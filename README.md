@@ -1,2 +1,2 @@
-# academy_client
+# academy-client
 Frontend Repository for ISkolar: Academy
