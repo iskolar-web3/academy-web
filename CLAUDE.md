@@ -4,24 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-**Package manager:** Bun
+**Package manager:** pnpm
 
 ```bash
-bun dev               # Start dev server on port 3000
-bun run generate-routes  # Regenerate routeTree.gen.ts (tsr generate)
-bun build             # Production build (vite build)
-bun preview           # Preview production build
-bun test              # Run unit tests (Vitest)
-bun lint              # Lint with Biome
-bun format            # Format with Biome
-bun check             # Lint + format check
+pnpm dev               # Start dev server on port 3000
+pnpm generate-routes   # Regenerate routeTree.gen.ts (tsr generate)
+pnpm build             # Production build (vite build)
+pnpm preview           # Preview production build
+pnpm test              # Run unit tests (Vitest)
+pnpm lint              # Lint with Biome
+pnpm format            # Format with Biome
+pnpm check             # Lint + format check
 ```
 
-Run a single test file: `bun test src/path/to/file.test.ts`
+Run a single test file: `pnpm test src/path/to/file.test.ts`
 
 ## Architecture
 
-**iSkolar Academy** is the frontend SPA. Stack: React 19 + Vite 8 + TanStack Start (SSR-capable, file-based router) + TanStack Query + Tailwind CSS 4 + Shadcn/ui. The product concept is being defined and is intended to differ from the iSkolar reference platform.
+**iSkolar Academy** is the frontend SPA. Stack: React 19 + Vite 8 + TanStack Start (SSR-capable, file-based router) + TanStack Query + Tailwind CSS 4 + Shadcn/ui. The product is a **student-project showcase, discovery & funding platform** (a subsidiary of iSkolar) — see `documents/iskolar-academy-plan.md`, `-prd.md`, and `-design-brief.md`. It reuses the iSkolar reference design system + engineering patterns. Files split across **AWS S3** (general media) and the **Lumen document vault** (provenance/sensitive docs); payments via **PayMongo**.
 
 ### Provider Stack (router.tsx)
 ```
@@ -32,7 +32,7 @@ getRouter() → createTanStackRouter({ routeTree, context }) → setupRouterSsrQ
 ### Routing
 TanStack Start with file-based routes under `src/routes/`. `__root.tsx` is the root layout; `index.tsx` is the home route.
 
-`routeTree.gen.ts` is auto-generated — do not edit manually. Run `bun run generate-routes` after adding/renaming routes.
+`routeTree.gen.ts` is auto-generated — do not edit manually. Run `pnpm generate-routes` after adding/renaming routes.
 
 > Route groups (`_auth/`, `_onboarding/`, role-guarded groups, etc.) are **not yet created**. Follow the iSkolar reference convention (`D:/GithubRepo/iskolar-main/web/`) when adding them.
 
@@ -58,8 +58,19 @@ VITE_BACKEND_URL=http://localhost:5000
 
 ## Code Style
 
-- **Linter/Formatter:** Biome (tabs, double quotes) — run `bun check` before committing
+- **Linter/Formatter:** Biome (tabs, double quotes) — run `pnpm check` before committing
 - **Path alias:** `#/*` maps to `./src/*` (defined in `package.json` `imports`)
-- **UI components:** Shadcn/ui (style: new-york, base color: zinc) — add via `bunx shadcn@latest add <component>`
+- **UI components:** Shadcn/ui (style: new-york, base color: zinc) — add via `pnpm dlx shadcn@latest add <component>`
 - **Styling:** Tailwind CSS 4 via `@tailwindcss/vite`; single entry `src/styles.css` (Shadcn oklch tokens only)
 - Packages installed and ready: `react-hook-form`, `zod`, `@hookform/resolvers`, `framer-motion`, `lenis`
+
+## Documentation
+
+Development is documented phase-by-phase in `documentation/` — a file-by-file narrative of **how each part of the frontend was built** (format adapted from the SecureFlow walkthrough; the original reference set lives in the monorepo-root `walkthrough/` folder, template only).
+
+**Rules:**
+- **One doc per phase/feature**, named `NN-<kebab-title>.md` (`NN` = zero-padded build order). Copy `documentation/_TEMPLATE.md` to start.
+- **Write/update the doc in the same change that ships the feature** — not after the fact.
+- Every doc carries a header with **Status** (📋 Planned · 🔨 In progress · ✅ Done), **Date**, **Repo(s)**, a **Traces to** line (PRD FR-IDs · plan § · story IDs), and **Commit/PR**.
+- Body sections: **Goal → What Was Built** (File / Functions·Components / Purpose) **→ Decisions & Trade-offs → Verification → Open Items**.
+- Keep the **progress table** in `documentation/README.md` in sync with every add or status change.
