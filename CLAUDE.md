@@ -64,6 +64,28 @@ VITE_BACKEND_URL=http://localhost:5000
 - **Styling:** Tailwind CSS 4 via `@tailwindcss/vite`; single entry `src/styles.css` (Shadcn oklch tokens only)
 - Packages installed and ready: `react-hook-form`, `zod`, `@hookform/resolvers`, `framer-motion`, `lenis`
 
+## SSR & Hydration
+
+This app runs **TanStack Start with SSR**, so every route component renders on the server first, then hydrates on the client. Watch the browser console for:
+
+> ⚠️ *A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up.* (`https://react.dev/link/hydration-mismatch`)
+
+**Before treating it as a bug, rule out a browser extension.** Extensions mutate the DOM before React hydrates and produce *false* mismatches. The tell is an unfamiliar attribute on `<html>`/`<body>` in the printed diff, e.g.:
+- `cz-shortcut-listen="true"` → **ColorZilla**
+- `data-gr-*` / `data-new-gr-c-s-*` → **Grammarly**
+- `data-lt-*` → **LanguageTool**, `bis_*` → **Bitdefender**
+
+Reproduce in an **incognito window with extensions disabled** — if the warning disappears, it's the extension, not our code. Do not "fix" these.
+
+**Real mismatches in our code** come from server-render output differing from the first client render. Check for these in any component that renders during SSR:
+- A `typeof window !== "undefined"` (or `typeof document`) branch that changes markup → gate browser-only logic in `useEffect` instead, or render a stable placeholder.
+- Non-deterministic values in render: `Date.now()`, `Math.random()`, `new Date()`, `crypto.randomUUID()` → compute once on the server and pass down, or move into `useEffect`.
+- **Locale/timezone-dependent formatting** (`toLocaleString`, `Intl.*`) that differs server vs client → format with a fixed locale/timezone, or do it client-side after mount.
+- **External/changing data** read at render without a server snapshot → fetch via TanStack Query (SSR-dehydrated) so server and client start from the same data.
+- **Invalid HTML nesting** (`<div>` inside `<p>`, `<p>` inside `<p>`, block elements inside `<button>`/`<a>`, stray whitespace in `<table>`) → the browser auto-corrects the DOM, so the client tree no longer matches the server string.
+
+When debugging, read the diff React prints (`-` server vs `+` client) to find the offending element, then trace it to one of the causes above.
+
 ## Documentation
 
 Development is documented phase-by-phase in `documentation/` — a file-by-file narrative of **how each part of the frontend was built** (format adapted from the SecureFlow walkthrough; the original reference set lives in the monorepo-root `walkthrough/` folder, template only).
