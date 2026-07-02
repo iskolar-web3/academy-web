@@ -23,6 +23,8 @@ Run a single test file: `pnpm test src/path/to/file.test.ts`
 
 **iSkolar Academy** is the frontend SPA. Stack: React 19 + Vite 8 + TanStack Start (SSR-capable, file-based router) + TanStack Query + Tailwind CSS 4 + Shadcn/ui. The product is a **student-project showcase, discovery & funding platform** (a subsidiary of iSkolar) — see `documents/iskolar-academy-plan.md`, `-prd.md`, and `-design-brief.md`. It reuses the iSkolar reference design system + engineering patterns. Files split across **AWS S3** (general media) and the **Lumen document vault** (provenance/sensitive docs); payments via **PayMongo**.
 
+> **Structure reference:** [`documentation/website-structure.md`](documentation/website-structure.md) — the hybrid Vertical Slice layout (domains across `routes`/`lib`/`hooks`/`components`), the route groups + URL map, auth/guards state, and conventions. Keep it in sync when a route group or domain is added.
+
 ### Provider Stack (router.tsx)
 ```
 getRouter() → createTanStackRouter({ routeTree, context }) → setupRouterSsrQueryIntegration

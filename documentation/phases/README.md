@@ -24,8 +24,8 @@ Cross-cutting concerns (`auth.tsx`, `lib/api.ts`, `integrations/tanstack-query/`
 
 | Phase | Doc | Theme | Stories | Status | Depends on |
 |---|---|---|---|:---:|---|
-| P0 | `P0-foundation.md` | SSO, provisioning, role onboarding, security envelope, profiles, visitor landing | PLT-01…06, STU-01/02, SPN-01/02 | 📋 Planned | §3 token contract |
-| P1 | `P1-submission.md` | Project draft → MVP gate → members/consent → ownership → dashboard/lifecycle | STU-03…11 | 📋 Planned | P0 |
+| P0 | `P0-foundation.md` | SSO, provisioning, role onboarding, security envelope, profiles, visitor landing | PLT-01…06, STU-01/02, SPN-01/02 | 🔨 In progress | §3 token contract |
+| P1 | `P1-submission.md` | Project draft → MVP gate → members/consent → ownership → dashboard/lifecycle | STU-03…11 | 🔨 In progress | P0 |
 | P2 | `P2-review.md` | Admin review queue, quality review, approve/return/reject, moderation, metrics | ADM-01/03/04/05/06 | 📋 Planned | P1 |
 | P3 | `P3-discovery-contact.md` | Browse + search + filters, all-in-one card, express interest, notifications, upvotes | SPN-03…08, PLT-07/08, STU-12/13 | 📋 Planned | P2 |
 | P4 | `P4-grants-funding.md` | Grants page, grant request, browse/fund (PayMongo), payouts/ledger, oversight | STU-14…16, SPN-09…11, ADM-02 | 📋 Planned | P0 + §9 money-model |

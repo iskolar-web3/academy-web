@@ -1,7 +1,26 @@
 # Phase P1 — Submission (Project Draft → MVP Gate → Members/Consent → Ownership → Lifecycle)
 
-**Status:** 📋 Planned
+**Status:** 🔨 In progress (client-only — mock-backed; server calls pending)
 **Target:** after P0
+
+> **Build note (2026-07-01):** the `project` slice is built client-only. `lib/project/api.ts`
+> is backed by an in-memory mock store (`lib/project/mock.ts`) so create → dashboard → submit
+> → lifecycle works end-to-end; swap each body to `apiFetch` when `academy-server` lands.
+> Routes use the **visible** `/student/projects/*` segment (see `../website-structure.md`).
+>
+> **Update (dashboard, design-template match):** the my-projects dashboard now lives at
+> `/student/home` as a **1:1 build of the design-template STUDENT DASHBOARD** — a sticky
+> profile sidebar (`components/account/StudentProfileCard`), four stat tiles, and per-project
+> cards (`components/project/MyProjectCard`) with a lifecycle **pipeline tracker**
+> (`components/project/ProjectPipeline`, `helper.pipelineSteps`). `MyProjectsTable` was
+> removed; `/student/projects` now redirects to `/student/home`. Destructive lifecycle
+> actions (submit/resubmit/withdraw/delete) live on the project **detail** page. Project
+> gained server-owned display fields (`upvotes`, `hue`, `school`) to match the card. Profile
+> detail (school/skills) is placeholder until the profile API lands (STU-01/02).
+> **Stubbed pending server:** thesis-paper upload is a validated **file picker only** (no Lumen
+> upload); linked-member invites show a **mock "consent pending"** state — invite accept/decline
+> (STU-08) waits on the P3 notification model. The public-profile published-work backfill
+> (STU-02) is also deferred to when discovery data lands.
 **Repo(s):** academy-client (this doc) · academy-server (`project/`)
 **Traces to:** PRD — FR-ST1…ST11, FR-S4 (uploads), FR-N4 (Lumen storage) · Plan — §6, §7 (Phase 1) · Stories — STU-03, STU-04, STU-05, STU-06, STU-07, STU-08, STU-09, STU-10, STU-11
 **Commit/PR:** —

@@ -451,9 +451,14 @@
 	from { transform: translateY(115%); }
 	to { transform: translateY(0); }
 }
+@keyframes dsPopIn {
+	from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 @layer components {
 	.animate-fade-up { animation: dsFadeUp 0.3s ease both; }
+	.animate-pop-in { animation: dsPopIn 0.16s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
 	.animate-badge { animation: dsBadge 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 	.animate-check { animation: dsCheck 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 	.animate-spin-ds { animation: dsSpin 0.7s linear infinite; }

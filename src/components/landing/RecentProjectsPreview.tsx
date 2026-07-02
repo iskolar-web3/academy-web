@@ -23,7 +23,7 @@ export function RecentProjectsPreview() {
 				))}
 			</div>
 
-			<p className="mt-10 flex items-center justify-center gap-2 text-base text-content-soft">
+			<p className="mt-10 flex flex-col items-center justify-center gap-1 text-center text-base text-content-soft sm:flex-row sm:gap-2">
 				Sign in to browse every published project, search, and filter.
 				<span className="inline-flex items-center gap-1 text-action">
 					Sign in <ArrowRight className="size-4" aria-hidden />

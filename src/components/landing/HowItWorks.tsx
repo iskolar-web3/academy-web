@@ -119,19 +119,28 @@ export function HowItWorks() {
 	);
 
 	return (
-		<section ref={ref} className="relative h-[180vh]">
-			<div className="sticky top-0 flex h-screen items-center overflow-hidden">
+		<section ref={ref} className="relative h-auto lg:h-[180vh]">
+			<div className="flex items-center py-16 lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden lg:py-0">
 				<div className="container-page w-full">
 					<SectionHeading label="How it works" />
 					<div className="relative mt-20">
+						{/* Terminal rails — run from each edge into the outer nodes, fading at the ends. */}
 						<div
 							aria-hidden
-							className="absolute top-12 left-[16.6%] right-[16.6%] h-0.5 -translate-y-1/2 bg-line"
+							className="absolute top-12 left-0 right-[83.4%] hidden h-0.5 -translate-y-1/2 bg-gradient-to-l from-line to-transparent sm:block"
+						/>
+						<div
+							aria-hidden
+							className="absolute top-12 left-[83.4%] right-0 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-line to-transparent sm:block"
+						/>
+						<div
+							aria-hidden
+							className="absolute top-12 left-[16.6%] right-[16.6%] hidden h-0.5 -translate-y-1/2 bg-line sm:block"
 						/>
 						<motion.div
 							aria-hidden
 							style={{ scaleX: lineFill }}
-							className="absolute top-12 left-[16.6%] right-[16.6%] h-0.5 -translate-y-1/2 origin-left bg-action"
+							className="absolute top-12 left-[16.6%] right-[16.6%] hidden h-0.5 -translate-y-1/2 origin-left bg-action sm:block"
 						/>
 						<div className="grid grid-cols-1 gap-16 sm:grid-cols-3 sm:gap-10">
 							{STEPS.map((step, i) => (
@@ -139,7 +148,14 @@ export function HowItWorks() {
 									key={step.n}
 									className="flex flex-col items-center text-center"
 								>
-									<StepNode progress={scrollYProgress} index={i} n={step.n} />
+									{/* Mobile: static filled node (no pinned scroll to drive the fill). */}
+									<span className="flex size-24 items-center justify-center rounded-full bg-action font-mono font-semibold text-3xl text-white lg:hidden">
+										{step.n}
+									</span>
+									{/* Desktop: scroll-filled animated node. */}
+									<div className="hidden lg:block">
+										<StepNode progress={scrollYProgress} index={i} n={step.n} />
+									</div>
 									<h3 className="mt-8 mb-3 text-3xl text-foreground">
 										{step.title}
 									</h3>

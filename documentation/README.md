@@ -14,6 +14,10 @@ A phase-by-phase, **file-by-file narrative of how `academy-client` was built** �
 
 Before a phase ships, its **planned** scope (FE slices, files to create/affect, implementation process) lives in [`phases/`](./phases/README.md) — one `P0…P5` doc per product phase, written in planned/before-progress tense. As a phase actually ships, migrate its content into a numbered `NN-*.md` build-order doc below and flip the phase status.
 
+## Reference docs
+
+- [`website-structure.md`](./website-structure.md) — living map of the folder architecture (hybrid VSA), route groups, and the URL layout. Update it whenever a route group or domain is added.
+
 ## Status legend
 
 📋 Planned · 🔨 In progress · ✅ Done
@@ -28,5 +32,14 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 |---|---|---|---|---|
 | 00 | `00-project-scaffold.md` | 📋 Planned | — | Plan §1 (scaffold) |
 | 01 | `01-pnpm-migration.md` | ✅ Done | 2026-06-30 | `documents/iskolar-academy-runtime-migration-plan.md` §3 |
+| 02 | `02-auth-session-wiring.md` | ✅ Done | 2026-07-02 | Plan §3 · PLT-01/02/03 |
+| 03 | `03-student-dashboard.md` | ✅ Done | 2026-07-02 | Plan §6–7 · STU-09/10/11 |
+| 04 | `04-app-header-and-discover-gallery.md` | ✅ Done | 2026-07-02 | Plan §6 · SPN-03 |
 
 > **Package-manager migration (Bun → pnpm)** — done 2026-06-30 (`01-pnpm-migration.md`). The client keeps its Node/Vite runtime; only the package manager changed (lockfile + docs, no source change). The server's runtime migration (Bun → Node 24) is the next phase.
+>
+> **Auth session wiring** — done 2026-07-02 (`02-auth-session-wiring.md`). `AuthProvider` now reads the live `GET /auth/session` (verify cookie → JIT-provision), mount-gated for SSR parity; sign-in CTAs route to `/login`. Guards remain commented; the richer `SessionUser` shape waits on server step 9.
+>
+> **Student dashboard** — done 2026-07-02 (`03-student-dashboard.md`). `/student/home` rebuilt as a 1:1 port of the design-template STUDENT DASHBOARD (profile sidebar + stat tiles + pipeline-tracker project cards). `/student/projects` redirects to it; destructive lifecycle actions moved to the detail page.
+>
+> **App header + Discover gallery** — done 2026-07-02 (`04-app-header-and-discover-gallery.md`). The signed-in top nav was rebuilt to the design-template HEADER (role-aware Discover · Grants · My Projects + bell + user pill); `/discover` now renders the showcase gallery and `/grants` is a P4 placeholder.

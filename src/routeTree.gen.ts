@@ -9,50 +9,514 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudentRouteImport } from './routes/student'
+import { Route as SponsorRouteImport } from './routes/sponsor'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as OnboardingRouteImport } from './routes/_onboarding'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentHomeRouteImport } from './routes/student/home'
+import { Route as SponsorProfileRouteImport } from './routes/sponsor/profile'
+import { Route as SponsorHomeRouteImport } from './routes/sponsor/home'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as OnboardingRoleSelectRouteImport } from './routes/_onboarding/role-select'
+import { Route as AppGrantsRouteImport } from './routes/_app/grants'
+import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
+import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
+import { Route as StudentProjectsNewRouteImport } from './routes/student/projects/new'
+import { Route as AppUUserIdRouteImport } from './routes/_app/u.$userId'
+import { Route as StudentProjectsProjectIdIndexRouteImport } from './routes/student/projects/$projectId/index'
+import { Route as StudentProjectsProjectIdEditRouteImport } from './routes/student/projects/$projectId/edit'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const StudentRoute = StudentRouteImport.update({
+  id: '/student',
+  path: '/student',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SponsorRoute = SponsorRouteImport.update({
+  id: '/sponsor',
+  path: '/sponsor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/_onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicRoute,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentHomeRoute = StudentHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => StudentRoute,
+} as any)
+const SponsorProfileRoute = SponsorProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SponsorRoute,
+} as any)
+const SponsorHomeRoute = SponsorHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => SponsorRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const PublicLoginRoute = PublicLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any)
+const OnboardingRoleSelectRoute = OnboardingRoleSelectRouteImport.update({
+  id: '/role-select',
+  path: '/role-select',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const AppGrantsRoute = AppGrantsRouteImport.update({
+  id: '/grants',
+  path: '/grants',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDiscoverRoute = AppDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => AppRoute,
+} as any)
+const StudentProjectsIndexRoute = StudentProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentProjectsNewRoute = StudentProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => StudentRoute,
+} as any)
+const AppUUserIdRoute = AppUUserIdRouteImport.update({
+  id: '/u/$userId',
+  path: '/u/$userId',
+  getParentRoute: () => AppRoute,
+} as any)
+const StudentProjectsProjectIdIndexRoute =
+  StudentProjectsProjectIdIndexRouteImport.update({
+    id: '/projects/$projectId/',
+    path: '/projects/$projectId/',
+    getParentRoute: () => StudentRoute,
+  } as any)
+const StudentProjectsProjectIdEditRoute =
+  StudentProjectsProjectIdEditRouteImport.update({
+    id: '/projects/$projectId/edit',
+    path: '/projects/$projectId/edit',
+    getParentRoute: () => StudentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof PublicIndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/sponsor': typeof SponsorRouteWithChildren
+  '/student': typeof StudentRouteWithChildren
+  '/discover': typeof AppDiscoverRoute
+  '/grants': typeof AppGrantsRoute
+  '/role-select': typeof OnboardingRoleSelectRoute
+  '/login': typeof PublicLoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/sponsor/home': typeof SponsorHomeRoute
+  '/sponsor/profile': typeof SponsorProfileRoute
+  '/student/home': typeof StudentHomeRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/u/$userId': typeof AppUUserIdRoute
+  '/student/projects/new': typeof StudentProjectsNewRoute
+  '/student/projects/': typeof StudentProjectsIndexRoute
+  '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
+  '/student/projects/$projectId/': typeof StudentProjectsProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof PublicIndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/sponsor': typeof SponsorRouteWithChildren
+  '/student': typeof StudentRouteWithChildren
+  '/discover': typeof AppDiscoverRoute
+  '/grants': typeof AppGrantsRoute
+  '/role-select': typeof OnboardingRoleSelectRoute
+  '/login': typeof PublicLoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/sponsor/home': typeof SponsorHomeRoute
+  '/sponsor/profile': typeof SponsorProfileRoute
+  '/student/home': typeof StudentHomeRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/u/$userId': typeof AppUUserIdRoute
+  '/student/projects/new': typeof StudentProjectsNewRoute
+  '/student/projects': typeof StudentProjectsIndexRoute
+  '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
+  '/student/projects/$projectId': typeof StudentProjectsProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_onboarding': typeof OnboardingRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
+  '/sponsor': typeof SponsorRouteWithChildren
+  '/student': typeof StudentRouteWithChildren
+  '/_app/discover': typeof AppDiscoverRoute
+  '/_app/grants': typeof AppGrantsRoute
+  '/_onboarding/role-select': typeof OnboardingRoleSelectRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/sponsor/home': typeof SponsorHomeRoute
+  '/sponsor/profile': typeof SponsorProfileRoute
+  '/student/home': typeof StudentHomeRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/_public/': typeof PublicIndexRoute
+  '/_app/u/$userId': typeof AppUUserIdRoute
+  '/student/projects/new': typeof StudentProjectsNewRoute
+  '/student/projects/': typeof StudentProjectsIndexRoute
+  '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
+  '/student/projects/$projectId/': typeof StudentProjectsProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/sponsor'
+    | '/student'
+    | '/discover'
+    | '/grants'
+    | '/role-select'
+    | '/login'
+    | '/admin/dashboard'
+    | '/sponsor/home'
+    | '/sponsor/profile'
+    | '/student/home'
+    | '/student/profile'
+    | '/u/$userId'
+    | '/student/projects/new'
+    | '/student/projects/'
+    | '/student/projects/$projectId/edit'
+    | '/student/projects/$projectId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/sponsor'
+    | '/student'
+    | '/discover'
+    | '/grants'
+    | '/role-select'
+    | '/login'
+    | '/admin/dashboard'
+    | '/sponsor/home'
+    | '/sponsor/profile'
+    | '/student/home'
+    | '/student/profile'
+    | '/u/$userId'
+    | '/student/projects/new'
+    | '/student/projects'
+    | '/student/projects/$projectId/edit'
+    | '/student/projects/$projectId'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_onboarding'
+    | '/_public'
+    | '/admin'
+    | '/sponsor'
+    | '/student'
+    | '/_app/discover'
+    | '/_app/grants'
+    | '/_onboarding/role-select'
+    | '/_public/login'
+    | '/admin/dashboard'
+    | '/sponsor/home'
+    | '/sponsor/profile'
+    | '/student/home'
+    | '/student/profile'
+    | '/_public/'
+    | '/_app/u/$userId'
+    | '/student/projects/new'
+    | '/student/projects/'
+    | '/student/projects/$projectId/edit'
+    | '/student/projects/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  OnboardingRoute: typeof OnboardingRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
+  SponsorRoute: typeof SponsorRouteWithChildren
+  StudentRoute: typeof StudentRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/student': {
+      id: '/student'
+      path: '/student'
+      fullPath: '/student'
+      preLoaderRoute: typeof StudentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sponsor': {
+      id: '/sponsor'
+      path: '/sponsor'
+      fullPath: '/sponsor'
+      preLoaderRoute: typeof SponsorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_onboarding': {
+      id: '/_onboarding'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_public/': {
+      id: '/_public/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/home': {
+      id: '/student/home'
+      path: '/home'
+      fullPath: '/student/home'
+      preLoaderRoute: typeof StudentHomeRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/sponsor/profile': {
+      id: '/sponsor/profile'
+      path: '/profile'
+      fullPath: '/sponsor/profile'
+      preLoaderRoute: typeof SponsorProfileRouteImport
+      parentRoute: typeof SponsorRoute
+    }
+    '/sponsor/home': {
+      id: '/sponsor/home'
+      path: '/home'
+      fullPath: '/sponsor/home'
+      preLoaderRoute: typeof SponsorHomeRouteImport
+      parentRoute: typeof SponsorRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_onboarding/role-select': {
+      id: '/_onboarding/role-select'
+      path: '/role-select'
+      fullPath: '/role-select'
+      preLoaderRoute: typeof OnboardingRoleSelectRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/_app/grants': {
+      id: '/_app/grants'
+      path: '/grants'
+      fullPath: '/grants'
+      preLoaderRoute: typeof AppGrantsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/discover': {
+      id: '/_app/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof AppDiscoverRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/student/projects/': {
+      id: '/student/projects/'
+      path: '/projects'
+      fullPath: '/student/projects/'
+      preLoaderRoute: typeof StudentProjectsIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/projects/new': {
+      id: '/student/projects/new'
+      path: '/projects/new'
+      fullPath: '/student/projects/new'
+      preLoaderRoute: typeof StudentProjectsNewRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/_app/u/$userId': {
+      id: '/_app/u/$userId'
+      path: '/u/$userId'
+      fullPath: '/u/$userId'
+      preLoaderRoute: typeof AppUUserIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/student/projects/$projectId/': {
+      id: '/student/projects/$projectId/'
+      path: '/projects/$projectId'
+      fullPath: '/student/projects/$projectId/'
+      preLoaderRoute: typeof StudentProjectsProjectIdIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/projects/$projectId/edit': {
+      id: '/student/projects/$projectId/edit'
+      path: '/projects/$projectId/edit'
+      fullPath: '/student/projects/$projectId/edit'
+      preLoaderRoute: typeof StudentProjectsProjectIdEditRouteImport
+      parentRoute: typeof StudentRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppDiscoverRoute: typeof AppDiscoverRoute
+  AppGrantsRoute: typeof AppGrantsRoute
+  AppUUserIdRoute: typeof AppUUserIdRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDiscoverRoute: AppDiscoverRoute,
+  AppGrantsRoute: AppGrantsRoute,
+  AppUUserIdRoute: AppUUserIdRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface OnboardingRouteChildren {
+  OnboardingRoleSelectRoute: typeof OnboardingRoleSelectRoute
+}
+
+const OnboardingRouteChildren: OnboardingRouteChildren = {
+  OnboardingRoleSelectRoute: OnboardingRoleSelectRoute,
+}
+
+const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
+  OnboardingRouteChildren,
+)
+
+interface PublicRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+  PublicIndexRoute: typeof PublicIndexRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicIndexRoute: PublicIndexRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
+
+interface AdminRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface SponsorRouteChildren {
+  SponsorHomeRoute: typeof SponsorHomeRoute
+  SponsorProfileRoute: typeof SponsorProfileRoute
+}
+
+const SponsorRouteChildren: SponsorRouteChildren = {
+  SponsorHomeRoute: SponsorHomeRoute,
+  SponsorProfileRoute: SponsorProfileRoute,
+}
+
+const SponsorRouteWithChildren =
+  SponsorRoute._addFileChildren(SponsorRouteChildren)
+
+interface StudentRouteChildren {
+  StudentHomeRoute: typeof StudentHomeRoute
+  StudentProfileRoute: typeof StudentProfileRoute
+  StudentProjectsNewRoute: typeof StudentProjectsNewRoute
+  StudentProjectsIndexRoute: typeof StudentProjectsIndexRoute
+  StudentProjectsProjectIdEditRoute: typeof StudentProjectsProjectIdEditRoute
+  StudentProjectsProjectIdIndexRoute: typeof StudentProjectsProjectIdIndexRoute
+}
+
+const StudentRouteChildren: StudentRouteChildren = {
+  StudentHomeRoute: StudentHomeRoute,
+  StudentProfileRoute: StudentProfileRoute,
+  StudentProjectsNewRoute: StudentProjectsNewRoute,
+  StudentProjectsIndexRoute: StudentProjectsIndexRoute,
+  StudentProjectsProjectIdEditRoute: StudentProjectsProjectIdEditRoute,
+  StudentProjectsProjectIdIndexRoute: StudentProjectsProjectIdIndexRoute,
+}
+
+const StudentRouteWithChildren =
+  StudentRoute._addFileChildren(StudentRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  OnboardingRoute: OnboardingRouteWithChildren,
+  PublicRoute: PublicRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
+  SponsorRoute: SponsorRouteWithChildren,
+  StudentRoute: StudentRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

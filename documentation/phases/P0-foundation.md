@@ -68,9 +68,12 @@ Stand up the identity + security spine and the first viewable surfaces: silently
 |---|---|---|---|
 | `src/components/landing/Hero.tsx` | component | **Create** | Landing hero / value prop. |
 | `src/components/landing/RecentProjectsPreview.tsx` | component | **Create** | Renders top-3 published cards (card only, no detail). |
-| `src/components/profile/ProfileView.tsx` | component | **Create** | Public profile renderer (specialty/skills subheader; published-work list slot — populated P1+). |
-| `src/components/profile/ProfileEditForm.tsx` | component | **Create** | react-hook-form + Zod edit form (student & sponsor variants). |
+| `src/components/account/ProfileView.tsx` | component | **Create** | Public profile renderer (specialty/skills subheader; published-work list slot — populated P1+). |
+| `src/components/account/ProfileEditForm.tsx` | component | **Create** | react-hook-form + Zod edit form (student & sponsor variants). |
+| `src/components/layout/RoleNav.tsx` | component | **Create** | Shared signed-in shell chrome (cross-cutting, not a domain slice). |
 | `src/components/ui/*` | component | **Affect** | Add needed Shadcn primitives via `pnpm dlx shadcn@latest add …`. |
+
+> **Component domain naming:** profile UI lives in `components/account/` (not `components/profile/`) so it shares the `account` domain name with `lib/account` + `hooks/account` — one domain, four folders. See [`../website-structure.md`](../website-structure.md) for the realized route-group convention (role areas use a **visible** `/student|/sponsor|/admin` segment; cross-cutting shells stay pathless).
 
 ### Server (academy-server — for cross-reference)
 `auth.ts` (validate iSkolar JWT, `requireRole()`), `account/` slice (provisioning + profile CRUD), `db.ts` + Goose migrations for `academy_user`, `student_profile`, `sponsor_profile`. Middleware chain: requestId → logging → CSRF → CORS → secureHeaders → auth → requireRole → Zod validator.

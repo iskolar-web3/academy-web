@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
 	type MotionValue,
 	motion,
@@ -99,16 +100,16 @@ export function Hero() {
 				))}
 			</div>
 
-			<div className="container-page relative z-10 grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_.95fr]">
-				<div className="animate-fade-up">
-					<div className="mb-5 flex items-center gap-2.5">
-						<span className="h-0.5 w-7 bg-content-faint" />
-						<span className="font-mono text-xs uppercase tracking-[0.3em] text-content-faint">
+			<div className="container-page relative z-10 grid items-center gap-12 pt-16 pb-14 sm:pt-24 lg:grid-cols-[1.05fr_.95fr]">
+				<div className="order-2 animate-fade-up lg:order-1">
+					<div className="mb-5 flex items-center gap-4">
+						<span className="h-[3px] w-14 rounded-full bg-content-faint" />
+						<span className="font-mono text-lg font-semibold uppercase tracking-[0.22em] text-content-faint">
 							A subsidiary of iSkolar
 						</span>
 					</div>
 
-					<h1 className="text-balance text-7xl leading-[1.05] tracking-tight text-foreground lg:text-[5.25rem]">
+					<h1 className="text-balance text-4xl leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-[5.25rem]">
 						<motion.span
 							className="block origin-left will-change-transform"
 							style={{ skewX: skewTop, x: shiftTopX, y: shiftTopY }}
@@ -143,16 +144,16 @@ export function Hero() {
 						</motion.span>
 					</h1>
 
-					<p className="mt-8 max-w-2xl text-2xl leading-relaxed text-content-strong">
+					<p className="mt-8 max-w-2xl text-lg leading-relaxed text-content-strong sm:text-2xl">
 						Showcase your built MVPs, fund starting theses with grants, and
 						connect with investors who scout real student projects — on the
 						platform that runs with academic integrity.
 					</p>
 
 					<div className="mt-10 flex flex-wrap items-center gap-4">
-						<button type="button" className="btn btn-primary h-14 px-9 text-lg">
+						<Link to="/login" className="btn btn-primary h-14 px-9 text-lg">
 							Sign in with iSkolar
-						</button>
+						</Link>
 						<button
 							type="button"
 							className="btn btn-secondary h-14 px-9 text-lg"
@@ -162,12 +163,12 @@ export function Hero() {
 					</div>
 				</div>
 
-				<div className="relative flex animate-fade-up flex-col items-center justify-center">
-					<div className="absolute top-0 size-[26rem] rounded-full bg-[radial-gradient(circle,rgba(96,121,232,0.18),transparent_68%)]" />
+				<div className="order-1 relative flex animate-fade-up flex-col items-center justify-center lg:order-2">
+					<div className="absolute top-0 size-64 rounded-full bg-[radial-gradient(circle,rgba(96,121,232,0.18),transparent_68%)] sm:size-[26rem]" />
 					<img
 						src="/logo-academy.png"
 						alt="iSkolar Academy"
-						className="relative max-h-[26rem] w-auto animate-float"
+						className="relative max-h-64 w-auto animate-float sm:max-h-[26rem]"
 					/>
 					<div className="relative mt-3 flex items-center gap-3.5">
 						<span className="h-0.5 w-12 bg-action/40" />

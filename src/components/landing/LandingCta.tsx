@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Reveal } from "#/components/landing/Reveal";
 
 export function LandingCta() {
@@ -12,9 +13,9 @@ export function LandingCta() {
 					or start scouting talent.
 				</p>
 				<div className="mt-7 flex justify-center">
-					<button type="button" className="btn btn-primary">
+					<Link to="/login" className="btn btn-primary">
 						Sign in with iSkolar
-					</button>
+					</Link>
 				</div>
 			</Reveal>
 		</section>

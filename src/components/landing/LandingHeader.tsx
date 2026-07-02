@@ -1,6 +1,8 @@
+import { Link } from "@tanstack/react-router";
+
 /**
  * Slim public top bar for the visitor landing — logo + a single sign-in entry.
- * Sign-in redirects to iSkolar SSO (wired in P0 auth); rendered as a button for now.
+ * Sign-in routes to the /login auth page, which redirects to iSkolar SSO.
  */
 export function LandingHeader() {
 	return (
@@ -16,9 +18,9 @@ export function LandingHeader() {
 						Academy
 					</span>
 				</div>
-				<button type="button" className="btn btn-secondary h-11 px-6 text-sm">
+				<Link to="/login" className="btn btn-secondary h-11 px-6 text-sm">
 					Sign in
-				</button>
+				</Link>
 			</div>
 		</header>
 	);
