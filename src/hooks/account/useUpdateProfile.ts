@@ -1,24 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateSponsorProfile, updateStudentProfile } from "#/lib/account/api";
-import type {
-	SponsorProfileEdit,
-	StudentProfileEdit,
-} from "#/lib/account/model";
+import { updateMyProfile } from "#/lib/account/api";
+import type { ProfileEdit } from "#/lib/account/model";
+import { validateSessionQuery } from "#/lib/auth/api";
 
-/** Mutation for editing own student profile (STU-01). */
-export function useUpdateStudentProfile() {
+/**
+ * Mutation for editing own profile (STU-01 / SPN-01). On success it seeds the fresh
+ * record into the `me` profile cache and invalidates every profile query + the session
+ * (the display-name snapshot on the header may have changed).
+ */
+export function useUpdateProfile() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (input: StudentProfileEdit) => updateStudentProfile(input),
-		onSuccess: () => qc.invalidateQueries({ queryKey: ["account", "profile"] }),
-	});
-}
-
-/** Mutation for editing own sponsor profile (SPN-01). */
-export function useUpdateSponsorProfile() {
-	const qc = useQueryClient();
-	return useMutation({
-		mutationFn: (input: SponsorProfileEdit) => updateSponsorProfile(input),
-		onSuccess: () => qc.invalidateQueries({ queryKey: ["account", "profile"] }),
+		mutationFn: (input: ProfileEdit) => updateMyProfile(input),
+		onSuccess: (profile) => {
+			qc.setQueryData(["account", "profile", "me"], profile);
+			qc.invalidateQueries({ queryKey: ["account", "profile"] });
+			qc.invalidateQueries({ queryKey: validateSessionQuery().queryKey });
+		},
 	});
 }

@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
+import { SponsorRail } from "#/components/discover/SponsorRail";
+import { useSession } from "#/hooks/auth/useSession";
+import { AcademyRole } from "#/lib/auth/model";
 import { MOCK_PROJECTS } from "#/lib/discover/mock";
 
 /**
@@ -34,6 +37,8 @@ const CATEGORIES = [
 ];
 
 function Discover() {
+	const { role } = useSession();
+	const isSponsor = role === AcademyRole.Sponsor;
 	const [query, setQuery] = useState("");
 	const [sort, setSort] = useState<Sort>("newest");
 	const [category, setCategory] = useState("All");
@@ -169,10 +174,13 @@ function Discover() {
 				) : null}
 			</div>
 
-			<div className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
-				{projects.map((project) => (
-					<DiscoverCard key={project.id} project={project} />
-				))}
+			<div className="flex items-start gap-6">
+				<div className="grid min-w-0 flex-1 grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
+					{projects.map((project) => (
+						<DiscoverCard key={project.id} project={project} />
+					))}
+				</div>
+				{isSponsor ? <SponsorRail /> : null}
 			</div>
 		</div>
 	);

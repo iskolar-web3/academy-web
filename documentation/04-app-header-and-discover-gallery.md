@@ -6,6 +6,11 @@
 **Traces to:** PRD — FR-SP3 (browse showcase) · Plan — §6 · Stories — SPN-03
 **Design source:** `design-template/iskolar-academy/project/iSkolar Academy.dc.html` (HEADER + GALLERY sections)
 
+> **Phase split:** this increment spans two phases. The **HEADER / `RoleNav`** is the **P0**
+> shared signed-in shell (PLT-05) — its guard wiring is recorded in
+> [`phases/P0-foundation.md`](./phases/P0-foundation.md) → Realized Build — Client. The
+> **Discover gallery** (SPN-03) is **P3** and stays documented here.
+
 ## Goal
 
 Fix the signed-in top navigation to **exactly match the design-template HEADER** (I had

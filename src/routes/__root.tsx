@@ -40,11 +40,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		// suppressHydrationWarning on <html>/<body> ONLY: browser extensions (ColorZilla →
+		// `cz-shortcut-listen`, Grammarly → `data-gr-*`, LanguageTool → `data-lt-*`) mutate
+		// these two elements before React hydrates, producing false attribute mismatches. This
+		// suppresses those (one level deep — attributes of html/body), NOT real mismatches in
+		// our own components, which still warn. See project CLAUDE.md "SSR & Hydration".
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 			</head>
-			<body>
+			<body suppressHydrationWarning>
 				<AuthProvider>{children}</AuthProvider>
 				<TanStackDevtools
 					config={{

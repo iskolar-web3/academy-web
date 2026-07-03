@@ -3,6 +3,7 @@ import {
 	AlertTriangle,
 	Bell,
 	Check,
+	CreditCard,
 	Heart,
 	Lock,
 	LogOut,
@@ -114,8 +115,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 
 	const activeRole = role ?? user?.academyRole ?? AcademyRole.Student;
 	const name = user?.displayName || user?.iskolarUserId || "Guest";
-	// School is placeholder until the profile API lands (STU-01).
-	const subtitle = `${ROLE_LABEL[activeRole]} · UP Diliman`;
+	const subtitle = ROLE_LABEL[activeRole];
 
 	const onLogout = async () => {
 		setOpen(null);
@@ -276,17 +276,25 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 								</div>
 
 								<Link
-									to="/student/profile"
+									to={
+										activeRole === AcademyRole.Sponsor
+											? "/sponsor/profile"
+											: "/student/profile"
+									}
 									onClick={() => setOpen(null)}
 									className={menuItemCls}
 								>
 									<User className="size-[18px] text-action" aria-hidden />
 									Profile
 								</Link>
-								<button type="button" className={menuItemCls}>
+								<Link
+									to="/settings"
+									onClick={() => setOpen(null)}
+									className={menuItemCls}
+								>
 									<Settings className="size-[18px] text-action" aria-hidden />
 									Settings
-								</button>
+								</Link>
 								<button
 									type="button"
 									className={menuItemCls}
@@ -303,6 +311,19 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 										<Lock className="size-[18px] text-action" aria-hidden />
 										My pitch vaults
 									</button>
+								) : null}
+								{activeRole === AcademyRole.Sponsor ? (
+									<Link
+										to="/sponsor/subscription"
+										onClick={() => setOpen(null)}
+										className={menuItemCls}
+									>
+										<CreditCard
+											className="size-[18px] text-action"
+											aria-hidden
+										/>
+										Subscription
+									</Link>
 								) : null}
 
 								<div className="mx-1.5 my-1.5 h-px bg-[#eef1fa]" />

@@ -18,16 +18,19 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
 import { Route as StudentHomeRouteImport } from './routes/student/home'
+import { Route as SponsorSubscriptionRouteImport } from './routes/sponsor/subscription'
 import { Route as SponsorProfileRouteImport } from './routes/sponsor/profile'
 import { Route as SponsorHomeRouteImport } from './routes/sponsor/home'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as OnboardingRoleSelectRouteImport } from './routes/_onboarding/role-select'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppGrantsRouteImport } from './routes/_app/grants'
 import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
 import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
 import { Route as StudentProjectsNewRouteImport } from './routes/student/projects/new'
 import { Route as AppUUserIdRouteImport } from './routes/_app/u.$userId'
+import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
 import { Route as StudentProjectsProjectIdIndexRouteImport } from './routes/student/projects/$projectId/index'
 import { Route as StudentProjectsProjectIdEditRouteImport } from './routes/student/projects/$projectId/edit'
 
@@ -73,6 +76,11 @@ const StudentHomeRoute = StudentHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => StudentRoute,
 } as any)
+const SponsorSubscriptionRoute = SponsorSubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => SponsorRoute,
+} as any)
 const SponsorProfileRoute = SponsorProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -97,6 +105,11 @@ const OnboardingRoleSelectRoute = OnboardingRoleSelectRouteImport.update({
   id: '/role-select',
   path: '/role-select',
   getParentRoute: () => OnboardingRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppGrantsRoute = AppGrantsRouteImport.update({
   id: '/grants',
@@ -123,6 +136,11 @@ const AppUUserIdRoute = AppUUserIdRouteImport.update({
   path: '/u/$userId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
+  id: '/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => AppRoute,
+} as any)
 const StudentProjectsProjectIdIndexRoute =
   StudentProjectsProjectIdIndexRouteImport.update({
     id: '/projects/$projectId/',
@@ -143,13 +161,16 @@ export interface FileRoutesByFullPath {
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
   '/grants': typeof AppGrantsRoute
+  '/settings': typeof AppSettingsRoute
   '/role-select': typeof OnboardingRoleSelectRoute
   '/login': typeof PublicLoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/sponsor/home': typeof SponsorHomeRoute
   '/sponsor/profile': typeof SponsorProfileRoute
+  '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/u/$userId': typeof AppUUserIdRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
   '/student/projects/': typeof StudentProjectsIndexRoute
@@ -163,13 +184,16 @@ export interface FileRoutesByTo {
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
   '/grants': typeof AppGrantsRoute
+  '/settings': typeof AppSettingsRoute
   '/role-select': typeof OnboardingRoleSelectRoute
   '/login': typeof PublicLoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/sponsor/home': typeof SponsorHomeRoute
   '/sponsor/profile': typeof SponsorProfileRoute
+  '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/u/$userId': typeof AppUUserIdRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
   '/student/projects': typeof StudentProjectsIndexRoute
@@ -186,14 +210,17 @@ export interface FileRoutesById {
   '/student': typeof StudentRouteWithChildren
   '/_app/discover': typeof AppDiscoverRoute
   '/_app/grants': typeof AppGrantsRoute
+  '/_app/settings': typeof AppSettingsRoute
   '/_onboarding/role-select': typeof OnboardingRoleSelectRoute
   '/_public/login': typeof PublicLoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/sponsor/home': typeof SponsorHomeRoute
   '/sponsor/profile': typeof SponsorProfileRoute
+  '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
   '/_public/': typeof PublicIndexRoute
+  '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/_app/u/$userId': typeof AppUUserIdRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
   '/student/projects/': typeof StudentProjectsIndexRoute
@@ -209,13 +236,16 @@ export interface FileRouteTypes {
     | '/student'
     | '/discover'
     | '/grants'
+    | '/settings'
     | '/role-select'
     | '/login'
     | '/admin/dashboard'
     | '/sponsor/home'
     | '/sponsor/profile'
+    | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/projects/$projectId'
     | '/u/$userId'
     | '/student/projects/new'
     | '/student/projects/'
@@ -229,13 +259,16 @@ export interface FileRouteTypes {
     | '/student'
     | '/discover'
     | '/grants'
+    | '/settings'
     | '/role-select'
     | '/login'
     | '/admin/dashboard'
     | '/sponsor/home'
     | '/sponsor/profile'
+    | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/projects/$projectId'
     | '/u/$userId'
     | '/student/projects/new'
     | '/student/projects'
@@ -251,14 +284,17 @@ export interface FileRouteTypes {
     | '/student'
     | '/_app/discover'
     | '/_app/grants'
+    | '/_app/settings'
     | '/_onboarding/role-select'
     | '/_public/login'
     | '/admin/dashboard'
     | '/sponsor/home'
     | '/sponsor/profile'
+    | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
     | '/_public/'
+    | '/_app/projects/$projectId'
     | '/_app/u/$userId'
     | '/student/projects/new'
     | '/student/projects/'
@@ -340,6 +376,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentHomeRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/sponsor/subscription': {
+      id: '/sponsor/subscription'
+      path: '/subscription'
+      fullPath: '/sponsor/subscription'
+      preLoaderRoute: typeof SponsorSubscriptionRouteImport
+      parentRoute: typeof SponsorRoute
+    }
     '/sponsor/profile': {
       id: '/sponsor/profile'
       path: '/profile'
@@ -374,6 +417,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/role-select'
       preLoaderRoute: typeof OnboardingRoleSelectRouteImport
       parentRoute: typeof OnboardingRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/grants': {
       id: '/_app/grants'
@@ -410,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUUserIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/projects/$projectId': {
+      id: '/_app/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof AppProjectsProjectIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/student/projects/$projectId/': {
       id: '/student/projects/$projectId/'
       path: '/projects/$projectId'
@@ -430,12 +487,16 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppGrantsRoute: typeof AppGrantsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
   AppUUserIdRoute: typeof AppUUserIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDiscoverRoute: AppDiscoverRoute,
   AppGrantsRoute: AppGrantsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
   AppUUserIdRoute: AppUUserIdRoute,
 }
 
@@ -479,11 +540,13 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface SponsorRouteChildren {
   SponsorHomeRoute: typeof SponsorHomeRoute
   SponsorProfileRoute: typeof SponsorProfileRoute
+  SponsorSubscriptionRoute: typeof SponsorSubscriptionRoute
 }
 
 const SponsorRouteChildren: SponsorRouteChildren = {
   SponsorHomeRoute: SponsorHomeRoute,
   SponsorProfileRoute: SponsorProfileRoute,
+  SponsorSubscriptionRoute: SponsorSubscriptionRoute,
 }
 
 const SponsorRouteWithChildren =

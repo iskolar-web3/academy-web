@@ -21,6 +21,30 @@
 > upload); linked-member invites show a **mock "consent pending"** state — invite accept/decline
 > (STU-08) waits on the P3 notification model. The public-profile published-work backfill
 > (STU-02) is also deferred to when discovery data lands.
+>
+> **Update (submit wizard = modal, 2026-07-03):** submitting is now a **1:1 port of the
+> design-template SUBMIT WIZARD MODAL** (`components/project/SubmitProjectModal`) — a 760px
+> modal with a 5-step numbered stepper (Details · MVP · Team · Ownership · Review), opened from
+> the dashboard "+ Submit a project" button (state on `/student/home`), not a standalone page.
+> `/student/projects/new` now **redirects** to `/student/home`.
+>
+> **Update (P1 client finished to contract, 2026-07-03):**
+> - **Project Detail rebuilt** to the design-template PROJECT DETAIL (`components/project/ProjectDetailView`)
+>   — gradient cover banner, two-column body (pitch · purpose quote · tech · team) + a side rail
+>   (interact/manage card · MVP links · Venture Pitch Vault [P5 stub]). Viewer-aware
+>   (`owner|sponsor|public`); the owner route feeds the manage card (status · returned note ·
+>   lifecycle actions). Sponsor "Express interest"/public are stubs until **P3**.
+> - **Edit unified onto the modal** — `$projectId/edit` now opens `SubmitProjectModal` **prefilled**
+>   (`projectToFormValues`), with the STU-11 re-review notice; the page-based `ProjectForm` +
+>   its subfields were **removed**. The MVP gate now lives solely in the modal (template-accurate:
+>   demo+repo required, video optional) — the stricter `helper.mvpGateIssues` was **removed**,
+>   resolving the create/edit gate discrepancy.
+> - **Membership invitations (STU-08)** — `components/project/IncomingInvites` on the dashboard
+>   (Accept/Decline). **Stubbed** (static seed, local state) pending the P3 notification model.
+> - **API swapped mock → real** — `lib/project/api.ts` now calls `apiFetch` against the P1
+>   endpoint contract (parsed via `projectSchema`); `lib/project/mock.ts` was **removed**. Hooks
+>   and UI are unchanged. Surfaces show loading/empty/error states until the server slice ships
+>   (`academy-server/documentation/phases/P1-submission-server.md`).
 **Repo(s):** academy-client (this doc) · academy-server (`project/`)
 **Traces to:** PRD — FR-ST1…ST11, FR-S4 (uploads), FR-N4 (Lumen storage) · Plan — §6, §7 (Phase 1) · Stories — STU-03, STU-04, STU-05, STU-06, STU-07, STU-08, STU-09, STU-10, STU-11
 **Commit/PR:** —

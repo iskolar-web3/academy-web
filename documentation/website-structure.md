@@ -36,10 +36,10 @@ src/
 
 | Domain | routes | lib | hooks | components |
 |---|---|---|---|---|
-| **auth** | `_public/login`, `_onboarding/role-select` | `lib/auth/{api,model}.ts` | `hooks/auth/useSession.ts` | — |
-| **account** | `student/profile`, `sponsor/profile`, `_app/u/$userId` | `lib/account/{api,model}.ts` | `hooks/account/{useProfile,useUpdateProfile}.ts` | `components/account/{ProfileView,ProfileEditForm,StudentProfileCard}.tsx` |
-| **project** | `student/home` (dashboard), `student/projects/*` | `lib/project/{api,model,helper,mock}.ts` | `hooks/project/{useMyProjects,useProject,useProjectMutations}.ts` | `components/project/{ProjectStatusBadge,ProjectPipeline,MyProjectCard,ProjectForm/*}.tsx` |
-| **discover** | `_app/discover` (gallery), `_app/grants` (P4 stub) | `lib/discover/mock.ts` | (P3) | `components/discover/DiscoverCard.tsx`, `components/project/ProjectCard.tsx` (landing teaser) |
+| **auth** | `_public/login`, `_onboarding/role-select` | `lib/auth/{api,model}.ts` | `hooks/auth/{useSession,useConfirmRole,useRouteGuard}.ts` | `components/layout/RouteFallback.tsx` (guard fallback) |
+| **account** | `student/profile`, `sponsor/profile`, `_app/u/$userId`, `_app/settings` | `lib/account/{api,model}.ts` | `hooks/account/{useProfile,useUpdateProfile}.ts` | `components/account/{ProfileView,ProfileEditForm,StudentProfileCard}.tsx` |
+| **project** | `student/home` (dashboard), `student/projects/*` | `lib/project/{api,model,helper}.ts` | `hooks/project/{useMyProjects,useProject,useProjectMutations}.ts` | `components/project/{ProjectPipeline,MyProjectCard,ProjectStatusBadge,UpvoteButton,SubmitProjectModal,ProjectDetailView,IncomingInvites}.tsx` |
+| **discover** | `_app/discover` (gallery), `_app/grants` (P4 stub) | `lib/discover/mock.ts` | (P3) | `components/discover/{DiscoverCard,SponsorRail}.tsx`, `components/project/ProjectCard.tsx` (landing teaser) |
 | **landing** | `_public/` (index) | — | — | `components/landing/*` |
 
 > The **component folder shares the domain name** (`components/account`, not
@@ -63,18 +63,21 @@ Two kinds of group:
 |---|---|---|---|---|
 | `/` | `routes/_public/index.tsx` | pathless | none | Visitor landing (PLT-06) |
 | `/login` | `routes/_public/login.tsx` | pathless | none | SSO entry + dev role preview |
-| `/role-select` | `routes/_onboarding/role-select.tsx` | pathless | signed-in, no role | Role confirm (PLT-04) |
+| `/role-select` | `routes/_onboarding/role-select.tsx` | pathless | signed-in, no role | Role confirm (PLT-04) — one click per role. A **sponsor** no longer picks a sub-kind; it routes to `/sponsor/subscription` to choose a tier. |
 | `/u/$userId` | `routes/_app/u.$userId.tsx` | pathless | any signed-in | Public profile (STU-02/SPN-02) |
-| `/discover` | `routes/_app/discover.tsx` | pathless | any signed-in | Showcase gallery (SPN-03) — toolbar + card grid; search filters mock client-side, server search/filters/sort → P3 |
+| `/discover` | `routes/_app/discover.tsx` | pathless | any signed-in | Showcase gallery (SPN-03) — toolbar + card grid; **sponsors** also get the 320px `SponsorRail` sidebar (alerts/watchlist · subscriptions · suggested · plan). Search filters mock client-side, server search/filters/sort → P3 |
 | `/grants` | `routes/_app/grants.tsx` | pathless | any signed-in | Grants placeholder (P4) |
+| `/projects/$projectId` | `routes/_app/projects.$projectId.tsx` | pathless | any signed-in | Public/sponsor **project detail** — design-template PROJECT DETAIL (`ProjectDetailView`, `viewer="sponsor"|"public"`), opened from a Discover gallery card. Reads mock showcase; real query + express-interest → P3. |
+| `/settings` | `routes/_app/settings.tsx` | pathless | any signed-in | Settings (design-template SETTINGS PAGE) — alerts toggle · digest/language · account/privacy · Log out. Opened from the header account dropdown. |
 | `/student/home` | `routes/student/home.tsx` | visible | role = student | **Student dashboard** (STU-09): profile sidebar + stat tiles + project pipeline cards. 1:1 with design-template STUDENT DASHBOARD. |
 | `/student/projects` | `routes/student/projects/index.tsx` | visible | role = student | Redirects → `/student/home` (the dashboard is the student's home) |
-| `/student/projects/new` | `routes/student/projects/new.tsx` | visible | role = student | Submission wizard (STU-03…07) |
-| `/student/projects/$projectId` | `routes/student/projects/$projectId/index.tsx` | visible | role = student | Owner project view |
-| `/student/projects/$projectId/edit` | `routes/student/projects/$projectId/edit.tsx` | visible | role = student | Edit + re-review (STU-11) |
+| `/student/projects/new` | `routes/student/projects/new.tsx` | visible | role = student | **Redirects → `/student/home`.** Submitting is the design-template SUBMIT WIZARD **modal** (`components/project/SubmitProjectModal`, 5 steps) opened from the dashboard "+ Submit a project" action, not a standalone page (STU-03…07). |
+| `/student/projects/$projectId` | `routes/student/projects/$projectId/index.tsx` | visible | role = student | Owner project view — design-template **PROJECT DETAIL** (`ProjectDetailView`, `viewer="owner"`): cover banner + two-column body + side rail; the manage card holds status · returned note · lifecycle actions (STU-09/10/11). |
+| `/student/projects/$projectId/edit` | `routes/student/projects/$projectId/edit.tsx` | visible | role = student | Opens the **SUBMIT WIZARD modal prefilled** (`SubmitProjectModal project={…}`) with the re-review notice (STU-11); closing returns to the detail. |
 | `/student/profile` | `routes/student/profile.tsx` | visible | role = student | Edit profile (STU-01) |
 | `/sponsor/home` | `routes/sponsor/home.tsx` | visible | role = sponsor | Placeholder |
 | `/sponsor/profile` | `routes/sponsor/profile.tsx` | visible | role = sponsor | Edit profile (SPN-01) |
+| `/sponsor/subscription` | `routes/sponsor/subscription.tsx` | visible | role = sponsor | Subscription & billing (design-template) — tier picker (Scout/Alpha/Venture) + PayMongo payment (stubbed → P5) + seats/invoices. **Sponsor onboarding lands here** after role-confirm. |
 | `/admin/dashboard` | `routes/admin/dashboard.tsx` | visible | role = admin | Placeholder (queue → P2) |
 
 Layout files: `_public.tsx`, `_onboarding.tsx`, `_app.tsx` (pathless shells) and
@@ -98,40 +101,45 @@ shells that should own top-level URLs (`/`, `/login`, `/u/$userId`) stay pathles
 ## 3. Auth & guards (current state)
 
 `src/auth.tsx` provides `AuthProvider` (wraps the app in `__root.tsx`) exposing
-`{ user, role, isLoading, isSignedIn, refresh, logout }`. It now reads the **live**
+`{ user, role, isLoading, isSignedIn, refresh, logout }`. It reads the **live**
 `GET /auth/session` endpoint (academy-server) via `lib/auth/api.ts → validateSessionQuery`,
 mount-gated so SSR and the first client render both show a visitor (no hydration mismatch).
-Set a dev `auth_token` cookie (academy-server `src/dev/mint-token.ts`) to sign in. Route
-**guards are still commented**, so screens remain reachable without a session for review.
+Set a dev `auth_token` cookie (academy-server `src/dev/mint-token.ts`) to sign in.
 
-Each role/onboarding layout carries its **real guard as commented code** modeled on
-iskolar-main (`beforeLoad` → `context.auth.getSession()` → `redirect`). Wiring auth (P0)
-is three steps:
+**Guards are live (as of `phases/P0-foundation.md` → Realized Build — Client)** and **client/effect-based**, not
+`beforeLoad`. `src/hooks/auth/useRouteGuard.ts` reads the mount-gated session; each guarded
+layout calls it and renders `components/layout/RouteFallback` until the session resolves —
+so SSR and the first client render are identical (no mismatch) — then admits the route or
+`navigate`s to a redirect. Modes:
 
-1. `src/auth.tsx` — replace the stub with silent SSO validation
-   (`lib/auth/api.ts → validateSessionQuery`) + provisioning.
-2. `src/router.tsx` — pass `auth` into the router context so `beforeLoad` can read it.
-3. Uncomment the `beforeLoad` blocks in `_onboarding.tsx`, `_app.tsx`, `student.tsx`,
-   `sponsor.tsx`, `admin.tsx`.
+- **`signed-in`** — `_app.tsx` (any confirmed role; unconfirmed → `/role-select`).
+- **`role`** — `student.tsx` / `sponsor.tsx` / `admin.tsx` (wrong role → own area).
+- **`onboarding`** — `_onboarding.tsx` (signed in + **un**confirmed; confirmed → own area).
 
-> Guards are UX / defense-in-depth only. Real enforcement is the server's `requireRole()`.
+> **Why not `beforeLoad`:** it runs on the SSR server where the dev `auth_token` cookie
+> isn't present, so it would render `/login` server-side while the client renders the app →
+> hydration mismatch + redirect flash. The effect-based guard avoids both. Guards are UX /
+> defense-in-depth only — real enforcement is the server's `requireRole()`.
 
 ---
 
 ## 4. Blocked-on-server files (drop-in skeletons)
 
-These exist with **final signatures** so server code drops straight in — no restructuring:
+The client calls are **live** against the P0 endpoint contract; the server delivers the
+matching handlers (`academy-server/documentation/phases/P0-foundation-server.md`):
 
-- `lib/auth/api.ts` — `validateSessionQuery` is **live** (`GET /auth/session`). `lib/account/api.ts`
-  still throws `"… not wired yet"`; query keys / signatures are final so hooks/UI build against them.
-- `lib/auth/model.ts`, `lib/account/model.ts` — **real** (types/enums/Zod are known from the
-  PRD, not blocked). `AcademyRole`, `SponsorKind`, profile shapes + edit schemas.
-- `hooks/auth`, `hooks/account` — real React Query wrappers over the stubbed lib calls.
-- `ProfileEditForm` — real validation; submit is a **mock** (`console.log` + local note)
-  until the mutation is wired.
+- `lib/auth/api.ts` — `validateSessionQuery` (`GET /auth/session`), `ssoLoginUrl`.
+- `lib/account/api.ts` — `myProfileQuery` (`GET /accounts/me/profile`), `profileQuery`
+  (`GET /accounts/:id/profile`), `updateMyProfile` (`PATCH /accounts/me/profile`),
+  `confirmRole` (`POST /accounts/me/role`), `logoutRequest` (`POST /auth/logout`).
+- `lib/auth/model.ts`, `lib/account/model.ts` — **real** types/enums/Zod. `AccountProfile`
+  view model, `profileEditSchema` (the template's four fields), `roleConfirmSchema`.
+- `hooks/auth`, `hooks/account` — real React Query wrappers (`useMyProfile`, `useProfile`,
+  `useUpdateProfile`, `useConfirmRole`, `useRouteGuard`).
+- `ProfileEditForm` / `ProfileView` — rebuilt 1:1 to the template; **real** submit + query.
 
-The `Dev preview` block on `/login` and the mock data in `_app/u/$userId` and the role home
-pages are **temporary** — remove/replace when auth + real queries land.
+Until the server `account` slice ships, profile/onboarding surfaces show their loading /
+not-found / error states in dev — sign in by minting a dev token.
 
 ---
 

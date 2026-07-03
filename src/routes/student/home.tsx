@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
+import { IncomingInvites } from "#/components/project/IncomingInvites";
 import { MyProjectCard } from "#/components/project/MyProjectCard";
+import { SubmitProjectModal } from "#/components/project/SubmitProjectModal";
 import { useSession } from "#/hooks/auth/useSession";
 import { useMyProjects } from "#/hooks/project/useMyProjects";
 import { dashboardStats } from "#/lib/project/helper";
@@ -26,6 +29,7 @@ function StudentHome() {
 	const { user } = useSession();
 	const { data: projects = [], isLoading } = useMyProjects();
 	const stats = dashboardStats(projects);
+	const [submitOpen, setSubmitOpen] = useState(false);
 
 	const name = user?.displayName || user?.iskolarUserId || "Student";
 	const profile = {
@@ -45,12 +49,13 @@ function StudentHome() {
 
 			<div>
 				<div className="mb-[22px] flex items-center justify-end gap-2.5">
-					<Link
-						to="/student/projects/new"
+					<button
+						type="button"
+						onClick={() => setSubmitOpen(true)}
 						className="btn btn-primary h-[46px] px-5 text-[14.5px]"
 					>
 						+ Submit a project
-					</Link>
+					</button>
 				</div>
 
 				<div className="mb-7 grid grid-cols-2 gap-3.5 sm:grid-cols-4">
@@ -64,6 +69,8 @@ function StudentHome() {
 					))}
 				</div>
 
+				<IncomingInvites />
+
 				{isLoading ? (
 					<p className="text-content-soft">Loading…</p>
 				) : projects.length === 0 ? (
@@ -72,9 +79,13 @@ function StudentHome() {
 						<p className="mt-1 text-sm text-content-soft">
 							Publish your first project to get it in front of sponsors.
 						</p>
-						<Link to="/student/projects/new" className="btn btn-primary mt-5">
+						<button
+							type="button"
+							onClick={() => setSubmitOpen(true)}
+							className="btn btn-primary mt-5"
+						>
 							+ Submit a project
-						</Link>
+						</button>
 					</div>
 				) : (
 					<div className="flex flex-col gap-4">
@@ -84,6 +95,10 @@ function StudentHome() {
 					</div>
 				)}
 			</div>
+
+			{submitOpen ? (
+				<SubmitProjectModal onClose={() => setSubmitOpen(false)} />
+			) : null}
 		</div>
 	);
 }

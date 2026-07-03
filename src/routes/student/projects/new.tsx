@@ -1,18 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ProjectForm } from "#/components/project/ProjectForm/ProjectForm";
-import { emptyFormValues } from "#/lib/project/helper";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/** Create a project draft → submit wizard (STU-03…07). */
+/**
+ * Submitting a project is a **modal** opened from the dashboard "+ Submit a project"
+ * action (design-template SUBMIT WIZARD MODAL — see `components/project/SubmitProjectModal`),
+ * not a standalone page. This route is kept as a redirect so any existing link to
+ * `/student/projects/new` lands on the dashboard where the modal lives.
+ */
 export const Route = createFileRoute("/student/projects/new")({
-	component: NewProject,
+	beforeLoad: () => {
+		throw redirect({ to: "/student/home" });
+	},
 });
-
-function NewProject() {
-	return (
-		<div className="mx-auto max-w-2xl">
-			<p className="eyebrow mb-2">New project</p>
-			<h1 className="mb-8 text-3xl text-content-heading">Create a project</h1>
-			<ProjectForm mode="create" defaultValues={emptyFormValues()} />
-		</div>
-	);
-}

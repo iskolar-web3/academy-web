@@ -1,265 +1,189 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-	type SponsorProfileEdit,
-	type StudentProfileEdit,
-	sponsorProfileEditSchema,
-	studentProfileEditSchema,
-} from "#/lib/account/model";
+import { useMyProfile } from "#/hooks/account/useProfile";
+import { useUpdateProfile } from "#/hooks/account/useUpdateProfile";
+import { type ProfileEdit, profileEditSchema } from "#/lib/account/model";
 
 /**
- * Own-profile edit form (STU-01 / SPN-01), student + sponsor variants.
+ * Own-profile edit form (STU-01 / SPN-01) — a 1:1 port of the design-template EDIT
+ * PROFILE PAGE: a card with a gradient header band, an overlapping avatar tile, and the
+ * four fields (Display name · Headline · School / organization · Bio). Same page for
+ * every role — `org` maps to school (student) or organization (sponsor) server-side.
  *
- * The layout + validation are real; the submit is a MOCK until `academy-server` lands.
- * To wire it: import `useUpdateStudentProfile` / `useUpdateSponsorProfile` from
- * `hooks/account/useUpdateProfile` and call `.mutate(values)` in `onSubmit` (see TODO).
+ * Prefills from `GET /accounts/me/profile` and saves via `PATCH /accounts/me/profile`.
  */
 
 const fieldCls =
-	"w-full rounded-lg border border-line bg-surface-card px-3 py-2 text-sm text-content outline-none transition-colors focus:border-action";
-const labelCls = "mb-1 block text-sm font-medium text-content-heading";
-const errCls = "mt-1 text-xs text-danger";
+	"h-12 w-full rounded-xl border border-line bg-surface-card px-4 text-[15px] text-content-heading outline-none transition-colors focus:border-action";
+const labelCls = "mb-[7px] block text-[13px] text-content-muted";
+const errCls = "mt-1.5 text-xs text-danger";
 
-function SavedNote() {
+/** First letters of the first two words — "Jasmine Reyes" → "JR". */
+function initialsOf(name: string): string {
+	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
 	return (
-		<p className="status-pill status-pill--info">
-			Saved locally — profile API is wired in P0 (server).
-		</p>
+		parts
+			.slice(0, 2)
+			.map((w) => w[0]?.toUpperCase() ?? "")
+			.join("") || "?"
 	);
 }
 
-function StudentForm() {
+export function ProfileEditForm() {
+	const router = useRouter();
+	const { data: profile, isLoading, isError } = useMyProfile();
+	const update = useUpdateProfile();
+	const [saved, setSaved] = useState(false);
+
 	const {
 		register,
 		handleSubmit,
-		setValue,
-		formState: { errors },
-	} = useForm<StudentProfileEdit>({
-		resolver: zodResolver(studentProfileEditSchema),
-		defaultValues: {
-			displayName: "",
-			school: "",
-			program: "",
-			specialty: "",
-			bio: "",
-			skills: [],
-			links: { github: "", website: "", linkedin: "" },
-		},
+		reset,
+		watch,
+		formState: { errors, isDirty },
+	} = useForm<ProfileEdit>({
+		resolver: zodResolver(profileEditSchema),
+		defaultValues: { displayName: "", headline: "", org: "", bio: "" },
 	});
-	const [saved, setSaved] = useState(false);
 
-	const onSubmit = (values: StudentProfileEdit) => {
-		// TODO(P0): useUpdateStudentProfile().mutate(values)
-		console.log("student profile (mock submit)", values);
-		setSaved(true);
+	// Prefill once the profile loads (and whenever it changes underneath us).
+	useEffect(() => {
+		if (profile) {
+			reset({
+				displayName: profile.displayName,
+				headline: profile.headline,
+				org: profile.org,
+				bio: profile.bio,
+			});
+		}
+	}, [profile, reset]);
+
+	const displayName = watch("displayName");
+
+	const onSubmit = (values: ProfileEdit) => {
+		setSaved(false);
+		update.mutate(values, { onSuccess: () => setSaved(true) });
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-			<div>
-				<label htmlFor="displayName" className={labelCls}>
-					Display name
-				</label>
-				<input
-					id="displayName"
-					className={fieldCls}
-					{...register("displayName")}
-				/>
-				{errors.displayName ? (
-					<p className={errCls}>{errors.displayName.message}</p>
-				) : null}
-			</div>
+		<main className="mx-auto max-w-3xl">
+			<button
+				type="button"
+				onClick={() => router.history.back()}
+				className="mb-[18px] text-[14.5px] text-action"
+			>
+				← Back
+			</button>
+			<h1 className="mb-[22px] text-[32px] text-action">Edit profile</h1>
 
-			<div className="grid gap-5 sm:grid-cols-2">
-				<div>
-					<label htmlFor="school" className={labelCls}>
-						School
-					</label>
-					<input id="school" className={fieldCls} {...register("school")} />
-					{errors.school ? (
-						<p className={errCls}>{errors.school.message}</p>
+			<form
+				onSubmit={handleSubmit(onSubmit)}
+				className="card-surface overflow-hidden rounded-[18px]"
+			>
+				<div className="h-24 bg-[linear-gradient(135deg,#3a52a6,#607ef2)]" />
+				<div className="-mt-[42px] px-7 pb-7">
+					<span className="inline-flex size-[84px] items-center justify-center rounded-[24px] border-4 border-white bg-action text-[28px] text-white shadow-[0_10px_24px_rgba(31,42,82,0.2)]">
+						{initialsOf(displayName || "?")}
+					</span>
+					<p className="mt-3 mb-[22px] font-mono text-[13px] text-content-faint">
+						How you appear across iSkolar Academy.
+					</p>
+
+					{isError ? (
+						<p className="mb-4 status-pill status-pill--danger">
+							Couldn't load your profile — check the connection and try again.
+						</p>
+					) : null}
+
+					<fieldset
+						disabled={isLoading}
+						className="flex flex-col gap-4 disabled:opacity-60"
+					>
+						<div>
+							<label htmlFor="displayName" className={labelCls}>
+								Display name
+							</label>
+							<input
+								id="displayName"
+								className={fieldCls}
+								{...register("displayName")}
+							/>
+							{errors.displayName ? (
+								<p className={errCls}>{errors.displayName.message}</p>
+							) : null}
+						</div>
+
+						<div>
+							<label htmlFor="headline" className={labelCls}>
+								Headline
+							</label>
+							<input
+								id="headline"
+								className={fieldCls}
+								placeholder="e.g. Building offline-first learning tools"
+								{...register("headline")}
+							/>
+							{errors.headline ? (
+								<p className={errCls}>{errors.headline.message}</p>
+							) : null}
+						</div>
+
+						<div>
+							<label htmlFor="org" className={labelCls}>
+								School / organization
+							</label>
+							<input id="org" className={fieldCls} {...register("org")} />
+							{errors.org ? (
+								<p className={errCls}>{errors.org.message}</p>
+							) : null}
+						</div>
+
+						<div>
+							<label htmlFor="bio" className={labelCls}>
+								Bio
+							</label>
+							<textarea
+								id="bio"
+								className={`${fieldCls} min-h-24 resize-y py-3`}
+								{...register("bio")}
+							/>
+							{errors.bio ? (
+								<p className={errCls}>{errors.bio.message}</p>
+							) : null}
+						</div>
+					</fieldset>
+
+					<div className="mt-6 flex items-center gap-2.5">
+						<button
+							type="button"
+							onClick={() => router.history.back()}
+							className="btn btn-secondary h-12"
+						>
+							Cancel
+						</button>
+						<button
+							type="submit"
+							disabled={update.isPending || isLoading || !isDirty}
+							className="btn btn-primary h-12 flex-1 disabled:cursor-not-allowed disabled:opacity-60"
+						>
+							{update.isPending ? "Saving…" : "Save changes"}
+						</button>
+					</div>
+
+					{update.isError ? (
+						<p className="mt-3 text-xs text-danger">
+							Couldn't save — {(update.error as Error).message}
+						</p>
+					) : null}
+					{saved && !update.isPending ? (
+						<p className="mt-3 status-pill status-pill--success">
+							Profile saved.
+						</p>
 					) : null}
 				</div>
-				<div>
-					<label htmlFor="program" className={labelCls}>
-						Program
-					</label>
-					<input id="program" className={fieldCls} {...register("program")} />
-				</div>
-			</div>
-
-			<div>
-				<label htmlFor="specialty" className={labelCls}>
-					Specialty
-				</label>
-				<input id="specialty" className={fieldCls} {...register("specialty")} />
-			</div>
-
-			<div>
-				<label htmlFor="skills" className={labelCls}>
-					Skills <span className="text-content-faint">(comma-separated)</span>
-				</label>
-				<input
-					id="skills"
-					className={fieldCls}
-					placeholder="React, Machine Learning, UX"
-					onChange={(e) =>
-						setValue(
-							"skills",
-							e.target.value
-								.split(",")
-								.map((s) => s.trim())
-								.filter(Boolean),
-						)
-					}
-				/>
-			</div>
-
-			<div>
-				<label htmlFor="bio" className={labelCls}>
-					Bio
-				</label>
-				<textarea id="bio" rows={4} className={fieldCls} {...register("bio")} />
-				{errors.bio ? <p className={errCls}>{errors.bio.message}</p> : null}
-			</div>
-
-			<div className="grid gap-5 sm:grid-cols-3">
-				<div>
-					<label htmlFor="github" className={labelCls}>
-						GitHub
-					</label>
-					<input
-						id="github"
-						className={fieldCls}
-						{...register("links.github")}
-					/>
-					{errors.links?.github ? (
-						<p className={errCls}>{errors.links.github.message}</p>
-					) : null}
-				</div>
-				<div>
-					<label htmlFor="website" className={labelCls}>
-						Website
-					</label>
-					<input
-						id="website"
-						className={fieldCls}
-						{...register("links.website")}
-					/>
-				</div>
-				<div>
-					<label htmlFor="linkedin" className={labelCls}>
-						LinkedIn
-					</label>
-					<input
-						id="linkedin"
-						className={fieldCls}
-						{...register("links.linkedin")}
-					/>
-				</div>
-			</div>
-
-			<div className="flex items-center gap-4">
-				<button type="submit" className="btn btn-primary">
-					Save profile
-				</button>
-				{saved ? <SavedNote /> : null}
-			</div>
-		</form>
+			</form>
+		</main>
 	);
-}
-
-function SponsorForm() {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<SponsorProfileEdit>({
-		resolver: zodResolver(sponsorProfileEditSchema),
-		defaultValues: {
-			displayName: "",
-			organization: "",
-			focus: "",
-			bio: "",
-			website: "",
-		},
-	});
-	const [saved, setSaved] = useState(false);
-
-	const onSubmit = (values: SponsorProfileEdit) => {
-		// TODO(P0): useUpdateSponsorProfile().mutate(values)
-		console.log("sponsor profile (mock submit)", values);
-		setSaved(true);
-	};
-
-	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-			<div>
-				<label htmlFor="displayName" className={labelCls}>
-					Display name
-				</label>
-				<input
-					id="displayName"
-					className={fieldCls}
-					{...register("displayName")}
-				/>
-				{errors.displayName ? (
-					<p className={errCls}>{errors.displayName.message}</p>
-				) : null}
-			</div>
-
-			<div>
-				<label htmlFor="organization" className={labelCls}>
-					Organization
-				</label>
-				<input
-					id="organization"
-					className={fieldCls}
-					{...register("organization")}
-				/>
-			</div>
-
-			<div>
-				<label htmlFor="focus" className={labelCls}>
-					Focus{" "}
-					<span className="text-content-faint">(what you back / scout)</span>
-				</label>
-				<input id="focus" className={fieldCls} {...register("focus")} />
-			</div>
-
-			<div>
-				<label htmlFor="bio" className={labelCls}>
-					Bio
-				</label>
-				<textarea id="bio" rows={4} className={fieldCls} {...register("bio")} />
-				{errors.bio ? <p className={errCls}>{errors.bio.message}</p> : null}
-			</div>
-
-			<div>
-				<label htmlFor="website" className={labelCls}>
-					Website
-				</label>
-				<input id="website" className={fieldCls} {...register("website")} />
-				{errors.website ? (
-					<p className={errCls}>{errors.website.message}</p>
-				) : null}
-			</div>
-
-			<div className="flex items-center gap-4">
-				<button type="submit" className="btn btn-primary">
-					Save profile
-				</button>
-				{saved ? <SavedNote /> : null}
-			</div>
-		</form>
-	);
-}
-
-export function ProfileEditForm({
-	variant,
-}: {
-	variant: "student" | "sponsor";
-}) {
-	return variant === "student" ? <StudentForm /> : <SponsorForm />;
 }

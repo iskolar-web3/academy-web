@@ -96,8 +96,46 @@ const urlOrEmpty = z.union([z.url(), z.literal("")]);
 
 /**
  * Form/draft schema — lax. A draft can be saved with just a title; URLs may be blank.
- * The strict MVP gate is applied separately at submit time (see `helper.mvpGateIssues`).
+ * The strict MVP gate is applied separately at submit time (see `SubmitProjectModal`).
  */
+/** Wire schema for a `Project` returned by academy-server (parsed in `lib/project/api.ts`). */
+export const projectSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	category: z.enum(CATEGORIES).or(z.literal("")),
+	type: z.enum(PROJECT_TYPES),
+	pitch: z.string(),
+	purpose: z.string(),
+	tech: z.array(z.string()),
+	links: z.object({
+		demo: z.string(),
+		repo: z.string(),
+		video: z.string(),
+	}),
+	status: z.enum(PROJECT_STATUSES),
+	isTeam: z.boolean(),
+	members: z.array(
+		z.object({
+			id: z.string(),
+			name: z.string(),
+			contribution: z.string(),
+			linkedUserId: z.string().nullable(),
+			consent: z.enum(["not_required", "pending", "accepted", "declined"]),
+		}),
+	),
+	ownership: z.object({
+		declared: z.boolean(),
+		thesisPaperName: z.string().nullable(),
+	}),
+	returnedNote: z.string().nullable(),
+	updatedDays: z.number(),
+	upvotes: z.number(),
+	hue: z.number(),
+	school: z.string(),
+});
+
+export const projectListSchema = z.array(projectSchema);
+
 export const projectFormSchema = z.object({
 	title: z.string().min(2, "Title is too short").max(120),
 	category: z.enum(CATEGORIES).or(z.literal("")),

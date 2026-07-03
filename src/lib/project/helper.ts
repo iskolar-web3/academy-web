@@ -199,53 +199,10 @@ export function triggersReReview(
 	);
 }
 
-export interface GateIssue {
-	/** react-hook-form field path. */
-	path: string;
-	message: string;
-}
-
-/**
- * The strict MVP submission gate (STU-04/05). Returns the list of blocking issues; an
- * empty array means the project may be submitted.
- */
-export function mvpGateIssues(v: ProjectFormValues): GateIssue[] {
-	const issues: GateIssue[] = [];
-	if (!v.category) {
-		issues.push({ path: "category", message: "Pick a category" });
-	}
-	if (v.pitch.trim().length < 20) {
-		issues.push({ path: "pitch", message: "Add a short pitch (20+ chars)" });
-	}
-	if (v.purpose.trim().length < 20) {
-		issues.push({
-			path: "purpose",
-			message: "Describe the purpose (20+ chars)",
-		});
-	}
-	if (!isValidUrl(v.links.demo)) {
-		issues.push({ path: "links.demo", message: "Enter a valid demo URL" });
-	}
-	if (!isValidUrl(v.links.repo)) {
-		issues.push({ path: "links.repo", message: "Enter a valid repo URL" });
-	}
-	if (!isValidUrl(v.links.video)) {
-		issues.push({ path: "links.video", message: "Enter a valid video URL" });
-	}
-	if (!v.ownershipDeclared) {
-		issues.push({
-			path: "ownershipDeclared",
-			message: "Confirm ownership to submit",
-		});
-	}
-	if (v.type === "thesis_capstone" && !v.thesisPaperName) {
-		issues.push({
-			path: "thesisPaperName",
-			message: "Upload the thesis/capstone paper",
-		});
-	}
-	return issues;
-}
+// The MVP submission gate (STU-04/05) lives in `components/project/SubmitProjectModal`
+// (the single create + edit surface): a live demo and public repo are required, the demo
+// video is optional, plus the ownership + consent declarations — matching the design-template
+// SUBMIT WIZARD. The server re-validates it on submit (never trust the client gate).
 
 /** Map form values → the fields a create/update accepts. */
 export function formToProjectInput(v: ProjectFormValues): ProjectInput {

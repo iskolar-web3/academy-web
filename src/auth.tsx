@@ -7,6 +7,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { logoutRequest } from "#/lib/account/api";
 import { validateSessionQuery } from "#/lib/auth/api";
 import type { AcademyRole, AcademyUser } from "#/lib/auth/model";
 
@@ -54,7 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				await refetch();
 			},
 			logout: async () => {
-				// TODO(P0): server sign-out (clear cookie) once iSkolar-main SSO logout lands.
+				// Best-effort server sign-out (clears the auth_token cookie), then drop the
+				// local session so the UI reverts to "visitor" immediately regardless.
+				await logoutRequest();
 				queryClient.setQueryData(validateSessionQuery().queryKey, null);
 			},
 		};

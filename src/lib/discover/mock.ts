@@ -1,4 +1,5 @@
 import type { ProjectCardData } from "#/components/project/ProjectCard";
+import type { Category, Project } from "#/lib/project/model";
 
 /**
  * Placeholder content lifted from the design template (design-template/iskolar-academy).
@@ -364,6 +365,39 @@ export const MOCK_ACTIVITY: MockActivity[] = [
 		when: "1d",
 	},
 ];
+
+/**
+ * Adapt a showcase `MockProject` to the full `Project` shape the design-template PROJECT
+ * DETAIL (`ProjectDetailView`) renders. Gallery projects are published; the MVP links aren't
+ * in the mock (real data + links land in P3), so they read empty here.
+ */
+export function mockToProject(m: MockProject): Project {
+	return {
+		id: m.id,
+		title: m.title,
+		category: m.category as Category,
+		type: m.type === "thesis" ? "thesis_capstone" : "idea",
+		pitch: m.pitch,
+		purpose: m.purpose,
+		tech: m.tech,
+		links: { demo: "", repo: "", video: "" },
+		status: "published",
+		isTeam: m.members.length > 1,
+		members: m.members.map((mem, i) => ({
+			id: `${m.id}-m${i}`,
+			name: mem.name,
+			contribution: mem.role,
+			linkedUserId: null,
+			consent: "accepted" as const,
+		})),
+		ownership: { declared: true, thesisPaperName: null },
+		returnedNote: null,
+		updatedDays: m.days,
+		upvotes: m.upvotes,
+		hue: m.hue,
+		school: m.school,
+	};
+}
 
 /** Card view-model for a project (what ProjectCard renders). */
 export function toProjectCard(p: MockProject): ProjectCardData {

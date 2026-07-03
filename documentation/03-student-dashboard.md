@@ -80,6 +80,6 @@ already mirror).
 - **Profile backfill** (school, skills, since, published-work) — STU-01/02, when the profile
   API lands; replace the placeholder.
 - **Grant payouts / pitch vaults / request-a-grant** — P4/P5.
-- **Route guards** still commented (shared with [02-auth-session-wiring](./02-auth-session-wiring.md)).
+- **Route guards** are now live (client/effect-based) — see [`phases/P0-foundation.md`](./phases/P0-foundation.md) → Realized Build — Client.
 - Minor pixel deltas vs the mockup: card radius 16px (shared `.card-surface`) vs 15px;
   app-wide `.container-page` width.

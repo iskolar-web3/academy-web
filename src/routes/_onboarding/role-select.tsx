@@ -1,133 +1,123 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Briefcase, HandCoins, Search, Shield, Users } from "lucide-react";
-import { useState } from "react";
+import { useConfirmRole } from "#/hooks/auth/useConfirmRole";
 import { getDefaultPathOfRole } from "#/lib/api";
-import { AcademyRole, SponsorKind } from "#/lib/auth/model";
+import { AcademyRole } from "#/lib/auth/model";
 
 /**
- * Role confirmation (PLT-04). The role is seeded from iSkolar; here the user confirms it
- * (and a sponsor picks a sub-kind). Submit is MOCK — it just routes into the role area.
- * TODO(P0): persist via `lib/account/api.ts → confirmRole()` before navigating.
+ * Role confirmation (PLT-04) — a port of the design-template ONBOARDING screen: an eyebrow,
+ * a heading, and a vertical list of role cards. Confirming persists the role via
+ * `POST /accounts/me/role` (`useConfirmRole`), which flips `roleConfirmed` so the guard lets
+ * the user into their area. One click per role. A sponsor is routed to
+ * `/sponsor/subscription` to pick a tier (no more sponsor sub-kind step).
  */
 export const Route = createFileRoute("/_onboarding/role-select")({
 	component: RoleSelect,
 });
 
-const ROLES = [
+interface RoleCard {
+	role: AcademyRole;
+	initial: string;
+	bg: string;
+	label: string;
+	desc: string;
+}
+
+const ROLE_CARDS: RoleCard[] = [
 	{
 		role: AcademyRole.Student,
-		Icon: Users,
-		title: "Student",
-		body: "Showcase your projects, request grants for a starting thesis, and get scouted.",
+		initial: "St",
+		bg: "#3a52a6",
+		label: "Student",
+		desc: "Showcase your projects, request grants for a starting thesis, and get scouted.",
 	},
 	{
 		role: AcademyRole.Sponsor,
-		Icon: HandCoins,
-		title: "Sponsor",
-		body: "Back theses, fund published work, and scout the people behind real MVPs.",
+		initial: "Sp",
+		bg: "#607ef2",
+		label: "Sponsor",
+		desc: "Back theses, fund published work, and scout the people behind real MVPs.",
 	},
 	{
 		role: AcademyRole.Admin,
-		Icon: Shield,
-		title: "Admin",
-		body: "Review submissions, run the quality gate, and moderate the showcase.",
+		initial: "Ad",
+		bg: "#1f2a52",
+		label: "Admin",
+		desc: "Review submissions, run the quality gate, and moderate the showcase.",
 	},
-];
-
-const SPONSOR_KINDS = [
-	{ kind: SponsorKind.Investor, Icon: HandCoins, title: "Investor" },
-	{ kind: SponsorKind.Recruiter, Icon: Search, title: "Recruiter" },
-	{ kind: SponsorKind.Employer, Icon: Briefcase, title: "Employer" },
 ];
 
 function RoleSelect() {
 	const navigate = useNavigate();
-	const [role, setRole] = useState<AcademyRole | null>(null);
-	const [kind, setKind] = useState<SponsorKind | null>(null);
+	const confirm = useConfirmRole();
 
-	const needsKind = role === AcademyRole.Sponsor;
-	const canContinue = role !== null && (!needsKind || kind !== null);
-
-	const onContinue = () => {
-		if (!role) return;
-		// TODO(P0): await confirmRole({ role, kind }) before navigating.
-		navigate({ to: getDefaultPathOfRole(role) });
+	const onRole = (role: AcademyRole) => {
+		confirm.mutate(
+			{ role, kind: null },
+			{
+				onSuccess: () =>
+					navigate({
+						// A sponsor picks a subscription tier next; others go straight in.
+						to:
+							role === AcademyRole.Sponsor
+								? "/sponsor/subscription"
+								: getDefaultPathOfRole(role),
+					}),
+			},
+		);
 	};
 
-	return (
-		<div className="mx-auto max-w-4xl text-center">
-			<h1 className="text-4xl text-content-heading">Welcome to Academy</h1>
-			<p className="mt-2 text-lg text-content-soft">
-				Confirm how you'll use the platform.
-			</p>
+	const busy = confirm.isPending;
 
-			<div className="mt-10 grid gap-5 sm:grid-cols-3">
-				{ROLES.map(({ role: r, Icon, title, body }) => {
-					const active = role === r;
-					return (
-						<button
-							key={r}
-							type="button"
-							onClick={() => {
-								setRole(r);
-								setKind(null);
-							}}
-							className={`card-surface flex flex-col items-center p-6 text-center transition-all ${
-								active ? "ring-2 ring-action" : "hover:-translate-y-1"
-							}`}
-						>
-							<span
-								className={`inline-flex size-16 items-center justify-center rounded-full ${
-									active
-										? "bg-action text-on-action"
-										: "bg-surface-tint text-action"
-								}`}
-							>
-								<Icon className="size-8" strokeWidth={1.5} aria-hidden />
-							</span>
-							<h2 className="mt-4 text-xl text-content-heading">{title}</h2>
-							<p className="mt-2 text-sm text-content-soft">{body}</p>
-						</button>
-					);
-				})}
+	return (
+		<main className="mx-auto max-w-[760px]">
+			<div className="mb-8 text-center">
+				<div className="mb-3.5 inline-flex items-center gap-[11px]">
+					<span className="h-0.5 w-[30px] bg-action/50" />
+					<span className="font-mono text-[11.5px] uppercase tracking-[0.24em] text-action/60">
+						Welcome to Academy
+					</span>
+					<span className="h-0.5 w-[30px] bg-action/50" />
+				</div>
+				<h1 className="mb-2 text-[34px] text-content-heading">
+					Confirm how you'll use Academy
+				</h1>
+				<p className="text-[15.5px] leading-[1.55] text-content-muted">
+					You're signed in through iSkolar. Your role is seeded from your
+					account, confirm it to continue.
+				</p>
 			</div>
 
-			{needsKind ? (
-				<div className="mt-8">
-					<p className="eyebrow mb-4 justify-center">Sponsor type</p>
-					<div className="grid gap-4 sm:grid-cols-3">
-						{SPONSOR_KINDS.map(({ kind: k, Icon, title }) => {
-							const active = kind === k;
-							return (
-								<button
-									key={k}
-									type="button"
-									onClick={() => setKind(k)}
-									className={`card-surface flex items-center justify-center gap-3 p-4 transition-all ${
-										active ? "ring-2 ring-action" : "hover:-translate-y-1"
-									}`}
-								>
-									<Icon
-										className="size-5 text-action"
-										strokeWidth={1.5}
-										aria-hidden
-									/>
-									<span className="text-content-heading">{title}</span>
-								</button>
-							);
-						})}
-					</div>
-				</div>
-			) : null}
+			<div className="flex flex-col gap-3.5">
+				{ROLE_CARDS.map((r) => (
+					<button
+						key={r.role}
+						type="button"
+						disabled={busy}
+						onClick={() => onRole(r.role)}
+						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-all hover:-translate-y-0.5 hover:border-action disabled:cursor-not-allowed disabled:opacity-60"
+					>
+						<span
+							className="flex size-[52px] flex-none items-center justify-center rounded-[15px] text-[20px] text-white"
+							style={{ background: r.bg }}
+						>
+							{r.initial}
+						</span>
+						<div className="flex-1">
+							<div className="text-[19px] text-content-heading">{r.label}</div>
+							<div className="mt-0.5 text-[13.5px] text-content-faint">
+								{r.desc}
+							</div>
+						</div>
+						<span className="text-[20px] text-action">→</span>
+					</button>
+				))}
+			</div>
 
-			<button
-				type="button"
-				onClick={onContinue}
-				disabled={!canContinue}
-				className="btn btn-primary mt-10 px-16 disabled:cursor-not-allowed disabled:opacity-50"
-			>
-				Continue
-			</button>
-		</div>
+			{confirm.isError ? (
+				<p className="mt-4 text-center text-sm text-danger">
+					Couldn't confirm your role — {(confirm.error as Error).message}
+				</p>
+			) : null}
+		</main>
 	);
 }
