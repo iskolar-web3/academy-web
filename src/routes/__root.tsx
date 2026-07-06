@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { AuthProvider } from "#/auth";
+import { Toaster } from "#/components/ui/sonner";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
@@ -51,6 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body suppressHydrationWarning>
 				<AuthProvider>{children}</AuthProvider>
+				<Toaster />
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",

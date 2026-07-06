@@ -1,7 +1,19 @@
 # Phase P1 — Submission (Project Draft → MVP Gate → Members/Consent → Ownership → Lifecycle)
 
-**Status:** 🔨 In progress (client-only — mock-backed; server calls pending)
+**Status:** ✅ **Core done** · ✅ **invites + STU-02 backfill closed by P3** (2026-07-06) · 🔨 **Deferred** (thesis upload → Lumen/FR-N4 · linked-member picker — see P3 Open Items)
 **Target:** after P0
+
+### What's done vs still in progress
+
+| | Scope | State |
+|---|---|---|
+| ✅ Done | Draft create/edit, submit-wizard modal (5-step, MVP gate), project detail (viewer-aware), full lifecycle actions (submit/resubmit/withdraw/delete), STU-11 re-review, dashboard + pipeline. **`lib/project/api.ts` calls the live server** (mock store retired). | Shipped, green |
+| 🔨 Deferred | **Thesis upload (STU-05)** — file picker only, no Lumen call (blocked on `src/lumen.ts`/FR-N4). | Stubbed by design |
+| ✅ Closed by P3 (2026-07-06) | **Incoming invites (STU-08)** — `IncomingInvites` now renders live `member_invite` notifications and posts real accept/decline. **Public-profile published-work backfill (STU-02)** — `/u/$userId` reads the live `?owner=` discovery query. ⚠️ Caveat: the invite loop only delivers end-to-end once the modal's linked-member checkbox becomes a real identifier picker (tracked in the **P3** doc's Open Items). | Shipped with P3 |
+
+> The remaining deferred item is **P1-scoped but gated on later infra** (Lumen), so it stays 🔨
+> here rather than reopening the phase. It's tracked in Open Items and mirrored in
+> `academy-server/documentation/phases/P1-submission-server.md`.
 
 > **Build note (2026-07-01):** the `project` slice is built client-only. `lib/project/api.ts`
 > is backed by an in-memory mock store (`lib/project/mock.ts`) so create → dashboard → submit

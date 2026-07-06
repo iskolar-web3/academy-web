@@ -1,14 +1,18 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { InterestButton } from "#/components/interest/InterestButton";
 import { ProjectDetailView } from "#/components/project/ProjectDetailView";
+import { UpvoteButton } from "#/components/project/UpvoteButton";
 import { useSession } from "#/hooks/auth/useSession";
+import { useToggleUpvote } from "#/hooks/upvote/useToggleUpvote";
 import { AcademyRole } from "#/lib/auth/model";
-import { MOCK_PROJECTS, mockToProject } from "#/lib/discover/mock";
+import { showcaseProjectQuery } from "#/lib/discover/api";
 
 /**
  * Public / sponsor project detail — opened from a Discover gallery card. Renders the
- * design-template PROJECT DETAIL (`ProjectDetailView`); a sponsor sees Express interest,
- * everyone else a read-only view. Reads the mock showcase (real `lib/discover` query +
- * express-interest wiring land in P3).
+ * design-template PROJECT DETAIL (`ProjectDetailView`) over the live published projection,
+ * with the template's interact rail: the large upvote (PLT-08), the sponsor-only
+ * "I'm interested" action (SPN-07), and the privacy note shown to every viewer.
  */
 export const Route = createFileRoute("/_app/projects/$projectId")({
 	component: PublicProjectDetail,
@@ -17,9 +21,22 @@ export const Route = createFileRoute("/_app/projects/$projectId")({
 function PublicProjectDetail() {
 	const { projectId } = Route.useParams();
 	const { role } = useSession();
-	const mock = MOCK_PROJECTS.find((p) => p.id === projectId);
+	const {
+		data: project,
+		isLoading,
+		isError,
+	} = useQuery(showcaseProjectQuery(projectId));
+	const toggle = useToggleUpvote();
 
-	if (!mock) {
+	if (isLoading) {
+		return (
+			<p className="py-10 text-center text-[14px] text-content-soft">
+				Loading project…
+			</p>
+		);
+	}
+
+	if (isError || !project) {
 		return (
 			<div className="card-surface mx-auto max-w-md p-8 text-center">
 				<p className="text-content-heading">Project not found</p>
@@ -40,7 +57,29 @@ function PublicProjectDetail() {
 			>
 				← Back to showcase
 			</Link>
-			<ProjectDetailView project={mockToProject(mock)} viewer={viewer} />
+			<ProjectDetailView
+				project={project}
+				viewer={viewer}
+				interact={
+					<>
+						<UpvoteButton
+							size="lg"
+							count={project.upvotes}
+							upvoted={project.upvotedByMe}
+							onToggle={() => toggle.mutate(project.id)}
+							title={`Upvote ${project.title}`}
+						/>
+						{viewer === "sponsor" ? (
+							<InterestButton projectId={project.id} />
+						) : null}
+						<p className="mt-2.5 text-center font-mono text-[12px] leading-[1.5] text-content-faint">
+							Interest reveals only you
+							<br />
+							to the student, never their contact.
+						</p>
+					</>
+				}
+			/>
 		</div>
 	);
 }

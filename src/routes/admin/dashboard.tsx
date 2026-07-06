@@ -1,36 +1,89 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { MetricsPanel } from "#/components/admin/MetricsPanel";
+import { ModerationPanel } from "#/components/admin/ModerationPanel";
+import { ReviewDecisionModal } from "#/components/admin/ReviewDecisionModal";
+import { ReviewQueuePanel } from "#/components/admin/ReviewQueuePanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import {
+	useModerationProjects,
+	useReviewQueue,
+} from "#/hooks/review/useReviewQueue";
+import type { Project } from "#/lib/project/model";
 
 /**
- * Admin dashboard — placeholder. The review queue, quality gate, and metrics land in P2.
+ * Admin console (P2) — a 1:1 port of the design-template ADMIN screen: a sticky 220px
+ * tab-rail (Review queue · Moderation · Metrics) beside the active panel, with the review
+ * decision as a modal. The rail is a Radix Tabs (arrow-key nav, aria-selected). Admin-only
+ * (guarded by the `/admin` shell; the server re-enforces `requireRole`).
  */
 export const Route = createFileRoute("/admin/dashboard")({
-	component: AdminDashboard,
+	component: AdminConsole,
 });
 
-const STAT_STUBS = [
-	{ label: "In review", value: "—" },
-	{ label: "Published", value: "—" },
-	{ label: "Returned", value: "—" },
-	{ label: "Flagged", value: "—" },
-];
+const TABS = [
+	{ key: "queue", label: "Review queue" },
+	{ key: "moderation", label: "Moderation" },
+	{ key: "metrics", label: "Metrics" },
+] as const;
 
-function AdminDashboard() {
+function AdminConsole() {
+	const [reviewProject, setReviewProject] = useState<Project | null>(null);
+
+	const queue = useReviewQueue();
+	const moderation = useModerationProjects();
+
 	return (
-		<div>
-			<p className="eyebrow mb-2">Admin</p>
-			<h1 className="text-3xl text-content-heading">Review dashboard</h1>
-			<p className="mt-2 text-content-soft">
-				The submission queue, quality review, and moderation tools land in P2.
-			</p>
-
-			<div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-				{STAT_STUBS.map((stat) => (
-					<div key={stat.label} className="card-surface p-6">
-						<p className="text-sm text-content-soft">{stat.label}</p>
-						<p className="mt-2 text-3xl text-content-heading">{stat.value}</p>
+		<>
+			<Tabs
+				defaultValue="queue"
+				orientation="vertical"
+				className="mx-auto grid max-w-[1340px] grid-cols-1 items-start gap-[30px] lg:grid-cols-[220px_1fr]"
+			>
+				<aside className="lg:sticky lg:top-[84px]">
+					<div className="mb-4 flex items-center gap-2.5">
+						<span className="h-0.5 w-[26px] bg-action/55" aria-hidden />
+						<span className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-action/60">
+							Admin
+						</span>
 					</div>
-				))}
-			</div>
-		</div>
+					<TabsList className="flex-row lg:flex-col lg:items-stretch">
+						{TABS.map((t) => (
+							<TabsTrigger key={t.key} value={t.key}>
+								{t.label}
+							</TabsTrigger>
+						))}
+					</TabsList>
+				</aside>
+
+				<div>
+					<TabsContent value="queue">
+						<ReviewQueuePanel
+							projects={queue.data ?? []}
+							isLoading={queue.isLoading}
+							isError={queue.isError}
+							onOpen={setReviewProject}
+						/>
+					</TabsContent>
+					<TabsContent value="moderation">
+						<ModerationPanel
+							projects={moderation.data ?? []}
+							isLoading={moderation.isLoading}
+							isError={moderation.isError}
+						/>
+					</TabsContent>
+					<TabsContent value="metrics">
+						<MetricsPanel />
+					</TabsContent>
+				</div>
+			</Tabs>
+
+			{reviewProject ? (
+				<ReviewDecisionModal
+					project={reviewProject}
+					onClose={() => setReviewProject(null)}
+				/>
+			) : null}
+		</>
 	);
 }

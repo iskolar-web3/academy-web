@@ -1,6 +1,5 @@
 import { ArrowUpRight, Github, Lock, MonitorPlay, Play } from "lucide-react";
 import type { ReactNode } from "react";
-import { UpvoteButton } from "#/components/project/UpvoteButton";
 import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
 
@@ -8,13 +7,13 @@ import type { Project } from "#/lib/project/model";
  * Project detail — a 1:1 port of the design-template PROJECT DETAIL: a gradient cover
  * banner with category/type chips, a two-column body (pitch · purpose quote · tech · team
  * on the left; a side rail with the interact/manage card, MVP links, and the Venture Pitch
- * Vault on the right). Presentational + viewer-aware so it serves the owner (P1) and later
- * the sponsor/public showcase view (P3) from one design.
+ * Vault on the right). Presentational + viewer-aware so it serves the owner (P1) and the
+ * sponsor/public showcase view (P3) from one design.
  *
  * `viewer`:
- *  - `owner`   → the `manage` slot (status + returned note + lifecycle actions) tops the rail.
- *  - `sponsor` → Upvote + Express interest (real interest flow lands in P3).
- *  - `public`  → Upvote + a sign-in nudge.
+ *  - `owner`             → the `manage` slot (status · returned note · lifecycle actions).
+ *  - `sponsor`/`public`  → the `interact` slot (wired upvote + interest, composed by the
+ *    route so this stays presentational).
  */
 
 const TYPE_LABEL: Record<Project["type"], string> = {
@@ -50,10 +49,13 @@ export function ProjectDetailView({
 	project,
 	viewer,
 	manage,
+	interact,
 }: {
 	project: Project;
 	viewer: "owner" | "sponsor" | "public";
 	manage?: ReactNode;
+	/** The non-owner rail card content (wired upvote + interest), composed by the route. */
+	interact?: ReactNode;
 }) {
 	const links = MVP_LINKS.map((l) => ({
 		...l,
@@ -167,34 +169,7 @@ export function ProjectDetailView({
 					{/* Side rail */}
 					<aside className="flex w-full flex-col gap-3.5 lg:w-[300px] lg:flex-none">
 						<div className={railCardCls}>
-							{viewer === "owner" ? (
-								manage
-							) : (
-								<>
-									<UpvoteButton
-										count={project.upvotes}
-										title={`Upvote ${project.title}`}
-									/>
-									{viewer === "sponsor" ? (
-										<>
-											<button
-												type="button"
-												className="mt-2.5 h-[42px] w-full rounded-[9px] bg-action text-[14px] text-on-action transition-colors hover:bg-action-hover"
-											>
-												Express interest
-											</button>
-											<p className="mt-2.5 text-center font-mono text-[12px] leading-[1.5] text-content-faint">
-												Interest reveals only you to the student, never their
-												contact.
-											</p>
-										</>
-									) : (
-										<p className="mt-2.5 text-center font-mono text-[12px] leading-[1.5] text-content-faint">
-											Sponsors can express interest in this work.
-										</p>
-									)}
-								</>
-							)}
+							{viewer === "owner" ? manage : interact}
 						</div>
 
 						<div className={railCardCls}>

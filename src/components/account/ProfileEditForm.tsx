@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { useMyProfile } from "#/hooks/account/useProfile";
 import { useUpdateProfile } from "#/hooks/account/useUpdateProfile";
 import { type ProfileEdit, profileEditSchema } from "#/lib/account/model";
@@ -64,7 +65,12 @@ export function ProfileEditForm() {
 
 	const onSubmit = (values: ProfileEdit) => {
 		setSaved(false);
-		update.mutate(values, { onSuccess: () => setSaved(true) });
+		update.mutate(values, {
+			onSuccess: () => {
+				setSaved(true);
+				toast.success("Profile saved");
+			},
+		});
 	};
 
 	return (

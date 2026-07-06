@@ -1,12 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useState } from "react";
+import { cn } from "#/lib/utils";
 
 /**
  * Upvote button — the canonical interaction from the design-template DESIGN SYSTEM page:
  * idle is an outlined "♥ Upvote! · N"; on activate it turns solid blue, the heart springs,
- * confetti bursts, the count ticks, and the "Upvote!" label collapses to just the count.
- * Local-only for now (resets on reload); real persistence lands in P3.
+ * confetti bursts, and the count ticks. **Controlled** (PLT-08): `upvoted`/`count` come from
+ * the server projection and `onToggle` runs the optimistic mutation. Two sizes from the
+ * template: `sm` (34px card footer, `upStyle`) and `lg` (46px full-width detail rail,
+ * `upStyleLg` — constant label, colors flip only).
  */
 
 /** Fixed confetti offsets (px) so SSR and client agree — no Math.random in render. */
@@ -35,22 +38,25 @@ const CONFETTI_COLORS = [
 
 export function UpvoteButton({
 	count,
+	upvoted = false,
+	onToggle,
+	size = "sm",
 	title,
 }: {
 	count: number;
+	upvoted?: boolean;
+	onToggle?: () => void;
+	size?: "sm" | "lg";
 	title?: string;
 }) {
-	const [upvoted, setUpvoted] = useState(false);
 	const [burst, setBurst] = useState(false);
-	const total = count + (upvoted ? 1 : 0);
 
 	function toggle() {
-		const next = !upvoted;
-		setUpvoted(next);
-		if (next) {
+		if (!upvoted) {
 			setBurst(true);
 			window.setTimeout(() => setBurst(false), 750);
 		}
+		onToggle?.();
 	}
 
 	return (
@@ -59,11 +65,15 @@ export function UpvoteButton({
 			onClick={toggle}
 			title={title}
 			aria-pressed={upvoted}
-			className={`relative inline-flex h-[34px] items-center gap-1.5 rounded-[9px] border px-[13px] font-sans text-[13px] transition-[background-color,color,border-color] duration-200 active:scale-95 ${
+			className={cn(
+				"relative inline-flex items-center transition-[background-color,color,border-color] duration-200 active:scale-95",
+				size === "lg"
+					? "h-[46px] w-full justify-center gap-[7px] rounded-[10px] border text-[15px]"
+					: "h-[34px] gap-1.5 rounded-[9px] border px-[13px] font-sans text-[13px]",
 				upvoted
 					? "border-action bg-action text-white"
-					: "border-line bg-surface-card text-action hover:bg-surface-tint"
-			}`}
+					: "border-line bg-surface-card text-action hover:bg-surface-tint",
+			)}
 		>
 			<motion.span
 				className="inline-flex"
@@ -71,17 +81,17 @@ export function UpvoteButton({
 				transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
 			>
 				<Heart
-					className="size-[15px]"
+					className={size === "lg" ? "size-[17px]" : "size-[15px]"}
 					fill={upvoted ? "currentColor" : "none"}
 					aria-hidden
 				/>
 			</motion.span>
-			{upvoted ? (
-				<span className="tabular-nums">{total}</span>
+			{size === "sm" && upvoted ? (
+				<span className="tabular-nums">{count}</span>
 			) : (
 				<>
 					<span>Upvote!</span>
-					<span className="tabular-nums">· {total}</span>
+					<span className="tabular-nums">· {count}</span>
 				</>
 			)}
 

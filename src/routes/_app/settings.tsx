@@ -5,35 +5,17 @@ import {
 } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAuth } from "#/auth";
+import { Switch } from "#/components/ui/switch";
 
 /**
  * Settings (design-template SETTINGS PAGE) — a signed-in surface under `_app` (any role).
- * Go-live alerts toggle, digest/language rows, account/privacy entries, and Log out. The
- * account/privacy sub-pages aren't scoped yet (inert); Log out uses the real auth flow.
+ * Go-live alerts toggle (Radix Switch, template geometry), digest/language rows,
+ * account/privacy entries, and Log out. The account/privacy sub-pages aren't scoped yet
+ * (inert); Log out uses the real auth flow.
  */
 export const Route = createFileRoute("/_app/settings")({
 	component: Settings,
 });
-
-function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
-	return (
-		<button
-			type="button"
-			role="switch"
-			aria-checked={on}
-			onClick={onToggle}
-			className={`relative h-[26px] w-[46px] flex-none rounded-full transition-colors ${
-				on ? "bg-action" : "bg-line"
-			}`}
-		>
-			<span
-				className={`absolute top-[3px] size-5 rounded-full bg-white shadow-sm transition-all ${
-					on ? "left-[23px]" : "left-[3px]"
-				}`}
-			/>
-		</button>
-	);
-}
 
 const rowCls = "flex items-center justify-between px-5 py-4";
 const linkRowCls =
@@ -71,7 +53,7 @@ function Settings() {
 							Notify me when watched work publishes
 						</div>
 					</div>
-					<Toggle on={alerts} onToggle={() => setAlerts((a) => !a)} />
+					<Switch checked={alerts} onCheckedChange={setAlerts} />
 				</div>
 				<div className={`${rowCls} border-[#eef1fa] border-b`}>
 					<span className="text-[15px] text-content-heading">Email digest</span>

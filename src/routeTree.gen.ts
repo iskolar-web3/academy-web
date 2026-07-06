@@ -25,6 +25,7 @@ import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as OnboardingRoleSelectRouteImport } from './routes/_onboarding/role-select'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
 import { Route as AppGrantsRouteImport } from './routes/_app/grants'
 import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
 import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
@@ -111,6 +112,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGrantsRoute = AppGrantsRouteImport.update({
   id: '/grants',
   path: '/grants',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
   '/grants': typeof AppGrantsRoute
+  '/notifications': typeof AppNotificationsRoute
   '/settings': typeof AppSettingsRoute
   '/role-select': typeof OnboardingRoleSelectRoute
   '/login': typeof PublicLoginRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
   '/grants': typeof AppGrantsRoute
+  '/notifications': typeof AppNotificationsRoute
   '/settings': typeof AppSettingsRoute
   '/role-select': typeof OnboardingRoleSelectRoute
   '/login': typeof PublicLoginRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/student': typeof StudentRouteWithChildren
   '/_app/discover': typeof AppDiscoverRoute
   '/_app/grants': typeof AppGrantsRoute
+  '/_app/notifications': typeof AppNotificationsRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_onboarding/role-select': typeof OnboardingRoleSelectRoute
   '/_public/login': typeof PublicLoginRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/student'
     | '/discover'
     | '/grants'
+    | '/notifications'
     | '/settings'
     | '/role-select'
     | '/login'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/student'
     | '/discover'
     | '/grants'
+    | '/notifications'
     | '/settings'
     | '/role-select'
     | '/login'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/student'
     | '/_app/discover'
     | '/_app/grants'
+    | '/_app/notifications'
     | '/_app/settings'
     | '/_onboarding/role-select'
     | '/_public/login'
@@ -425,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/notifications': {
+      id: '/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/grants': {
       id: '/_app/grants'
       path: '/grants'
@@ -487,6 +506,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppGrantsRoute: typeof AppGrantsRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
   AppUUserIdRoute: typeof AppUUserIdRoute
@@ -495,6 +515,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDiscoverRoute: AppDiscoverRoute,
   AppGrantsRoute: AppGrantsRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
   AppUUserIdRoute: AppUUserIdRoute,

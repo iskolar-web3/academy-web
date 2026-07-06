@@ -1,37 +1,16 @@
 import { Check, X } from "lucide-react";
-import { useState } from "react";
+import { toast } from "sonner";
+import { useNotificationMutations } from "#/hooks/notification/useNotificationMutations";
+import { useNotifications } from "#/hooks/notification/useNotifications";
+import { hueFromString, projectCover } from "#/lib/project/helper";
 
 /**
  * Membership invitations (STU-08) — where a credited member accepts or declines being shown
- * on someone else's project. This is the FE surface; the real invite feed rides the
- * **notification model (P3)**, so the list here is a static mock and Accept/Decline resolve
- * locally. Renders nothing once there are no pending invites. Static seed → SSR-safe.
+ * on someone else's project. Driven by unread `member_invite` notifications (the P3
+ * notification model): `title` = project title, `actorName` = inviter, `body` = the
+ * server-rendered invite line. Accept/decline post to the member sub-paths and the card
+ * disappears as the notification resolves. Renders nothing when no invites are pending.
  */
-
-interface Invite {
-	id: string;
-	project: string;
-	inviter: string;
-	contribution: string;
-	cover: string;
-}
-
-const SEED: Invite[] = [
-	{
-		id: "inv1",
-		project: "NoteMesh: shared lecture notes",
-		inviter: "Marco Dizon",
-		contribution: "Backend · Sync engine",
-		cover: "#3a52a6",
-	},
-	{
-		id: "inv2",
-		project: "CampusRide: student carpool",
-		inviter: "Ella Marquez",
-		contribution: "ML · Route matching",
-		cover: "#607ef2",
-	},
-];
 
 function initialsOf(name: string): string {
 	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
@@ -43,16 +22,34 @@ function initialsOf(name: string): string {
 	);
 }
 
-type Status = "pending" | "accepted" | "declined";
-
 export function IncomingInvites() {
-	const [status, setStatus] = useState<Record<string, Status>>({});
+	const { data } = useNotifications();
+	const { accept, decline } = useNotificationMutations();
 
-	const pending = SEED.filter((i) => (status[i.id] ?? "pending") === "pending");
+	const pending = (data ?? []).filter(
+		(n) => n.type === "member_invite" && n.unread && n.projectId && n.memberId,
+	);
 	if (pending.length === 0) return null;
 
-	const respond = (id: string, next: Status) =>
-		setStatus((s) => ({ ...s, [id]: next }));
+	const busy = accept.isPending || decline.isPending;
+
+	const respond = (
+		projectId: string,
+		memberId: string,
+		action: "accept" | "decline",
+	) => {
+		const vars = { projectId, memberId };
+		const opts = {
+			onSuccess: () =>
+				toast.success(
+					action === "accept" ? "Invitation accepted" : "Invitation declined",
+				),
+			onError: (err: Error) =>
+				toast.error(err.message || "Something went wrong."),
+		};
+		if (action === "accept") accept.mutate(vars, opts);
+		else decline.mutate(vars, opts);
+	};
 
 	return (
 		<div className="mb-6 rounded-[18px] border border-line bg-surface-card p-[18px]">
@@ -72,30 +69,44 @@ export function IncomingInvites() {
 					>
 						<span
 							className="flex size-[38px] flex-none items-center justify-center rounded-[11px] text-[12px] text-white"
-							style={{ background: inv.cover }}
+							style={{ background: projectCover(hueFromString(inv.title)) }}
 						>
-							{initialsOf(inv.inviter)}
+							{initialsOf(inv.actorName ?? inv.title)}
 						</span>
 						<div className="min-w-0 flex-1">
 							<div className="text-[15px] text-content-heading">
-								{inv.project}
+								{inv.title}
 							</div>
 							<div className="font-mono text-[11.5px] text-content-faint">
-								{inv.inviter} invited you · {inv.contribution}
+								{inv.body}
 							</div>
 						</div>
 						<div className="flex items-center gap-2">
 							<button
 								type="button"
-								onClick={() => respond(inv.id, "declined")}
-								className="flex h-9 items-center gap-1.5 rounded-[9px] border border-line bg-surface-card px-3 text-[13px] text-content-muted transition-colors hover:bg-surface-sunken"
+								disabled={busy}
+								onClick={() =>
+									respond(
+										inv.projectId as string,
+										inv.memberId as string,
+										"decline",
+									)
+								}
+								className="flex h-9 items-center gap-1.5 rounded-[9px] border border-line bg-surface-card px-3 text-[13px] text-content-muted transition-colors hover:bg-surface-sunken disabled:opacity-60"
 							>
 								<X className="size-4" aria-hidden /> Decline
 							</button>
 							<button
 								type="button"
-								onClick={() => respond(inv.id, "accepted")}
-								className="flex h-9 items-center gap-1.5 rounded-[9px] bg-action px-3 text-[13px] text-white transition-colors hover:bg-action-hover"
+								disabled={busy}
+								onClick={() =>
+									respond(
+										inv.projectId as string,
+										inv.memberId as string,
+										"accept",
+									)
+								}
+								className="flex h-9 items-center gap-1.5 rounded-[9px] bg-action px-3 text-[13px] text-white transition-colors hover:bg-action-hover disabled:opacity-60"
 							>
 								<Check className="size-4" aria-hidden /> Accept
 							</button>

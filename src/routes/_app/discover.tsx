@@ -1,25 +1,42 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
 import { SponsorRail } from "#/components/discover/SponsorRail";
 import { useSession } from "#/hooks/auth/useSession";
+import { useProjectGallery } from "#/hooks/discover/useProjectGallery";
 import { AcademyRole } from "#/lib/auth/model";
-import { MOCK_PROJECTS } from "#/lib/discover/mock";
+import { GALLERY_SORTS, type GallerySort } from "#/lib/discover/model";
 
 /**
- * Discover / showcase gallery (SPN-03) — a 1:1 port of the design-template GALLERY:
+ * Discover / showcase gallery (SPN-03/04/05) — a 1:1 port of the design-template GALLERY:
  * search + Filters (sort + category) toolbar, a result count, and the project card grid.
- * Filtering/sorting run over the mock showcase client-side (same logic as the template);
- * server-backed search + filters land in P3.
+ * Search/filter/sort state lives in the **URL search params** (shareable, back-button
+ * correct) and runs **server-side** against the published projection; sponsors also get
+ * the SponsorRail sidebar.
  */
+
+type GallerySearchParams = {
+	q?: string;
+	category?: string;
+	sort?: GallerySort;
+};
+
 export const Route = createFileRoute("/_app/discover")({
+	validateSearch: (search: Record<string, unknown>): GallerySearchParams => ({
+		q: typeof search.q === "string" && search.q ? search.q : undefined,
+		category:
+			typeof search.category === "string" && search.category
+				? search.category
+				: undefined,
+		sort: GALLERY_SORTS.includes(search.sort as GallerySort)
+			? (search.sort as GallerySort)
+			: undefined,
+	}),
 	component: Discover,
 });
 
-type Sort = "newest" | "trending" | "top";
-
-const SORTS: { key: Sort; label: string }[] = [
+const SORTS: { key: GallerySort; label: string }[] = [
 	{ key: "newest", label: "Newest" },
 	{ key: "trending", label: "Trending" },
 	{ key: "top", label: "Top all-time" },
@@ -39,10 +56,34 @@ const CATEGORIES = [
 function Discover() {
 	const { role } = useSession();
 	const isSponsor = role === AcademyRole.Sponsor;
-	const [query, setQuery] = useState("");
-	const [sort, setSort] = useState<Sort>("newest");
-	const [category, setCategory] = useState("All");
+	const search = Route.useSearch();
+	const navigate = useNavigate({ from: Route.fullPath });
 	const [filterOpen, setFilterOpen] = useState(false);
+
+	const sort = search.sort ?? "newest";
+	const category = search.category ?? "All";
+
+	// Local input state debounced into the URL (the query runs off the URL, not keystrokes).
+	const [query, setQuery] = useState(search.q ?? "");
+	useEffect(() => {
+		const t = window.setTimeout(() => {
+			navigate({
+				search: (prev) => ({ ...prev, q: query.trim() || undefined }),
+				replace: true,
+			});
+		}, 300);
+		return () => window.clearTimeout(t);
+	}, [query, navigate]);
+
+	const setParam = (patch: Partial<GallerySearchParams>) =>
+		navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+
+	const gallery = useProjectGallery({
+		q: search.q,
+		category,
+		sort,
+	});
+	const projects = gallery.data ?? [];
 
 	useEffect(() => {
 		if (!filterOpen) return;
@@ -52,24 +93,6 @@ function Discover() {
 		document.addEventListener("keydown", onKey);
 		return () => document.removeEventListener("keydown", onKey);
 	}, [filterOpen]);
-
-	const q = query.trim().toLowerCase();
-	let projects = MOCK_PROJECTS.filter((p) => {
-		if (category !== "All" && p.category !== category) return false;
-		if (!q) return true;
-		return `${p.title} ${p.category} ${p.school} ${p.tech.join(" ")} ${p.pitch}`
-			.toLowerCase()
-			.includes(q);
-	});
-	projects =
-		sort === "trending"
-			? [...projects].sort(
-					(a, b) =>
-						Number(b.trending) - Number(a.trending) || b.upvotes - a.upvotes,
-				)
-			: sort === "top"
-				? [...projects].sort((a, b) => b.upvotes - a.upvotes)
-				: [...projects].sort((a, b) => a.days - b.days);
 
 	return (
 		<div>
@@ -119,7 +142,11 @@ function Discover() {
 										<button
 											key={s.key}
 											type="button"
-											onClick={() => setSort(s.key)}
+											onClick={() =>
+												setParam({
+													sort: s.key === "newest" ? undefined : s.key,
+												})
+											}
 											className={`h-[34px] flex-1 rounded-[8px] font-sans text-[13.5px] transition ${
 												sort === s.key
 													? "bg-surface-card text-action shadow-card"
@@ -140,7 +167,9 @@ function Discover() {
 											key={c}
 											type="button"
 											onClick={() => {
-												setCategory(c);
+												setParam({
+													category: c === "All" ? undefined : c,
+												});
 												setFilterOpen(false);
 											}}
 											className={`h-8 rounded-[8px] border px-[13px] font-mono text-[12px] transition ${
@@ -161,12 +190,16 @@ function Discover() {
 
 			<div className="mb-[18px] flex items-center gap-3">
 				<span className="font-mono text-[12.5px] text-content-faint">
-					{projects.length} projects
+					{gallery.isLoading
+						? "Loading projects…"
+						: gallery.isError
+							? "Couldn’t load the showcase."
+							: `${projects.length} projects`}
 				</span>
 				{category !== "All" ? (
 					<button
 						type="button"
-						onClick={() => setCategory("All")}
+						onClick={() => setParam({ category: undefined })}
 						className="inline-flex h-7 items-center gap-1.5 rounded-full border border-action bg-action px-[11px] font-mono text-[12px] text-white"
 					>
 						{category} <span className="opacity-80">✕</span>
@@ -175,10 +208,21 @@ function Discover() {
 			</div>
 
 			<div className="flex items-start gap-6">
-				<div className="grid min-w-0 flex-1 grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
-					{projects.map((project) => (
-						<DiscoverCard key={project.id} project={project} />
-					))}
+				<div className="min-w-0 flex-1">
+					{!gallery.isLoading && !gallery.isError && projects.length === 0 ? (
+						<div className="card-surface p-10 text-center">
+							<p className="text-content-heading">No projects match</p>
+							<p className="mt-1.5 text-[14px] text-content-soft">
+								Try a different search or clear the category filter.
+							</p>
+						</div>
+					) : (
+						<div className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
+							{projects.map((project) => (
+								<DiscoverCard key={project.id} project={project} />
+							))}
+						</div>
+					)}
 				</div>
 				{isSponsor ? <SponsorRail /> : null}
 			</div>

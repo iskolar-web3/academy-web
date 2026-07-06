@@ -1,5 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { type AccountProfile, roleLabel } from "#/lib/account/model";
+import type { ShowcaseProject } from "#/lib/discover/model";
+import { statusChipClass } from "#/lib/project/helper";
 
 /**
  * Public profile page (STU-02 / SPN-02) — a 1:1 port of the design-template PROFILE VIEW
@@ -8,8 +10,9 @@ import { type AccountProfile, roleLabel } from "#/lib/account/model";
  * presentational — it takes the `AccountProfile` view model so it renders the same for a
  * mock, the signed-in user's own profile, or someone else's.
  *
- * The role "work" list (published projects, funded grants) lands with the showcase in
- * P1 / P3; here it shows the template card with a phase-accurate empty state.
+ * The student "work" card renders the template's two-column published-project rows
+ * (title · status pill · category · age) from the live showcase projection (STU-02);
+ * funded grants join it in P4.
  */
 
 function initialsOf(name: string): string {
@@ -35,9 +38,12 @@ const asideLabelCls =
 export function ProfileView({
 	profile,
 	canEdit,
+	work,
 }: {
 	profile: AccountProfile;
 	canEdit?: boolean;
+	/** The user's published showcase work (STU-02) — students only. */
+	work?: ShowcaseProject[];
 }) {
 	const router = useRouter();
 	const editTo =
@@ -122,10 +128,41 @@ export function ProfileView({
 									Showcase &amp; grants
 								</span>
 							</div>
-							<p className="rounded-xl border border-info-bd bg-surface-sunken p-5 text-sm text-content-soft">
-								Published projects and funded grants appear here once the
-								showcase ships (P1 / P3).
-							</p>
+							{work && work.length > 0 ? (
+								<div className="grid gap-3.5 sm:grid-cols-2">
+									{work.map((p) => (
+										<Link
+											key={p.id}
+											to="/projects/$projectId"
+											params={{ projectId: p.id }}
+											className="rounded-[13px] border border-[#e3ebfb] px-[15px] py-[13px] transition-colors hover:bg-surface-sunken"
+										>
+											<div className="mb-[5px] flex items-center justify-between gap-2">
+												<span className="truncate text-[15.5px] text-content-heading">
+													{p.title}
+												</span>
+												<span
+													className={`flex-none rounded-[6px] px-2 py-0.5 font-mono text-[11px] ${statusChipClass("published")}`}
+												>
+													Published
+												</span>
+											</div>
+											<div className="font-mono text-[11.5px] text-content-faint">
+												{p.category || "Uncategorized"} ·{" "}
+												{p.updatedDays === 0
+													? "today"
+													: `${p.updatedDays}d ago`}
+											</div>
+										</Link>
+									))}
+								</div>
+							) : (
+								<p className="rounded-xl border border-info-bd bg-surface-sunken p-5 text-sm text-content-soft">
+									{profile.role === "student"
+										? "No published projects yet."
+										: "Published projects and funded grants appear here as this account backs work (P4)."}
+								</p>
+							)}
 						</section>
 					</div>
 

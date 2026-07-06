@@ -1,7 +1,35 @@
 # Phase P3 — Discovery & Contact (Browse · Search · Filters · Card · Interest · Notifications · Upvotes)
 
-**Status:** 📋 Planned
+**Status:** ✅ **Client done** 2026-07-06 · ✅ **server live** 2026-07-06 (`academy-server/.../phases/P3-discovery-contact-server.md` — DB v6, 66/66 in-process) · 🔨 linked-member picker is a placeholder (see below)
 **Target:** after P2
+
+### What's done vs still in progress
+
+| | Scope | State |
+|---|---|---|
+| ✅ Done (client) | Notification slice (bell → live, `/notifications` page 1:1 to template §, `NotificationItem` per-type renderer), discover swapped mock → server contract (URL-driven search/category/sort), public project detail on the live published projection, one-tap interest ("I'm interested" → "✓ Interest sent", org gate, idempotent state), optimistic upvote toggle (sm card + lg detail variants), `IncomingInvites` → real `member_invite` + accept/decline, landing teaser + sponsor home → public teaser query, STU-02 published-work backfill on `/u/$userId`. `lib/discover/mock.ts` **deleted**. | Shipped, green |
+| ✅ Server live (2026-07-06) | All four slices shipped (DB v6) — gallery/search/sorts, public teaser, interest + reveal notification, upvote toggle, live notification feed, and the STU-08 invite loop are end-to-end. | Realized in `P3-discovery-contact-server.md` |
+| 🔨 Client follow-up | **The linked-member "picker" is a checkbox**: `formToProjectInput` sends `linkedUserId: "linked-N"` placeholders and echoes synthetic member ids, so a real invite can never reach a real user through the UI. The server defines `linkedUserId` = the invitee's **iSkolar user id** and handles the placeholder drift defensively — the modal needs an identifier input / user search to close the loop. | Open — needs a member-identifier field |
+
+### Realized scope corrections (template-driven — checked before building)
+
+- **SPN-08 "My interests" has no page** — the template has no such surface; the sent-state on
+  every card/detail (via `GET /interests/me`) is the P3 answer, and the *list* surface is the
+  P5 SPONSOR DEAL-FLOW screen. No `/sponsor/interests` route was invented.
+- **STU-13 works through notifications** — the template's `sponsor_interest` notification links
+  to the **sponsor's profile** ("open their profile to follow up"); there is no per-project
+  interested-sponsors list in the template. Implemented exactly that way.
+- **Interest wording corrected** — the template says "I'm interested" / "✓ Interest sent"
+  (§1844), not "Express interest"; the detail rail now matches, and the privacy note shows for
+  **every** non-owner viewer (it sits outside the sponsor conditional in the template).
+- **Detail rail upvote is the large variant** (`upStyleLg`, 46px full-width) — previously the
+  34px card variant was reused; `UpvoteButton` now has both template sizes and is controlled
+  (`upvoted`/`count` from the server, optimistic toggle).
+- **No separate SearchBar/FilterPanel/SortControl/ProjectGrid components** — the GALLERY
+  toolbar shipped in P2-era work as one route; P3 rebound it to URL params + the live query.
+- **SPN-07 gate:** the story's "org + ≥1 contact link" can't be enforced as written — the
+  profile model (and the template's EDIT PROFILE) has no contact-link field. Gated on
+  `org` non-empty (client prompt + server re-check); the contact-link gap is an Open Item.
 **Repo(s):** academy-client (this doc) · academy-server (`sponsor/`, `interest/`, `upvote/`, `notification/`)
 **Traces to:** PRD — FR-SP1…SP8, FR-N1, FR-N2, FR-N6 · Plan — §6, §7 (Phase 3) · Stories — SPN-03, SPN-04, SPN-05, SPN-06, SPN-07, SPN-08, PLT-07, PLT-08, STU-12, STU-13
 **Commit/PR:** —
@@ -83,6 +111,32 @@ Turn published projects into a discoverable, searchable, filterable gallery of a
 ### Server (academy-server — cross-reference)
 `sponsor/` (browse + tsvector search + filters), `interest/` (idempotent unique, emits `sponsor_interest`), `upvote/` (toggle + counts), `notification/` (list/read). Trending = upvotes last 30 days; Top = all-time.
 
+## Realized Build (2026-07-06)
+
+| File | Change | Notes |
+|---|---|---|
+| `lib/notification/{model,api}.ts` | **Created** | Type union (3 live + 3 forward types), server-owned `tone`/`title`/`body`/`ageLabel`, entity refs (`projectId`/`actorUserId`/`actorName`/`memberId`); list + read + read-all + invite accept/decline calls. |
+| `hooks/notification/{useNotifications,useNotificationMutations}.ts` | **Created** | List + unread count; read/read-all/accept/decline (invites also invalidate `project`). |
+| `components/notification/NotificationItem.tsx` | **Created** | Template row (42px tile · title + dot · body · when) + compact dropdown variant; per-type glyph/tone/link map (template `go` map). |
+| `routes/_app/notifications.tsx` | **Created** | NOTIFICATIONS PAGE 1:1 — 860px column, unread count, Mark-all-read, unread-tinted rows. |
+| `components/layout/RoleNav.tsx` | **Affected** | Mock array deleted; bell badge + dropdown + account-menu count now live; "See all" → `/notifications`. |
+| `components/project/IncomingInvites.tsx` | **Rewritten** | Seed → unread `member_invite` notifications; Accept/Decline post to the member sub-paths with toasts. |
+| `lib/discover/{model,api}.ts` | **Created** | `ShowcaseProject` (= `projectSchema` + `trending`/`upvotedByMe`), gallery/single/teaser queries (+ `owner` param for STU-02), `toProjectCardData` mapper. |
+| `hooks/discover/useProjectGallery.ts` | **Created** | Gallery query keyed off URL params. |
+| `routes/_app/discover.tsx` | **Rewritten** | `validateSearch` → URL-driven q/category/sort (debounced search input), live query, loading/empty/error states; toolbar + SponsorRail unchanged. |
+| `routes/_app/projects.$projectId.tsx` | **Rewritten** | Live `GET /discover/projects/:id`; composes the interact rail (lg upvote · sponsor `InterestButton` · privacy note). |
+| `components/project/ProjectDetailView.tsx` | **Affected** | New `interact` slot (routes compose the non-owner rail card; component stays presentational). |
+| `lib/interest/api.ts` + `hooks/interest/useInterest.ts` | **Created** | `GET /interests/me` (ids drive sent-states, SPN-08) + idempotent `POST /projects/:id/interest`. |
+| `components/interest/InterestButton.tsx` | **Created** | Template treatment exactly; org-gate prompt (SPN-07 AC#2) + success/error toasts. |
+| `lib/upvote/api.ts` + `hooks/upvote/useToggleUpvote.ts` | **Created** | `POST /projects/:id/upvote`; optimistic flip across all discover caches (lists + single), rollback on error (PLT-08 AC#4). |
+| `components/project/UpvoteButton.tsx` | **Rewritten** | Controlled (`count`/`upvoted`/`onToggle`) + both template sizes (34px `upStyle`, 46px `upStyleLg`); spring/confetti kept. |
+| `components/discover/DiscoverCard.tsx` | **Affected** | `MockProject` → `ShowcaseProject`; wired heart; `trending` badge server-owned. |
+| `components/landing/RecentProjectsPreview.tsx` · `routes/sponsor/home.tsx` | **Affected** | Mock cards → public `GET /discover/teaser` (PLT-06 stays card-only for visitors). |
+| `components/account/ProfileView.tsx` + `routes/_app/u.$userId.tsx` | **Affected** | STU-02 backfill: template two-column published-work rows from `?owner=` query (students only). |
+| `lib/discover/mock.ts` | **Deleted** | All consumers now live; `mockToProject`/`toProjectCard`/seeds gone (no orphans). |
+
+**Verification (client):** `pnpm generate-routes` ✓ · Biome clean (pre-existing `Hero.tsx` finding only) · `tsc --noEmit` **0** · `pnpm build` (client + SSR) ✓. Zero new packages, zero new env vars.
+
 ## Implementation Process (ordered)
 
 1. Land `notification` slice first (unblocks STU-08 from P1, STU-12, and the bell).
@@ -105,7 +159,17 @@ Turn published projects into a discoverable, searchable, filterable gallery of a
 
 - **Depends on:** P2 (published projects exist), P0 (sponsor profile completeness for SPN-07 gate).
 - **Cross-phase:** notification slice retroactively completes STU-08 (P1).
-- **Open:** whether `project/$projectId` is a separate detail page or the card expanded (see decisions).
+- **Open — linked-member picker (STU-07/08):** the submit modal's "linked" toggle is a checkbox;
+  `formToProjectInput` sends placeholder `linkedUserId: "linked-N"` ids, so a real invite never
+  reaches a real user through the UI. The server contract fixes `linkedUserId` = the invitee's
+  **iSkolar user id** and tolerates the placeholders (consent survives re-saves) — closing the
+  loop needs a member-identifier input / user search in the modal.
+- **Open — SPN-07 "≥1 contact link":** no contact-link field exists in the profile model or the
+  template's EDIT PROFILE; the gate is `org` non-empty on both sides. Needs a product/template
+  decision to go further.
+- ~~**Open:** whether `project/$projectId` is a separate detail page or the card expanded.~~
+  **RESOLVED (Realized Build):** it's a detail page — `routes/_app/projects.$projectId.tsx` on
+  the live published projection, composing the interact rail.
 
 ## Verification Plan
 

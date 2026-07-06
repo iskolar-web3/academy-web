@@ -36,19 +36,17 @@ TanStack Start with file-based routes under `src/routes/`. `__root.tsx` is the r
 
 `routeTree.gen.ts` is auto-generated — do not edit manually. Run `pnpm generate-routes` after adding/renaming routes.
 
-> Route groups (`_auth/`, `_onboarding/`, role-guarded groups, etc.) are **not yet created**. Follow the iSkolar reference convention (`D:/GithubRepo/iskolar-main/web/`) when adding them.
+> Route groups follow the iSkolar reference convention (`D:/GithubRepo/iskolar-main/web/`). The **live** route groups, guards, and URL map are not tracked here — see `documentation/website-structure.md`.
 
-### Data Flow (target convention — not yet built)
-- **API calls** live in `src/lib/` organized by domain, exporting `queryOptions()` builders
-- **Hooks** in `src/hooks/` expose React Query queries/mutations to components
-- Hooks call lib functions directly via React Query — no `src/services/` layer
+### Data Flow
+- **API calls** live in `src/lib/<domain>/` (`api.ts` + `model.ts`), exporting `queryOptions()` builders and mutation functions; everything goes through `apiFetch` in `src/lib/api.ts` (sends `credentials: "include"`, parses the server's `{ message, data }` envelope, throws `body.message` on non-ok)
+- **Wire shapes are re-parsed with Zod** (`<domain>/model.ts`) at the API boundary — the client never trusts raw JSON
+- **Hooks** in `src/hooks/<domain>/` expose React Query queries/mutations to components; components never call `apiFetch` directly
+- No `src/services/` layer — hooks call lib functions directly via React Query
 - `src/lib/utils.ts` holds `cn()` (clsx + tailwind-merge) for Shadcn
 
-### Not Yet Implemented
-- Auth (`src/auth.tsx` AuthProvider, JWT cookie session) — deferred
-- `src/hooks/`, `src/utils/` — deferred
-- Feature routes/pages — concept TBD
-- API layer (`src/lib/<domain>/`) — deferred
+### Current State & Pending Work
+Not tracked here — CLAUDE.md holds durable rules only. What's built, pending, or stubbed lives in the `documentation/README.md` progress table and `documentation/phases/P*.md` (each doc's stub/deferred tables record cross-phase boundaries).
 
 ## Environment Variables
 
@@ -62,9 +60,39 @@ VITE_BACKEND_URL=http://localhost:5000
 
 - **Linter/Formatter:** Biome (tabs, double quotes) — run `pnpm check` before committing
 - **Path alias:** `#/*` maps to `./src/*` (defined in `package.json` `imports`)
-- **UI components:** Shadcn/ui (style: new-york, base color: zinc) — add via `pnpm dlx shadcn@latest add <component>`
-- **Styling:** Tailwind CSS 4 via `@tailwindcss/vite`; single entry `src/styles.css` (Shadcn oklch tokens only)
-- Packages installed and ready: `react-hook-form`, `zod`, `@hookform/resolvers`, `framer-motion`, `lenis`
+- **UI primitives — "Shadcn for behavior, template classes for visuals"** (see `documentation/05-shadcn-library-adoption.md`): interactive primitives live in `src/components/ui/` (Shadcn new-york/zinc, generated via `pnpm dlx shadcn@latest add <component>` then **restyled 1:1 to the design-template**). In use: Dialog, DropdownMenu, Switch, Tabs, Checkbox, Button (cva variants — the single button source; `.btn-*` CSS classes retire as surfaces migrate), sonner Toaster. Static surfaces (cards/chips/pills) stay hand-rolled token classes; native `<select>` stays native.
+- **Styling:** Tailwind CSS 4 via `@tailwindcss/vite`; single entry `src/styles.css` (design tokens + the Shadcn variable bridge `--primary → --color-action` etc.)
+
+## Library & Dependency Discipline
+
+> Why this section exists: an audit (2026-07-06, `documentation/05-shadcn-library-adoption.md`)
+> found the Shadcn scaffold empty and `cn()`/`class-variance-authority`/`lenis`/`tw-animate-css`
+> installed but never exercised — the stack had been mirrored from the iSkolar reference without
+> verifying usage. Don't let that recur.
+
+**Analyze before writing — in this order:**
+
+1. **Before writing any UI**, check what already exists and use it instead of hand-rolling:
+   `src/components/ui/` (Radix primitives restyled to the template — Dialog, DropdownMenu,
+   Switch, Tabs, Checkbox, Button, Toaster), the fixed-component classes in `styles.css`
+   (`.card-surface`, `.chip`, `.status-pill`, …), and `cn()` from `#/lib/utils` for conditional
+   classes. New *interactive* primitive needed → `pnpm dlx shadcn@latest add <component>`, then
+   restyle it to the design-template before first use. New *static* markup → token classes, no
+   component library involved.
+2. **Before adding a package**, verify nothing installed already covers it:
+   read `package.json`, then check real usage with `grep -r "<pkg>" src --include="*.ts*" -l`.
+   An installed-but-unimported package is a bug to fix (wire it or remove it), not a shortcut.
+3. **When adding a package**, the same change must include its first consumer — a dependency
+   never lands "for later". If the consumer gets deleted, the dependency goes with it.
+4. **When mirroring iskolar-main**, mirror *patterns*, not package lists. Each package the
+   reference uses is adopted only when this repo has the feature that needs it.
+5. **After removing code**, re-run the usage check for the packages it imported — last-consumer
+   removals must drop the dependency too.
+
+All current deps are exercised: `react-hook-form`/`zod`/`@hookform/resolvers` (forms + wire
+parsing) · `framer-motion` (landing/upvote) · `lenis` (landing smooth scroll) ·
+`radix-ui`/`class-variance-authority`/`clsx`/`tailwind-merge` (ui primitives) ·
+`sonner`/`tw-animate-css` (toast + enter/exit animations) · `lucide-react` (icons).
 
 ## SSR & Hydration
 
@@ -98,3 +126,4 @@ Development is documented phase-by-phase in `documentation/` — a file-by-file 
 - Every doc carries a header with **Status** (📋 Planned · 🔨 In progress · ✅ Done), **Date**, **Repo(s)**, a **Traces to** line (PRD FR-IDs · plan § · story IDs), and **Commit/PR**.
 - Body sections: **Goal → What Was Built** (File / Functions·Components / Purpose) **→ Decisions & Trade-offs → Verification → Open Items**.
 - Keep the **progress table** in `documentation/README.md` in sync with every add or status change.
+- **CLAUDE.md stays durable** — rules and conventions only. Implementation *status* (what's built, pending, or deferred) belongs in the progress table and phase docs; shipping a phase must never require a CLAUDE.md edit. Touch CLAUDE.md only when a rule/convention itself changes.

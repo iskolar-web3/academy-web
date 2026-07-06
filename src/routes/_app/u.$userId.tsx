@@ -1,11 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "#/auth";
 import { ProfileView } from "#/components/account/ProfileView";
 import { useProfile } from "#/hooks/account/useProfile";
+import { publishedProjectsQuery } from "#/lib/discover/api";
 
 /**
  * Public profile (STU-02 / SPN-02). Reads the real profile via `useProfile(userId)`
- * (→ `GET /accounts/:id/profile`). Under `_app` because viewing a profile is a
+ * (→ `GET /accounts/:id/profile`) plus the user's published showcase work (STU-02,
+ * `GET /discover/projects?owner=…`). Under `_app` because viewing a profile is a
  * signed-in surface; `canEdit` is true only when the viewer is looking at themselves.
  */
 export const Route = createFileRoute("/_app/u/$userId")({
@@ -16,6 +19,11 @@ function PublicProfile() {
 	const { userId } = Route.useParams();
 	const { user } = useAuth();
 	const { data, isLoading, isError } = useProfile(userId);
+	const isStudent = data?.role === "student";
+	const work = useQuery({
+		...publishedProjectsQuery({ owner: userId }),
+		enabled: isStudent,
+	});
 
 	if (isLoading) {
 		return (
@@ -37,6 +45,10 @@ function PublicProfile() {
 	}
 
 	return (
-		<ProfileView profile={data} canEdit={user?.academyUserId === userId} />
+		<ProfileView
+			profile={data}
+			canEdit={user?.academyUserId === userId}
+			work={isStudent ? (work.data ?? []) : undefined}
+		/>
 	);
 }

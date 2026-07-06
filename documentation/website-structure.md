@@ -39,7 +39,11 @@ src/
 | **auth** | `_public/login`, `_onboarding/role-select` | `lib/auth/{api,model}.ts` | `hooks/auth/{useSession,useConfirmRole,useRouteGuard}.ts` | `components/layout/RouteFallback.tsx` (guard fallback) |
 | **account** | `student/profile`, `sponsor/profile`, `_app/u/$userId`, `_app/settings` | `lib/account/{api,model}.ts` | `hooks/account/{useProfile,useUpdateProfile}.ts` | `components/account/{ProfileView,ProfileEditForm,StudentProfileCard}.tsx` |
 | **project** | `student/home` (dashboard), `student/projects/*` | `lib/project/{api,model,helper}.ts` | `hooks/project/{useMyProjects,useProject,useProjectMutations}.ts` | `components/project/{ProjectPipeline,MyProjectCard,ProjectStatusBadge,UpvoteButton,SubmitProjectModal,ProjectDetailView,IncomingInvites}.tsx` |
-| **discover** | `_app/discover` (gallery), `_app/grants` (P4 stub) | `lib/discover/mock.ts` | (P3) | `components/discover/{DiscoverCard,SponsorRail}.tsx`, `components/project/ProjectCard.tsx` (landing teaser) |
+| **discover** | `_app/discover` (gallery), `_app/projects.$projectId` (public detail), `_app/grants` (P4 stub) | `lib/discover/{api,model}.ts` (live; mock **deleted** in P3) | `hooks/discover/useProjectGallery.ts` | `components/discover/{DiscoverCard,SponsorRail}.tsx`, `components/project/ProjectCard.tsx` (landing teaser) |
+| **interest** | (surfaces on detail + cards) | `lib/interest/api.ts` | `hooks/interest/useInterest.ts` | `components/interest/InterestButton.tsx` |
+| **upvote** | (control on cards + detail) | `lib/upvote/api.ts` | `hooks/upvote/useToggleUpvote.ts` | `components/project/UpvoteButton.tsx` (controlled, sm/lg) |
+| **notification** | `_app/notifications` | `lib/notification/{api,model}.ts` | `hooks/notification/{useNotifications,useNotificationMutations}.ts` | `components/notification/NotificationItem.tsx`, bell in `RoleNav`, `components/project/IncomingInvites.tsx` (invites feed) |
+| **review** | `admin/dashboard` (console) | `lib/review/{api,model}.ts`, `lib/metrics/api.ts` | `hooks/review/{useReviewQueue,useReviewDecision}.ts`, `hooks/metrics/usePlatformMetrics.ts` | `components/admin/{ReviewQueuePanel,ReviewDecisionModal,ModerationPanel,MetricsPanel}.tsx` |
 | **landing** | `_public/` (index) | — | — | `components/landing/*` |
 
 > The **component folder shares the domain name** (`components/account`, not
@@ -65,9 +69,10 @@ Two kinds of group:
 | `/login` | `routes/_public/login.tsx` | pathless | none | SSO entry + dev role preview |
 | `/role-select` | `routes/_onboarding/role-select.tsx` | pathless | signed-in, no role | Role confirm (PLT-04) — one click per role. A **sponsor** no longer picks a sub-kind; it routes to `/sponsor/subscription` to choose a tier. |
 | `/u/$userId` | `routes/_app/u.$userId.tsx` | pathless | any signed-in | Public profile (STU-02/SPN-02) |
-| `/discover` | `routes/_app/discover.tsx` | pathless | any signed-in | Showcase gallery (SPN-03) — toolbar + card grid; **sponsors** also get the 320px `SponsorRail` sidebar (alerts/watchlist · subscriptions · suggested · plan). Search filters mock client-side, server search/filters/sort → P3 |
+| `/discover` | `routes/_app/discover.tsx` | pathless | any signed-in | Showcase gallery (SPN-03/04/05) — toolbar + card grid over the **live** published projection; search/category/sort live in the **URL search params** and run server-side; **sponsors** also get the 320px `SponsorRail` sidebar. |
 | `/grants` | `routes/_app/grants.tsx` | pathless | any signed-in | Grants placeholder (P4) |
-| `/projects/$projectId` | `routes/_app/projects.$projectId.tsx` | pathless | any signed-in | Public/sponsor **project detail** — design-template PROJECT DETAIL (`ProjectDetailView`, `viewer="sponsor"|"public"`), opened from a Discover gallery card. Reads mock showcase; real query + express-interest → P3. |
+| `/projects/$projectId` | `routes/_app/projects.$projectId.tsx` | pathless | any signed-in | Public/sponsor **project detail** — design-template PROJECT DETAIL over `GET /discover/projects/:id`; interact rail = large upvote (PLT-08) + sponsor "I'm interested" (SPN-07, idempotent) + privacy note. |
+| `/notifications` | `routes/_app/notifications.tsx` | pathless | any signed-in | **Notifications page** (PLT-07) — design-template NOTIFICATIONS PAGE: unread count, Mark all read, per-type rows linking to entities (a `sponsor_interest` row links to the sponsor's profile — the STU-13 reveal). Reached from the header bell. |
 | `/settings` | `routes/_app/settings.tsx` | pathless | any signed-in | Settings (design-template SETTINGS PAGE) — alerts toggle · digest/language · account/privacy · Log out. Opened from the header account dropdown. |
 | `/student/home` | `routes/student/home.tsx` | visible | role = student | **Student dashboard** (STU-09): profile sidebar + stat tiles + project pipeline cards. 1:1 with design-template STUDENT DASHBOARD. |
 | `/student/projects` | `routes/student/projects/index.tsx` | visible | role = student | Redirects → `/student/home` (the dashboard is the student's home) |
@@ -78,7 +83,7 @@ Two kinds of group:
 | `/sponsor/home` | `routes/sponsor/home.tsx` | visible | role = sponsor | Placeholder |
 | `/sponsor/profile` | `routes/sponsor/profile.tsx` | visible | role = sponsor | Edit profile (SPN-01) |
 | `/sponsor/subscription` | `routes/sponsor/subscription.tsx` | visible | role = sponsor | Subscription & billing (design-template) — tier picker (Scout/Alpha/Venture) + PayMongo payment (stubbed → P5) + seats/invoices. **Sponsor onboarding lands here** after role-confirm. |
-| `/admin/dashboard` | `routes/admin/dashboard.tsx` | visible | role = admin | Placeholder (queue → P2) |
+| `/admin/dashboard` | `routes/admin/dashboard.tsx` | visible | role = admin | **Admin console** (P2) — design-template ADMIN: sticky 220px tab-rail (Review queue · Moderation · Metrics) + the review-decision **modal** (approve/return/reject). One page with tabs, not separate routes (ADM-01/03/04/05/06). Grant-request moderation → P4, metric charts → P4/P5. |
 
 Layout files: `_public.tsx`, `_onboarding.tsx`, `_app.tsx` (pathless shells) and
 `student.tsx`, `sponsor.tsx`, `admin.tsx` (role shells). All signed-in shells render
@@ -148,6 +153,13 @@ not-found / error states in dev — sign in by minting a dev token.
 - **Package manager:** pnpm. **Path alias:** `#/*` → `src/*`.
 - **Styling:** Tailwind v4 + tokens in `styles.css` (named by usage). Prefer the role
   utilities (`text-content-soft`, `bg-surface-tint`, `text-action`) and fixed-component
-  classes (`.btn`, `.card-surface`, `.chip`, `.status-pill`, `.eyebrow`, `.container-page`).
+  classes (`.card-surface`, `.chip`, `.status-pill`, `.eyebrow`, `.container-page`).
+- **UI primitives — Shadcn for behavior, template classes for visuals** (see
+  `05-shadcn-library-adoption.md`): interactive primitives come from `components/ui/*`
+  (Radix behavior, restyled 1:1 to the design-template — Dialog, DropdownMenu, Switch,
+  Tabs, Checkbox, Button, sonner Toaster). Buttons: `<Button variant size>` (cva) is the
+  single source going forward; `.btn-*` classes retire as surfaces migrate. Static
+  surfaces (cards/chips/pills) stay hand-rolled token classes. Native `<select>` stays
+  native. **Rule:** a package enters `package.json` only with a consumer in the same change.
 - **After route changes:** `pnpm generate-routes` → `pnpm exec biome check --write` →
   `pnpm build`.

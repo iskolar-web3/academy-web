@@ -1,7 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Github, MonitorPlay, Play, Upload, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "#/components/ui/button";
+import { Checkbox } from "#/components/ui/checkbox";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogTitle,
+} from "#/components/ui/dialog";
 import { useSession } from "#/hooks/auth/useSession";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
 import {
@@ -17,6 +26,7 @@ import {
 	type ProjectFormValues,
 	projectFormSchema,
 } from "#/lib/project/model";
+import { cn } from "#/lib/utils";
 import { validateThesisFile } from "#/utils/fileHandling";
 
 /**
@@ -70,15 +80,6 @@ export function SubmitProjectModal({
 		name: "members",
 	});
 
-	// Close on Escape (matches the header popovers' behaviour).
-	useEffect(() => {
-		const onKey = (e: KeyboardEvent) => {
-			if (e.key === "Escape") onClose();
-		};
-		document.addEventListener("keydown", onKey);
-		return () => document.removeEventListener("keydown", onKey);
-	}, [onClose]);
-
 	const links = watch("links");
 	const type = watch("type");
 	const category = watch("category");
@@ -128,48 +129,57 @@ export function SubmitProjectModal({
 	const onSubmitProject = async () => {
 		if (gateIssues.length > 0) return;
 		const input = formToProjectInput(getValues());
-		if (project) {
-			await update.mutateAsync({ id: project.id, input });
-			// Draft/returned/withdrawn re-enter review explicitly; a published edit
-			// re-reviews itself server-side when MVP-critical fields change.
-			if (project.status === "draft" || project.status === "submitted") {
-				await submit.mutateAsync(project.id);
-			} else if (
-				project.status === "returned" ||
-				project.status === "withdrawn"
-			) {
-				await resubmit.mutateAsync(project.id);
+		// mutateAsync re-throws (unlike mutate), so this chain owns its catch: surface the
+		// server's envelope message (422 gate / 403 owner / network) as a toast and keep
+		// the modal open so nothing typed is lost.
+		try {
+			if (project) {
+				await update.mutateAsync({ id: project.id, input });
+				// Draft/returned/withdrawn re-enter review explicitly; a published edit
+				// re-reviews itself server-side when MVP-critical fields change.
+				if (project.status === "draft" || project.status === "submitted") {
+					await submit.mutateAsync(project.id);
+				} else if (
+					project.status === "returned" ||
+					project.status === "withdrawn"
+				) {
+					await resubmit.mutateAsync(project.id);
+				}
+				toast.success(
+					willReReview ? "Saved — sent back to review" : "Changes saved",
+				);
+				onClose();
+				return;
 			}
+			const created = await create.mutateAsync(input);
+			await submit.mutateAsync(created.id);
+			toast.success("Project submitted for review");
 			onClose();
-			return;
+		} catch (err) {
+			toast.error(err instanceof Error ? err.message : "Something went wrong.");
 		}
-		const created = await create.mutateAsync(input);
-		await submit.mutateAsync(created.id);
-		onClose();
 	};
 
 	return (
-		<div className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(20,28,56,0.42)] p-6">
-			<button
-				type="button"
-				aria-label="Close"
-				onClick={onClose}
-				className="absolute inset-0 cursor-default"
-			/>
-			<div className="isk-scroll relative flex max-h-[90vh] w-[760px] max-w-full flex-col overflow-auto rounded-[18px] bg-surface-overlay shadow-modal">
+		<Dialog open onOpenChange={(open) => !open && onClose()}>
+			<DialogContent
+				aria-describedby={undefined}
+				className="isk-scroll flex max-h-[90vh] w-[760px] max-w-[calc(100vw-3rem)] flex-col overflow-auto"
+			>
 				{/* Header */}
-				<div className="sticky top-0 z-[2] flex items-center justify-between border-[#eef1fa] border-b bg-surface-overlay px-7 py-[22px]">
-					<span className="text-[20px] text-content-heading">
+				<div className="sticky top-0 z-[2] flex items-center justify-between rounded-t-[18px] border-[#eef1fa] border-b bg-surface-overlay px-7 py-[22px]">
+					<DialogTitle>
 						{editing ? "Edit project" : "Submit a project"}
-					</span>
-					<button
-						type="button"
-						onClick={onClose}
-						aria-label="Close"
-						className="flex size-[34px] items-center justify-center rounded-[9px] border border-info-bd bg-surface-card text-content-muted transition-colors hover:bg-surface-sunken"
-					>
-						<X className="size-4" aria-hidden />
-					</button>
+					</DialogTitle>
+					<DialogClose asChild>
+						<button
+							type="button"
+							aria-label="Close"
+							className="flex size-[34px] items-center justify-center rounded-[9px] border border-info-bd bg-surface-card text-content-muted transition-colors hover:bg-surface-sunken"
+						>
+							<X className="size-4" aria-hidden />
+						</button>
+					</DialogClose>
 				</div>
 
 				{/* Stepper */}
@@ -383,23 +393,32 @@ export function SubmitProjectModal({
 								submission.
 							</p>
 							<div className="flex flex-col gap-3">
-								<label className="flex cursor-pointer items-start gap-3 rounded-[11px] border border-[#eef1fa] p-3.5">
-									<input
-										type="checkbox"
-										className="mt-1 flex-none"
-										{...register("ownershipDeclared")}
+								<label
+									htmlFor="ownership-declared"
+									className="flex cursor-pointer items-start gap-3 rounded-[11px] border border-[#eef1fa] p-3.5"
+								>
+									<Checkbox
+										id="ownership-declared"
+										className="mt-1"
+										checked={ownershipDeclared}
+										onCheckedChange={(v) =>
+											setValue("ownershipDeclared", v === true)
+										}
 									/>
 									<span className="text-[14px] leading-[1.5] text-content-strong">
 										This is original student work; external code/assets are
 										credited and licensed.
 									</span>
 								</label>
-								<label className="flex cursor-pointer items-start gap-3 rounded-[11px] border border-[#eef1fa] p-3.5">
-									<input
-										type="checkbox"
-										className="mt-1 flex-none"
+								<label
+									htmlFor="consent-showcase"
+									className="flex cursor-pointer items-start gap-3 rounded-[11px] border border-[#eef1fa] p-3.5"
+								>
+									<Checkbox
+										id="consent-showcase"
+										className="mt-1"
 										checked={consented}
-										onChange={(e) => setConsented(e.target.checked)}
+										onCheckedChange={(v) => setConsented(v === true)}
 									/>
 									<span className="text-[14px] leading-[1.5] text-content-strong">
 										I consent to Academy review and to my name being shown on
@@ -476,35 +495,34 @@ export function SubmitProjectModal({
 
 				{/* Footer */}
 				<div className="flex items-center justify-between px-7 pt-[18px] pb-6">
-					<button
-						type="button"
+					<Button
+						variant="secondary"
+						size="lg"
 						onClick={() => setStep((s) => Math.max(0, s - 1))}
-						className={`h-[46px] rounded-[10px] border border-line bg-surface-card px-5 text-[14.5px] text-content-muted transition-colors hover:bg-surface-sunken ${
-							step === 0 ? "invisible" : ""
-						}`}
+						className={cn("rounded-[10px] px-5", step === 0 && "invisible")}
 					>
 						← Back
-					</button>
+					</Button>
 					{isLast ? (
-						<button
-							type="button"
+						<Button
+							size="lg"
 							disabled={busy}
 							onClick={onSubmitProject}
-							className="h-[46px] rounded-[10px] bg-action px-[26px] text-[15px] text-white transition-colors hover:bg-action-hover disabled:opacity-60"
+							className="rounded-[10px] px-[26px] text-[15px] shadow-none"
 						>
 							{busy ? "Saving…" : editing ? "Save changes" : "Submit project"}
-						</button>
+						</Button>
 					) : (
-						<button
-							type="button"
+						<Button
+							size="lg"
 							onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-							className="h-[46px] rounded-[10px] bg-action px-[26px] text-[15px] text-on-action transition-colors hover:bg-action-hover"
+							className="rounded-[10px] px-[26px] text-[15px] shadow-none"
 						>
 							Continue →
-						</button>
+						</Button>
 					)}
 				</div>
-			</div>
-		</div>
+			</DialogContent>
+		</Dialog>
 	);
 }
