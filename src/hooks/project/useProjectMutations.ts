@@ -5,6 +5,7 @@ import {
 	resubmitProject,
 	submitProject,
 	updateProject,
+	uploadThesisPaper,
 	withdrawProject,
 } from "#/lib/project/api";
 import type { ProjectInput } from "#/lib/project/model";
@@ -48,5 +49,11 @@ export function useProjectMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { create, update, submit, resubmit, withdraw, remove };
+	const uploadThesis = useMutation({
+		mutationFn: (vars: { id: string; file: File }) =>
+			uploadThesisPaper(vars.id, vars.file),
+		onSuccess: invalidate,
+	});
+
+	return { create, update, submit, resubmit, withdraw, remove, uploadThesis };
 }

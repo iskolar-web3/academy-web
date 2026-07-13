@@ -32,6 +32,28 @@ export async function apiFetch<T>(
 	return body as T;
 }
 
+/**
+ * Multipart upload wrapper — a sibling of `apiFetch` for file uploads (document/thesis/etc.).
+ * No `Content-Type` header: the browser sets the multipart boundary. Same envelope parsing
+ * and error surfacing as `apiFetch`.
+ */
+export async function apiUpload<T>(
+	path: string,
+	formData: FormData,
+): Promise<T> {
+	const res = await fetch(`${BACKEND_URL}${path}`, {
+		method: "POST",
+		credentials: "include",
+		body: formData,
+	});
+	const text = await res.text();
+	const body = text ? JSON.parse(text) : null;
+	if (!res.ok) {
+		throw new Error(body?.message ?? `HTTP ${res.status}`);
+	}
+	return body as T;
+}
+
 /** Post-auth landing path for a role (null → onboarding). Used by guards + login. */
 export function getDefaultPathOfRole(role: AcademyRole | null): string {
 	switch (role) {

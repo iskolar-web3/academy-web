@@ -33,9 +33,10 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 | 00 | `00-project-scaffold.md` | 📋 Planned | — | Plan §1 (scaffold) |
 | 01 | `01-pnpm-migration.md` | ✅ Done | 2026-06-30 | `documents/iskolar-academy-runtime-migration-plan.md` §3 |
 | **P0** | [`phases/P0-foundation.md`](./phases/P0-foundation.md) → Realized Build | 🔨 client done | 2026-07-03 | Plan §3/§6/§7 · PLT-01…06 · STU-01/02 · SPN-01/02 |
-| **P1** | [`phases/P1-submission.md`](./phases/P1-submission.md) | ✅ Core done · ✅ invites+STU-02 closed by P3 · 🔨 thesis deferred | 2026-07-03 | Plan §6–7 · STU-03…STU-11 |
+| **P1** | [`phases/P1-submission.md`](./phases/P1-submission.md) | ✅ Core done · ✅ invites+STU-02 closed by P3 · ✅ thesis upload done, client+server | 2026-07-03 | Plan §6–7 · STU-03…STU-11 |
 | **P2** | [`phases/P2-review.md`](./phases/P2-review.md) | ✅ Client done · ✅ server live | 2026-07-06 | Plan §6–7 · ADM-01/03/04/05/06 |
 | **P3** | [`phases/P3-discovery-contact.md`](./phases/P3-discovery-contact.md) | ✅ Client done · ✅ server live · 🔨 linked-member picker open | 2026-07-06 | Plan §6–7 · SPN-03…08 · STU-12/13 · PLT-07/08 |
+| **P4** | [`phases/P4-grants-funding.md`](./phases/P4-grants-funding.md) → Realized Build | ✅ Client done · ✅ server live | 2026-07-13 | Plan §4/§6–7 · STU-14/15/16 · SPN-09/10/11 · ADM-02 |
 | 03 | `03-student-dashboard.md` | ✅ Done | 2026-07-02 | Plan §6–7 (**P1**) · STU-09/10/11 |
 | 04 | `04-app-header-and-discover-gallery.md` | ✅ Done | 2026-07-02 | Plan §6 · SPN-03 (**P3** gallery; P0 header) |
 | 05 | `05-shadcn-library-adoption.md` | ✅ Done | 2026-07-06 | Plan §3 · CLAUDE.md code style · iSkolar blueprint §6 |

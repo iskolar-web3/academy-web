@@ -1,5 +1,6 @@
 import { ArrowUpRight, Github, Lock, MonitorPlay, Play } from "lucide-react";
 import type { ReactNode } from "react";
+import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
 
@@ -159,9 +160,20 @@ export function ProjectDetailView({
 							<p className="text-[15px] text-content-strong">
 								Individual project
 								{project.ownership.declared ? " · ownership declared" : ""}
-								{project.ownership.thesisPaperName
-									? ` · ${project.ownership.thesisPaperName}`
-									: ""}
+								{project.ownership.thesisPaperName ? (
+									<>
+										{" "}
+										·{" "}
+										<a
+											href={thesisPaperUrl(project.id)}
+											target="_blank"
+											rel="noreferrer"
+											className="text-action underline"
+										>
+											{project.ownership.thesisPaperName}
+										</a>
+									</>
+								) : null}
 							</p>
 						)}
 					</div>

@@ -13,6 +13,7 @@ import {
 } from "#/components/ui/dialog";
 import { useSession } from "#/hooks/auth/useSession";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
+import { thesisPaperUrl } from "#/lib/project/api";
 import {
 	emptyFormValues,
 	formToProjectInput,
@@ -64,11 +65,15 @@ export function SubmitProjectModal({
 }) {
 	const editing = !!project;
 	const { user } = useSession();
-	const { create, update, submit, resubmit } = useProjectMutations();
+	const { create, update, submit, resubmit, uploadThesis } =
+		useProjectMutations();
 	const [step, setStep] = useState(0);
 	// A returning editor already consented at creation.
 	const [consented, setConsented] = useState(editing);
 	const [fileError, setFileError] = useState<string | null>(null);
+	// The raw picked file, held only until it's uploaded on submit — a project may not exist
+	// yet (create path), so the upload can't fire until we have an id.
+	const [thesisFile, setThesisFile] = useState<File | null>(null);
 
 	const form = useForm<ProjectFormValues>({
 		resolver: zodResolver(projectFormSchema),
@@ -92,7 +97,8 @@ export function SubmitProjectModal({
 		create.isPending ||
 		update.isPending ||
 		submit.isPending ||
-		resubmit.isPending;
+		resubmit.isPending ||
+		uploadThesis.isPending;
 	const isLast = step === STEPS.length - 1;
 
 	// Editing a published project's title/category/MVP links sends it back to review (STU-11).
@@ -124,6 +130,7 @@ export function SubmitProjectModal({
 		}
 		setFileError(null);
 		setValue("thesisPaperName", file.name);
+		setThesisFile(file);
 	};
 
 	const onSubmitProject = async () => {
@@ -135,6 +142,11 @@ export function SubmitProjectModal({
 		try {
 			if (project) {
 				await update.mutateAsync({ id: project.id, input });
+				// A newly picked file uploads after the save so it lands on the record
+				// that now has the latest ownership/type; re-review below re-checks it.
+				if (thesisFile) {
+					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
+				}
 				// Draft/returned/withdrawn re-enter review explicitly; a published edit
 				// re-reviews itself server-side when MVP-critical fields change.
 				if (project.status === "draft" || project.status === "submitted") {
@@ -152,6 +164,10 @@ export function SubmitProjectModal({
 				return;
 			}
 			const created = await create.mutateAsync(input);
+			// The draft now has an id — the upload can only happen from here on.
+			if (thesisFile) {
+				await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
+			}
 			await submit.mutateAsync(created.id);
 			toast.success("Project submitted for review");
 			onClose();
@@ -435,6 +451,18 @@ export function SubmitProjectModal({
 										<div className="flex-1">
 											<div className="text-[14px] text-content-heading">
 												{thesisPaperName ?? "Thesis paper (PDF)"}
+												{editing &&
+												project.ownership.thesisPaperName &&
+												!thesisFile ? (
+													<a
+														href={thesisPaperUrl(project.id)}
+														target="_blank"
+														rel="noreferrer"
+														className="ml-2 text-[12.5px] text-action underline"
+													>
+														View
+													</a>
+												) : null}
 											</div>
 											<div className="mt-0.5 font-mono text-[11.5px] text-content-faint">
 												Required for thesis / capstone, stored in the Lumen
@@ -446,12 +474,23 @@ export function SubmitProjectModal({
 												</div>
 											) : null}
 										</div>
-										<label className="flex h-9 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
-											Upload
+										<label
+											className={cn(
+												"flex h-9 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken",
+												uploadThesis.isPending &&
+													"pointer-events-none opacity-60",
+											)}
+										>
+											{uploadThesis.isPending
+												? "Uploading…"
+												: thesisPaperName
+													? "Replace"
+													: "Upload"}
 											<input
 												type="file"
 												accept="application/pdf"
 												className="hidden"
+												disabled={uploadThesis.isPending}
 												onChange={(e) => onPickFile(e.target.files?.[0])}
 											/>
 										</label>

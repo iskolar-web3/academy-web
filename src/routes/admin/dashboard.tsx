@@ -5,6 +5,7 @@ import { ModerationPanel } from "#/components/admin/ModerationPanel";
 import { ReviewDecisionModal } from "#/components/admin/ReviewDecisionModal";
 import { ReviewQueuePanel } from "#/components/admin/ReviewQueuePanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { useOpenGrants } from "#/hooks/grant/useGrants";
 import {
 	useModerationProjects,
 	useReviewQueue,
@@ -32,6 +33,8 @@ function AdminConsole() {
 
 	const queue = useReviewQueue();
 	const moderation = useModerationProjects();
+	const grants = useOpenGrants();
+	const openGrants = (grants.data ?? []).filter((g) => g.status === "open");
 
 	return (
 		<>
@@ -70,6 +73,9 @@ function AdminConsole() {
 							projects={moderation.data ?? []}
 							isLoading={moderation.isLoading}
 							isError={moderation.isError}
+							grants={openGrants}
+							grantsLoading={grants.isLoading}
+							grantsError={grants.isError}
 						/>
 					</TabsContent>
 					<TabsContent value="metrics">

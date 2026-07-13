@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { type ApiEnvelope, apiFetch } from "#/lib/api";
+import { type ApiEnvelope, apiFetch, apiUpload, BACKEND_URL } from "#/lib/api";
 import {
 	type Project,
 	type ProjectInput,
@@ -78,4 +78,33 @@ export async function withdrawProject(id: string): Promise<void> {
 /** Delete a draft. `DELETE /projects/:id`. */
 export async function deleteDraft(id: string): Promise<void> {
 	await apiFetch(`/projects/${id}`, { method: "DELETE" });
+}
+
+/**
+ * Upload the thesis/capstone paper (STU-05). `POST /projects/:id/thesis`, multipart field
+ * `file`. Stored server-side via the interim `documents.ts` module (real storage today —
+ * see `documentation/phases/next-steps-lumen-p4-p5.md`; swaps to Lumen later with no
+ * contract change here).
+ */
+export async function uploadThesisPaper(
+	projectId: string,
+	file: File,
+): Promise<{ key: string }> {
+	const formData = new FormData();
+	formData.append("file", file);
+	const envelope = await apiUpload<ApiEnvelope<{ key: string }>>(
+		`/projects/${projectId}/thesis`,
+		formData,
+	);
+	return envelope.data;
+}
+
+/**
+ * Direct link to read the stored thesis paper (`GET /projects/:id/thesis`), auth-gated
+ * server-side to the owner/reviewers — same rule as the rest of the project detail. Used as
+ * an `<a href>`/`target="_blank"` target, not fetched via `apiFetch` (the browser sends the
+ * SSO cookie on the top-level navigation).
+ */
+export function thesisPaperUrl(projectId: string): string {
+	return `${BACKEND_URL}/projects/${projectId}/thesis`;
 }

@@ -1,11 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { IncomingInvites } from "#/components/project/IncomingInvites";
 import { MyProjectCard } from "#/components/project/MyProjectCard";
 import { SubmitProjectModal } from "#/components/project/SubmitProjectModal";
 import { useSession } from "#/hooks/auth/useSession";
+import { useMyGrants } from "#/hooks/grant/useMyGrants";
 import { useMyProjects } from "#/hooks/project/useMyProjects";
+import { formatPeso, grantStatusMeta } from "#/lib/grant/helper";
 import { dashboardStats } from "#/lib/project/helper";
 
 /**
@@ -28,6 +30,7 @@ function initialsOf(name: string): string {
 function StudentHome() {
 	const { user } = useSession();
 	const { data: projects = [], isLoading } = useMyProjects();
+	const { data: myGrants = [] } = useMyGrants();
 	const stats = dashboardStats(projects);
 	const [submitOpen, setSubmitOpen] = useState(false);
 
@@ -49,6 +52,12 @@ function StudentHome() {
 
 			<div>
 				<div className="mb-[22px] flex items-center justify-end gap-2.5">
+					<Link
+						to="/student/grants/new"
+						className="btn btn-secondary h-[46px] px-5 text-[14.5px]"
+					>
+						+ Request a grant
+					</Link>
 					<button
 						type="button"
 						onClick={() => setSubmitOpen(true)}
@@ -94,6 +103,38 @@ function StudentHome() {
 						))}
 					</div>
 				)}
+
+				{myGrants.length > 0 ? (
+					<div className="mt-8">
+						<div className="mb-3.5 text-[18px] text-content-heading">
+							Grant payouts
+						</div>
+						<div className="card-surface overflow-hidden rounded-2xl">
+							{myGrants.map((grant) => (
+								<Link
+									key={grant.id}
+									to="/grants/$grantId"
+									params={{ grantId: grant.id }}
+									className="flex items-center justify-between border-[#eef1fa] border-b px-5 py-4 last:border-b-0 hover:bg-surface-tint"
+								>
+									<span className="text-[15.5px] text-content-heading">
+										{grant.title}
+									</span>
+									<div className="flex items-center gap-4">
+										<span className="text-[15px] text-content-heading">
+											{formatPeso(grant.raised)}
+										</span>
+										<span
+											className={`rounded-[6px] border px-2.5 py-1 font-mono text-[11.5px] ${grantStatusMeta(grant.status).className}`}
+										>
+											{grantStatusMeta(grant.status).label}
+										</span>
+									</div>
+								</Link>
+							))}
+						</div>
+					</div>
+				) : null}
 			</div>
 
 			{submitOpen ? (

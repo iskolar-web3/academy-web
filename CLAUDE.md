@@ -127,3 +127,12 @@ Development is documented phase-by-phase in `documentation/` — a file-by-file 
 - Body sections: **Goal → What Was Built** (File / Functions·Components / Purpose) **→ Decisions & Trade-offs → Verification → Open Items**.
 - Keep the **progress table** in `documentation/README.md` in sync with every add or status change.
 - **CLAUDE.md stays durable** — rules and conventions only. Implementation *status* (what's built, pending, or deferred) belongs in the progress table and phase docs; shipping a phase must never require a CLAUDE.md edit. Touch CLAUDE.md only when a rule/convention itself changes.
+
+## Rules
+
+@.claude/rules/architecture.md
+@.claude/rules/api-design.md
+@.claude/rules/security.md
+@.claude/rules/code-quality.md
+@.claude/rules/frontend.md
+@.claude/rules/documentation.md

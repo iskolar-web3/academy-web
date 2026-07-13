@@ -1,6 +1,6 @@
 # Phase P1 — Submission (Project Draft → MVP Gate → Members/Consent → Ownership → Lifecycle)
 
-**Status:** ✅ **Core done** · ✅ **invites + STU-02 backfill closed by P3** (2026-07-06) · 🔨 **Deferred** (thesis upload → Lumen/FR-N4 · linked-member picker — see P3 Open Items)
+**Status:** ✅ **Core done** · ✅ **invites + STU-02 backfill closed by P3** (2026-07-06) · ✅ **Thesis upload done, client + server** (2026-07-13) · 🔨 **Deferred** (linked-member picker — see P3 Open Items)
 **Target:** after P0
 
 ### What's done vs still in progress
@@ -8,12 +8,22 @@
 | | Scope | State |
 |---|---|---|
 | ✅ Done | Draft create/edit, submit-wizard modal (5-step, MVP gate), project detail (viewer-aware), full lifecycle actions (submit/resubmit/withdraw/delete), STU-11 re-review, dashboard + pipeline. **`lib/project/api.ts` calls the live server** (mock store retired). | Shipped, green |
-| 🔨 Deferred | **Thesis upload (STU-05)** — file picker only, no Lumen call (blocked on `src/lumen.ts`/FR-N4). | Stubbed by design |
+| ✅ Closed (2026-07-13) | **Thesis upload (STU-05)** — real multipart upload (`uploadThesisPaper` → `POST /projects/:id/thesis`), wired into the submit/edit flow (save → upload → submit/resubmit), plus a "View" read-link on the owner detail page and the admin review modal. Not blocked on Lumen: storage is interim, real (Postgres `bytea`, see `next-steps-lumen-p4-p5.md`), swapped for Lumen later behind the same contract. Server shipped via `academy-server/documentation/phases/thesis-storage-retrofit-server.md` (30/30 in-process) — also closed a race the server team caught before implementing: the server no longer trusts the client's optimistically-echoed `thesisPaperName` on save, only the upload route itself sets it, so a failed upload can never leave a phantom "View" link. | Shipped, client + server |
 | ✅ Closed by P3 (2026-07-06) | **Incoming invites (STU-08)** — `IncomingInvites` now renders live `member_invite` notifications and posts real accept/decline. **Public-profile published-work backfill (STU-02)** — `/u/$userId` reads the live `?owner=` discovery query. ⚠️ Caveat: the invite loop only delivers end-to-end once the modal's linked-member checkbox becomes a real identifier picker (tracked in the **P3** doc's Open Items). | Shipped with P3 |
 
-> The remaining deferred item is **P1-scoped but gated on later infra** (Lumen), so it stays 🔨
-> here rather than reopening the phase. It's tracked in Open Items and mirrored in
-> `academy-server/documentation/phases/P1-submission-server.md`.
+> The remaining deferred item (linked-member picker) is tracked in the **P3** doc's Open
+> Items. The thesis-upload item above is no longer gated on Lumen — see
+> `documentation/phases/next-steps-lumen-p4-p5.md` for the storage-sequencing decision.
+
+> **Update (thesis-upload retrofit, 2026-07-13):** `SubmitProjectModal` now uploads the
+> picked PDF for real via a new `apiUpload` multipart helper (`lib/api.ts`) and
+> `uploadThesisPaper()`/`thesisPaperUrl()` (`lib/project/api.ts`), through a new
+> `uploadThesis` mutation (`useProjectMutations`). Flow: save (create/update) → upload (if a
+> new file was picked) → submit/resubmit, all inside the existing try/catch → `toast.error`
+> chain. The picker shows "Uploading…" while pending and "Replace" once a file exists;
+> `ProjectDetailView` and `ReviewDecisionModal` both gained a "View" link to the stored PDF
+> (`thesisPaperUrl`, opened in a new tab — the browser sends the SSO cookie on the top-level
+> navigation, no CORS/fetch involved). No new packages; `tsc`/`biome`/`pnpm build` all green.
 
 > **Build note (2026-07-01):** the `project` slice is built client-only. `lib/project/api.ts`
 > is backed by an in-memory mock store (`lib/project/mock.ts`) so create → dashboard → submit
@@ -136,7 +146,7 @@ Let a student create a project as a draft, pass the three-URL MVP gate, declare 
 - **Multi-step form over one giant form** — the submit flow has distinct gates (fields → MVP → ownership → team); stepping keeps validation legible and matches the gate semantics.
 - **MVP gate as a Zod `.refine()`** on the submit schema, not ad-hoc checks — schema is the single source of truth; draft schema is lax, submit schema strict.
 - **Non-user members allowed** (plan §9.3 recommendation) — name + contribution only; consent applies only to linked iSkolar users.
-- **Thesis paper → Lumen vault, not S3** (FR-N4) — provenance/tamper-evidence is native to Lumen; only general media goes to S3.
+- **Thesis paper → Lumen vault, not S3** (FR-N4) — provenance/tamper-evidence is native to Lumen; only general media goes to S3. **Interim (2026-07-13):** stored for real in Postgres `bytea` behind the server's `documents.ts` module until the Lumen pass swaps the backend — see `next-steps-lumen-p4-p5.md`. The client contract (`uploadThesisPaper`/`thesisPaperUrl`) doesn't change either way.
 
 ## Dependencies & Open Items
 

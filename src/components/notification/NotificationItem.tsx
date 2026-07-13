@@ -50,7 +50,10 @@ function linkOf(n: AcademyNotification): { to: string; params?: object } {
 					}
 				: { to: "/student/home" };
 		case "grant_funded":
-			return { to: "/grants" };
+			// The template seed links to the specific grant's detail; without a grantId
+			// field on the notification, the dashboard's "Grant payouts" list is the next
+			// best real target (P4 correction — see the phase doc's Open Items).
+			return { to: "/student/home" };
 		case "member_invite":
 		case "review_decision":
 		case "vault_request":

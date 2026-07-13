@@ -30,8 +30,10 @@ import { Route as AppGrantsRouteImport } from './routes/_app/grants'
 import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
 import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
 import { Route as StudentProjectsNewRouteImport } from './routes/student/projects/new'
+import { Route as StudentGrantsNewRouteImport } from './routes/student/grants/new'
 import { Route as AppUUserIdRouteImport } from './routes/_app/u.$userId'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
+import { Route as AppGrantsGrantIdRouteImport } from './routes/_app/grants.$grantId'
 import { Route as StudentProjectsProjectIdIndexRouteImport } from './routes/student/projects/$projectId/index'
 import { Route as StudentProjectsProjectIdEditRouteImport } from './routes/student/projects/$projectId/edit'
 
@@ -137,6 +139,11 @@ const StudentProjectsNewRoute = StudentProjectsNewRouteImport.update({
   path: '/projects/new',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentGrantsNewRoute = StudentGrantsNewRouteImport.update({
+  id: '/grants/new',
+  path: '/grants/new',
+  getParentRoute: () => StudentRoute,
+} as any)
 const AppUUserIdRoute = AppUUserIdRouteImport.update({
   id: '/u/$userId',
   path: '/u/$userId',
@@ -146,6 +153,11 @@ const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
   id: '/projects/$projectId',
   path: '/projects/$projectId',
   getParentRoute: () => AppRoute,
+} as any)
+const AppGrantsGrantIdRoute = AppGrantsGrantIdRouteImport.update({
+  id: '/$grantId',
+  path: '/$grantId',
+  getParentRoute: () => AppGrantsRoute,
 } as any)
 const StudentProjectsProjectIdIndexRoute =
   StudentProjectsProjectIdIndexRouteImport.update({
@@ -166,7 +178,7 @@ export interface FileRoutesByFullPath {
   '/sponsor': typeof SponsorRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
-  '/grants': typeof AppGrantsRoute
+  '/grants': typeof AppGrantsRouteWithChildren
   '/notifications': typeof AppNotificationsRoute
   '/settings': typeof AppSettingsRoute
   '/role-select': typeof OnboardingRoleSelectRoute
@@ -177,8 +189,10 @@ export interface FileRoutesByFullPath {
   '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/grants/$grantId': typeof AppGrantsGrantIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/u/$userId': typeof AppUUserIdRoute
+  '/student/grants/new': typeof StudentGrantsNewRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
   '/student/projects/': typeof StudentProjectsIndexRoute
   '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
@@ -190,7 +204,7 @@ export interface FileRoutesByTo {
   '/sponsor': typeof SponsorRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
-  '/grants': typeof AppGrantsRoute
+  '/grants': typeof AppGrantsRouteWithChildren
   '/notifications': typeof AppNotificationsRoute
   '/settings': typeof AppSettingsRoute
   '/role-select': typeof OnboardingRoleSelectRoute
@@ -201,8 +215,10 @@ export interface FileRoutesByTo {
   '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/grants/$grantId': typeof AppGrantsGrantIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/u/$userId': typeof AppUUserIdRoute
+  '/student/grants/new': typeof StudentGrantsNewRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
   '/student/projects': typeof StudentProjectsIndexRoute
   '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
@@ -217,7 +233,7 @@ export interface FileRoutesById {
   '/sponsor': typeof SponsorRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/_app/discover': typeof AppDiscoverRoute
-  '/_app/grants': typeof AppGrantsRoute
+  '/_app/grants': typeof AppGrantsRouteWithChildren
   '/_app/notifications': typeof AppNotificationsRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_onboarding/role-select': typeof OnboardingRoleSelectRoute
@@ -229,8 +245,10 @@ export interface FileRoutesById {
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
   '/_public/': typeof PublicIndexRoute
+  '/_app/grants/$grantId': typeof AppGrantsGrantIdRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/_app/u/$userId': typeof AppUUserIdRoute
+  '/student/grants/new': typeof StudentGrantsNewRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
   '/student/projects/': typeof StudentProjectsIndexRoute
   '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
@@ -255,8 +273,10 @@ export interface FileRouteTypes {
     | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/grants/$grantId'
     | '/projects/$projectId'
     | '/u/$userId'
+    | '/student/grants/new'
     | '/student/projects/new'
     | '/student/projects/'
     | '/student/projects/$projectId/edit'
@@ -279,8 +299,10 @@ export interface FileRouteTypes {
     | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/grants/$grantId'
     | '/projects/$projectId'
     | '/u/$userId'
+    | '/student/grants/new'
     | '/student/projects/new'
     | '/student/projects'
     | '/student/projects/$projectId/edit'
@@ -306,8 +328,10 @@ export interface FileRouteTypes {
     | '/student/home'
     | '/student/profile'
     | '/_public/'
+    | '/_app/grants/$grantId'
     | '/_app/projects/$projectId'
     | '/_app/u/$userId'
+    | '/student/grants/new'
     | '/student/projects/new'
     | '/student/projects/'
     | '/student/projects/$projectId/edit'
@@ -472,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentProjectsNewRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/student/grants/new': {
+      id: '/student/grants/new'
+      path: '/grants/new'
+      fullPath: '/student/grants/new'
+      preLoaderRoute: typeof StudentGrantsNewRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/_app/u/$userId': {
       id: '/_app/u/$userId'
       path: '/u/$userId'
@@ -485,6 +516,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/projects/$projectId'
       preLoaderRoute: typeof AppProjectsProjectIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/grants/$grantId': {
+      id: '/_app/grants/$grantId'
+      path: '/$grantId'
+      fullPath: '/grants/$grantId'
+      preLoaderRoute: typeof AppGrantsGrantIdRouteImport
+      parentRoute: typeof AppGrantsRoute
     }
     '/student/projects/$projectId/': {
       id: '/student/projects/$projectId/'
@@ -503,9 +541,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppGrantsRouteChildren {
+  AppGrantsGrantIdRoute: typeof AppGrantsGrantIdRoute
+}
+
+const AppGrantsRouteChildren: AppGrantsRouteChildren = {
+  AppGrantsGrantIdRoute: AppGrantsGrantIdRoute,
+}
+
+const AppGrantsRouteWithChildren = AppGrantsRoute._addFileChildren(
+  AppGrantsRouteChildren,
+)
+
 interface AppRouteChildren {
   AppDiscoverRoute: typeof AppDiscoverRoute
-  AppGrantsRoute: typeof AppGrantsRoute
+  AppGrantsRoute: typeof AppGrantsRouteWithChildren
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
@@ -514,7 +564,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppDiscoverRoute: AppDiscoverRoute,
-  AppGrantsRoute: AppGrantsRoute,
+  AppGrantsRoute: AppGrantsRouteWithChildren,
   AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
@@ -576,6 +626,7 @@ const SponsorRouteWithChildren =
 interface StudentRouteChildren {
   StudentHomeRoute: typeof StudentHomeRoute
   StudentProfileRoute: typeof StudentProfileRoute
+  StudentGrantsNewRoute: typeof StudentGrantsNewRoute
   StudentProjectsNewRoute: typeof StudentProjectsNewRoute
   StudentProjectsIndexRoute: typeof StudentProjectsIndexRoute
   StudentProjectsProjectIdEditRoute: typeof StudentProjectsProjectIdEditRoute
@@ -585,6 +636,7 @@ interface StudentRouteChildren {
 const StudentRouteChildren: StudentRouteChildren = {
   StudentHomeRoute: StudentHomeRoute,
   StudentProfileRoute: StudentProfileRoute,
+  StudentGrantsNewRoute: StudentGrantsNewRoute,
   StudentProjectsNewRoute: StudentProjectsNewRoute,
   StudentProjectsIndexRoute: StudentProjectsIndexRoute,
   StudentProjectsProjectIdEditRoute: StudentProjectsProjectIdEditRoute,

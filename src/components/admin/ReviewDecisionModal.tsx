@@ -16,6 +16,7 @@ import {
 	DialogTitle,
 } from "#/components/ui/dialog";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
+import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
 
@@ -243,6 +244,17 @@ export function ReviewDecisionModal({
 								/>
 								Consented to Academy review and public showcase.
 							</div>
+							{project.type === "thesis_capstone" &&
+							project.ownership.thesisPaperName ? (
+								<a
+									href={thesisPaperUrl(project.id)}
+									target="_blank"
+									rel="noreferrer"
+									className="text-[13px] text-action underline"
+								>
+									View thesis paper — {project.ownership.thesisPaperName}
+								</a>
+							) : null}
 						</div>
 					) : null}
 
