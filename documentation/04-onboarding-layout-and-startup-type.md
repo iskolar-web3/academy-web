@@ -2,7 +2,7 @@
 
 **Status:** ✅ Done (client) · ✅ server live
 **Date:** 2026-07-19
-**Repo(s):** academy-client (this doc) · academy-server (handoff — `documentation/phases/onboarding-basic-info-and-startup-type-server.md`)
+**Repo(s):** academy-client (this doc) · academy-server (handoff — `documentation/handoff/onboarding-basic-info-and-startup-type-server.md`)
 **Traces to:** Owner-directed addition, layered on top of the existing plan rather than replacing it — see the handoff doc's note on `documents/iskolar-academy-plan.md` §4's existing "startup/incubation track" framing.
 **Commit/PR:** —
 
@@ -90,7 +90,7 @@ for an already-operating company using Academy to reach investors.
   `account/model.ts`/`repository.ts`/`server.ts` rewritten to the three role-shaped
   schemas/methods, migration `00010`'s missing `student_profile`/`sponsor_profile`
   columns added directly (additive, no rollback needed). Verified 20/20 in-process; see
-  `academy-server/documentation/phases/onboarding-basic-info-and-startup-type-server.md`.
+  `academy-server/documentation/handoff/onboarding-basic-info-and-startup-type-server.md`.
   The `startup` project-type half was unaffected throughout and stayed correct.
 - Drive the full flow in a browser for both roles: fresh student account → role-select →
   the full 8-field form → student home; fresh sponsor account → role-select → the
@@ -109,7 +109,7 @@ for an already-operating company using Academy to reach investors.
   runtime check. The server also caught and fixed a `pg` `DATE`-serialization bug along
   the way (`birth_date` came back a calendar day off in timezones behind UTC). Verified
   24/24 in-process; see
-  `academy-server/documentation/phases/onboarding-basic-info-and-startup-type-server.md`.
+  `academy-server/documentation/handoff/onboarding-basic-info-and-startup-type-server.md`.
   `MyDetailsPanel` should now render real values — worth a browser check per the item
   above.
 - ~~Item 7 (sponsor onboarding 3-way branch) needs a server change~~ RESOLVED
@@ -121,5 +121,5 @@ for an already-operating company using Academy to reach investors.
   (organization/government both write their `name` to **both** `display_name` and `org`);
   `account/server.ts`'s sponsor branch now selects the schema by the body's own
   `sponsorType`. Verified 26/26 in-process; see
-  `academy-server/documentation/phases/sponsor-onboarding-3-way-branch-server.md`. Worth a
+  `academy-server/documentation/handoff/sponsor-onboarding-3-way-branch-server.md`. Worth a
   browser check per the item above, now covering all three sponsor forms too.

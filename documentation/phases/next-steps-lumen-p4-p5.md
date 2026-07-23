@@ -3,7 +3,7 @@
 **What this is:** the standing reminder + step-by-step guide for the remaining roadmap.
 When the owner says "start P4" / "start P5" / "start the Lumen pass" / "start the PayMongo
 pass", follow the matching step below top-to-bottom. This file is a **guide, not a phase
-doc** — the phase docs (`P4-grants-funding.md`, `P5-monetization-deal-flow.md`, and the
+doc** — the phase docs (`../09-grants-funding.md`, `../10-monetization-deal-flow.md`, and the
 `PL-lumen-pass`/PayMongo-pass pairs created in Steps 3–4) remain the canonical scope
 records; where this guide corrects them, the correction wins and gets folded into the phase
 doc at build time.
@@ -67,10 +67,10 @@ record — **not** a new database engine, not per-domain storage code.
 The immediate follow-up flagged above shipped: `SubmitProjectModal` now uploads the real PDF
 (`uploadThesisPaper` → `POST /projects/:id/thesis`, wired save → upload → submit/resubmit),
 and both `ProjectDetailView` and the admin `ReviewDecisionModal` gained a "View" link to the
-stored document. See `phases/P1-submission.md` → "Update (thesis-upload retrofit,
+stored document. See `../06-submission.md` → "Update (thesis-upload retrofit,
 2026-07-13)" for the exact file list. **The server side is the first real build of
 `documents.ts`**, done the same day —
-`academy-server/documentation/phases/thesis-storage-retrofit-server.md` (30/30 in-process).
+`academy-server/documentation/handoff/thesis-storage-retrofit-server.md` (30/30 in-process).
 P4's proposal-PDF and P5's vault/badge uploads (Steps 1–2 below) **reuse this same module**
 — it's already built, not just planned.
 
@@ -124,12 +124,12 @@ P4's proposal-PDF and P5's vault/badge uploads (Steps 1–2 below) **reuse this 
 The client shipped: real gallery + detail + create-request page, the inline
 `GrantFundPanel` simulated checkout, the student dashboard's "Grant payouts" section, and
 admin cancel-with-reason. Full corrections list and file inventory in
-`phases/P4-grants-funding.md` → "Realized Build — Client". Server done the same day —
-`academy-server/documentation/phases/P4-grants-funding-server.md` (51/51 in-process) —
+`../09-grants-funding.md` → "Realized Build — Client". Server done the same day —
+`academy-server/documentation/07-grants-funding-server.md` (51/51 in-process) —
 this is where `src/payments.ts` got built for real (simulated internals), ready to be
 reused as-is by P5's tier-subscribe flow below.
 
-**Scope source (kept for the record):** `P4-grants-funding.md` was authoritative for
+**Scope source (kept for the record):** `../09-grants-funding.md` was authoritative for
 stories/slices before the reference pass, **with these corrections** (folded into the
 phase doc's Realized Build, kept here too since this guide predates that pass):
 
@@ -182,7 +182,7 @@ not tiered, so no pricing/escrow/KYC decision is even relevant yet):**
    above).
 5. STU-16 graduation reuses the P1 submit flow unchanged — grant and project stay unlinked.
 
-**Server delivered:** `P4-grants-funding-server.md` — `grant/` slice (`grant_request` —
+**Server delivered:** `academy-server/documentation/07-grants-funding-server.md` — `grant/` slice (`grant_request` —
 request CRUD, browse, admin cancel-with-reason) **plus** `src/payments.ts` in simulated
 mode. Migration `00008` (DB v8) adds `grant_request` (+ `document_id` FK, all core fields
 `NOT NULL` — no draft laxity) and `grant_contribution` (`provider` column, `'simulated' |
@@ -208,8 +208,8 @@ reusing `src/payments.ts`), a real deal-flow board over P3 data, a real watchlis
 go-live-alerts toggle, the student pitch-vault page with 14-day access grants, a
 sponsor-side vault-access button + document read, and an admin Badges tab — plus fixing two
 pre-existing wrong stand-ins for the Verified Builder badge. Full corrections list and file
-inventory in `phases/P5-monetization-deal-flow.md` → "Realized Build — Client". Server done
-the same day — `academy-server/documentation/phases/P5-monetization-server.md` (67/67
+inventory in `../10-monetization-deal-flow.md` → "Realized Build — Client". Server done
+the same day — `academy-server/documentation/08-monetization-server.md` (67/67
 in-process) — reused both `src/payments.ts` (P4) and `@/documents` (P1 retrofit) as-is, no
 new cross-cutting modules. Two design gaps found and closed before implementing: Venture
 Partner subscribe attempts are now rejected server-side (the client's own `PlanTable` never
@@ -217,7 +217,7 @@ offers it as self-serve, but nothing else stopped a direct call), and re-request
 access after `denied`/`revoked` now reopens the same grant instead of a silent no-op
 forever (matching what `VaultAccessButton`'s UI already promises).
 
-**Scope source (kept for the record):** `P5-monetization-deal-flow.md` was authoritative for
+**Scope source (kept for the record):** `../10-monetization-deal-flow.md` was authoritative for
 stories/slices before the reference pass, **with these corrections** (folded into the phase
 doc's Realized Build, kept here too since this guide predates that pass):
 
@@ -292,7 +292,7 @@ storage + short-lived signed links; AES-256 applies to S3 media only, not vault 
 the target state Step 3 migrates toward — during P5 itself, protection is "auth-gated
 Postgres read," documented above, which is a stricter-not-looser interim.
 
-**Server delivered:** `P5-monetization-server.md` — `subscription/` (plan/tier model,
+**Server delivered:** `academy-server/documentation/08-monetization-server.md` — `subscription/` (plan/tier model,
 `requireEntitlement()` now real in `auth.ts` via a small `EntitlementResolver` interface,
 backed by `src/payments.ts`'s `subscribeToTier()` in simulated mode) · `vault/` (7 routes:
 implicit per-project vaults, 14-day access grants, owner/approved-sponsor document reads

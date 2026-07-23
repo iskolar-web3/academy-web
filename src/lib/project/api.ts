@@ -9,7 +9,7 @@ import {
 
 /**
  * Project API — calls the `project` slice on academy-server (see that repo's
- * `documentation/phases/P1-submission-server.md` for the contract). Reads parse through Zod;
+ * `documentation/04-submission-server.md` for the contract). Reads parse through Zod;
  * lifecycle transitions POST to their own sub-paths so the **server** owns the status machine
  * and the MVP gate (the client gate is UX only). Query keys/signatures are unchanged from the
  * earlier mock store, so hooks and UI didn't move.

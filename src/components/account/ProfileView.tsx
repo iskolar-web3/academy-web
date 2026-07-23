@@ -1,4 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
+import { format } from "date-fns";
 import {
 	type AccountProfile,
 	EDUCATION_LEVEL_LABELS,
@@ -43,11 +44,7 @@ const asideLabelCls =
 /** "2004-03-12" → "March 12, 2004" — no time-of-day, so no timezone shift to worry about. */
 function formatBirthDate(iso: string): string {
 	const [year, month, day] = iso.split("-").map(Number);
-	return new Date(year, month - 1, day).toLocaleDateString("en-US", {
-		month: "long",
-		day: "numeric",
-		year: "numeric",
-	});
+	return format(new Date(year, month - 1, day), "MMMM d, yyyy");
 }
 
 /**

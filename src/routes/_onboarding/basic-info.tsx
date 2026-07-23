@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -194,13 +195,7 @@ function BirthDateField({
 							selected ? "" : "text-content-faint"
 						}`}
 					>
-						{selected
-							? selected.toLocaleDateString("en-US", {
-									month: "long",
-									day: "numeric",
-									year: "numeric",
-								})
-							: "Set birth date"}
+						{selected ? format(selected, "MMMM d, yyyy") : "Set birth date"}
 						<CalendarIcon className="size-4 text-content-faint" aria-hidden />
 					</button>
 				</PopoverTrigger>

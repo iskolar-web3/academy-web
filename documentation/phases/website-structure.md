@@ -1,7 +1,7 @@
 # academy-client — Website Structure
 
 **Status:** 🔨 Living reference · **Date:** 2026-07-01 · **Repo:** academy-client
-**Traces to:** Plan §3 (architecture), phases [`phases/P0-foundation.md`](./phases/P0-foundation.md)
+**Traces to:** Plan §3 (architecture), [`../05-foundation.md`](../05-foundation.md)
 
 A map of how the frontend is organized — the folder architecture, the route groups, and
 the URL layout. Keep this in sync when route groups or domains are added.
@@ -150,7 +150,7 @@ shells that should own top-level URLs (`/`, `/login`, `/u/$userId`) stay pathles
 mount-gated so SSR and the first client render both show a visitor (no hydration mismatch).
 Set a dev `auth_token` cookie (academy-server `src/dev/mint-token.ts`) to sign in.
 
-**Guards are live (as of `phases/P0-foundation.md` → Realized Build — Client)** and **client/effect-based**, not
+**Guards are live (as of `../05-foundation.md`)** and **client/effect-based**, not
 `beforeLoad`. `src/hooks/auth/useRouteGuard.ts` reads the mount-gated session; each guarded
 layout calls it and renders `components/layout/RouteFallback` until the session resolves —
 so SSR and the first client render are identical (no mismatch) — then admits the route or
@@ -177,7 +177,7 @@ bottom CTA all open `SignInPopover`) — there's no `/login` route to redirect t
 ## 4. Blocked-on-server files (drop-in skeletons)
 
 The client calls are **live** against the P0 endpoint contract; the server delivers the
-matching handlers (`academy-server/documentation/phases/P0-foundation-server.md`):
+matching handlers (`academy-server/documentation/03-foundation-server.md`):
 
 - `lib/auth/api.ts` — `validateSessionQuery` (`GET /auth/session`), `ssoLoginUrl`.
 - `lib/account/api.ts` — `myProfileQuery` (`GET /accounts/me/profile`), `profileQuery`
@@ -201,7 +201,7 @@ not-found / error states in dev — sign in by minting a dev token.
   utilities (`text-content-soft`, `bg-surface-tint`, `text-action`) and fixed-component
   classes (`.card-surface`, `.chip`, `.status-pill`, `.eyebrow`, `.container-page`).
 - **UI primitives — Shadcn for behavior, template classes for visuals** (see
-  `05-shadcn-library-adoption.md`): interactive primitives come from `components/ui/*`
+  `../03-shadcn-library-adoption.md`): interactive primitives come from `components/ui/*`
   (Radix behavior, restyled 1:1 to the design-template — Dialog, DropdownMenu, Switch,
   Tabs, Checkbox, Button, sonner Toaster). Buttons: `<Button variant size>` (cva) is the
   single source going forward; `.btn-*` classes retire as surfaces migrate. Static

@@ -5,7 +5,7 @@ import type { ModerationInput, ReviewDecisionInput } from "#/lib/review/model";
 
 /**
  * Review API — calls the `review` slice on academy-server (contract in that repo's
- * `documentation/phases/P2-review-server.md`). All routes are admin-only
+ * `documentation/05-review-server.md`). All routes are admin-only
  * (`requireRole("admin")`); the server owns the decision status machine and writes the
  * `review_decision` notification. Queue + moderation reads reuse the project `Project` shape.
  */

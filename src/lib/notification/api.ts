@@ -7,7 +7,7 @@ import {
 
 /**
  * Notification API (PLT-07) — calls the `notification` slice on academy-server (contract in
- * that repo's `documentation/phases/P3-discovery-contact-server.md`). The list powers the
+ * that repo's `documentation/06-discovery-contact-server.md`). The list powers the
  * header bell, the notifications page, and the dashboard invites card; invite responses
  * (STU-08) post to the P1 member sub-paths that land with this slice.
  */

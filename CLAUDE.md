@@ -23,7 +23,7 @@ Run a single test file: `pnpm test src/path/to/file.test.ts`
 
 **iSkolar Academy** is the frontend SPA. Stack: React 19 + Vite 8 + TanStack Start (SSR-capable, file-based router) + TanStack Query + Tailwind CSS 4 + Shadcn/ui. The product is a **student-project showcase, discovery & funding platform** (a subsidiary of iSkolar) — see `documents/iskolar-academy-plan.md`, `-prd.md`, and `-design-brief.md`. It reuses the iSkolar reference design system + engineering patterns. Files split across **AWS S3** (general media) and the **Lumen document vault** (provenance/sensitive docs); payments via **PayMongo**.
 
-> **Structure reference:** [`documentation/website-structure.md`](documentation/website-structure.md) — the hybrid Vertical Slice layout (domains across `routes`/`lib`/`hooks`/`components`), the route groups + URL map, auth/guards state, and conventions. Keep it in sync when a route group or domain is added.
+> **Structure reference:** [`documentation/phases/website-structure.md`](documentation/phases/website-structure.md) — the hybrid Vertical Slice layout (domains across `routes`/`lib`/`hooks`/`components`), the route groups + URL map, auth/guards state, and conventions. Keep it in sync when a route group or domain is added.
 
 ### Provider Stack (router.tsx)
 ```
@@ -36,7 +36,7 @@ TanStack Start with file-based routes under `src/routes/`. `__root.tsx` is the r
 
 `routeTree.gen.ts` is auto-generated — do not edit manually. Run `pnpm generate-routes` after adding/renaming routes.
 
-> Route groups follow the iSkolar reference convention (`D:/GithubRepo/iskolar-main/web/`). The **live** route groups, guards, and URL map are not tracked here — see `documentation/website-structure.md`.
+> Route groups follow the iSkolar reference convention (`D:/GithubRepo/iskolar-main/web/`). The **live** route groups, guards, and URL map are not tracked here — see `documentation/phases/website-structure.md`.
 
 ### Data Flow
 - **API calls** live in `src/lib/<domain>/` (`api.ts` + `model.ts`), exporting `queryOptions()` builders and mutation functions; everything goes through `apiFetch` in `src/lib/api.ts` (sends `credentials: "include"`, parses the server's `{ message, data }` envelope, throws `body.message` on non-ok)
@@ -46,7 +46,7 @@ TanStack Start with file-based routes under `src/routes/`. `__root.tsx` is the r
 - `src/lib/utils.ts` holds `cn()` (clsx + tailwind-merge) for Shadcn
 
 ### Current State & Pending Work
-Not tracked here — CLAUDE.md holds durable rules only. What's built, pending, or stubbed lives in the `documentation/README.md` progress table and `documentation/phases/P*.md` (each doc's stub/deferred tables record cross-phase boundaries).
+Not tracked here — CLAUDE.md holds durable rules only. What's built, pending, or stubbed lives in the `documentation/README.md` progress table and each phase's `Open Items` section.
 
 ## Environment Variables
 
@@ -60,15 +60,10 @@ VITE_BACKEND_URL=http://localhost:5000
 
 - **Linter/Formatter:** Biome (tabs, double quotes) — run `pnpm check` before committing
 - **Path alias:** `#/*` maps to `./src/*` (defined in `package.json` `imports`)
-- **UI primitives — "Shadcn for behavior, template classes for visuals"** (see `documentation/05-shadcn-library-adoption.md`): interactive primitives live in `src/components/ui/` (Shadcn new-york/zinc, generated via `pnpm dlx shadcn@latest add <component>` then **restyled 1:1 to the design-template**). In use: Dialog, DropdownMenu, Switch, Tabs, Checkbox, Button (cva variants — the single button source; `.btn-*` CSS classes retire as surfaces migrate), sonner Toaster. Static surfaces (cards/chips/pills) stay hand-rolled token classes; native `<select>` stays native.
+- **UI primitives — "Shadcn for behavior, template classes for visuals"**: interactive primitives live in `src/components/ui/` (Shadcn new-york/zinc, generated via `pnpm dlx shadcn@latest add <component>` then **restyled 1:1 to the design-template**). In use: Dialog, DropdownMenu, Switch, Tabs, Checkbox, Button (cva variants — the single button source; `.btn-*` CSS classes retire as surfaces migrate), sonner Toaster. Static surfaces (cards/chips/pills) stay hand-rolled token classes; native `<select>` stays native.
 - **Styling:** Tailwind CSS 4 via `@tailwindcss/vite`; single entry `src/styles.css` (design tokens + the Shadcn variable bridge `--primary → --color-action` etc.)
 
 ## Library & Dependency Discipline
-
-> Why this section exists: an audit (2026-07-06, `documentation/05-shadcn-library-adoption.md`)
-> found the Shadcn scaffold empty and `cn()`/`class-variance-authority`/`lenis`/`tw-animate-css`
-> installed but never exercised — the stack had been mirrored from the iSkolar reference without
-> verifying usage. Don't let that recur.
 
 **Analyze before writing — in this order:**
 
@@ -88,11 +83,6 @@ VITE_BACKEND_URL=http://localhost:5000
    reference uses is adopted only when this repo has the feature that needs it.
 5. **After removing code**, re-run the usage check for the packages it imported — last-consumer
    removals must drop the dependency too.
-
-All current deps are exercised: `react-hook-form`/`zod`/`@hookform/resolvers` (forms + wire
-parsing) · `framer-motion` (landing/upvote) · `lenis` (landing smooth scroll) ·
-`radix-ui`/`class-variance-authority`/`clsx`/`tailwind-merge` (ui primitives) ·
-`sonner`/`tw-animate-css` (toast + enter/exit animations) · `lucide-react` (icons).
 
 ## SSR & Hydration
 

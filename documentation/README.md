@@ -12,11 +12,13 @@ A phase-by-phase, **file-by-file narrative of how `academy-client` was built** �
 
 ## Forward-looking phase plans
 
-Before a phase ships, its **planned** scope (FE slices, files to create/affect, implementation process) lives in [`phases/`](./phases/README.md) — one `P0…P5` doc per product phase, written in planned/before-progress tense. As a phase actually ships, migrate its content into a numbered `NN-*.md` build-order doc below and flip the phase status.
+Before a phase ships, its **planned** scope (FE slices, files to create/affect, implementation process) lives in [`phases/`](./phases/README.md), written in planned/before-progress tense. As a phase actually ships, migrate its content into a numbered `NN-*.md` build-order doc below and flip the phase status.
 
 ## Reference docs
 
-- [`website-structure.md`](./website-structure.md) — living map of the folder architecture (hybrid VSA), route groups, and the URL layout. Update it whenever a route group or domain is added.
+- [`phases/website-structure.md`](./phases/website-structure.md) — living map of the folder architecture (hybrid VSA), route groups, and the URL layout. Update it whenever a route group or domain is added.
+- [`phases/next-steps-lumen-p4-p5.md`](./phases/next-steps-lumen-p4-p5.md) — the standing roadmap guide for the Lumen pass and the real-PayMongo pass.
+- [`phases/manual-testing-guide.md`](./phases/manual-testing-guide.md) — a single-file, step-by-step click-through test script for the whole system, auth through every feature phase.
 
 ## Status legend
 
@@ -30,33 +32,27 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 
 | Phase | Doc | Status | Date | Traces to |
 |---|---|---|---|---|
-| 00 | `00-project-scaffold.md` | 📋 Planned | — | Plan §1 (scaffold) |
 | 01 | `01-pnpm-migration.md` | ✅ Done | 2026-06-30 | `documents/iskolar-academy-runtime-migration-plan.md` §3 |
-| **P0** | [`phases/P0-foundation.md`](./phases/P0-foundation.md) → Realized Build | 🔨 client done | 2026-07-03 | Plan §3/§6/§7 · PLT-01…06 · STU-01/02 · SPN-01/02 |
-| **P1** | [`phases/P1-submission.md`](./phases/P1-submission.md) | ✅ Core done · ✅ invites+STU-02 closed by P3 · ✅ thesis upload done, client+server | 2026-07-03 | Plan §6–7 · STU-03…STU-11 |
-| **P2** | [`phases/P2-review.md`](./phases/P2-review.md) | ✅ Client done · ✅ server live | 2026-07-06 | Plan §6–7 · ADM-01/03/04/05/06 |
-| **P3** | [`phases/P3-discovery-contact.md`](./phases/P3-discovery-contact.md) | ✅ Client done · ✅ server live · 🔨 linked-member picker open | 2026-07-06 | Plan §6–7 · SPN-03…08 · STU-12/13 · PLT-07/08 |
-| **P4** | [`phases/P4-grants-funding.md`](./phases/P4-grants-funding.md) → Realized Build | ✅ Client done · ✅ server live | 2026-07-13 | Plan §4/§6–7 · STU-14/15/16 · SPN-09/10/11 · ADM-02 |
-| **P5** | [`phases/P5-monetization-deal-flow.md`](./phases/P5-monetization-deal-flow.md) → Realized Build | ✅ Client done · ✅ server live | 2026-07-15 | Plan §4/§6–7 · STU-17/18 · SPN-12…16 · ADM-07 |
-| 03 | `03-student-dashboard.md` | ✅ Done | 2026-07-02 | Plan §6–7 (**P1**) · STU-09/10/11 |
-| 04 | `04-app-header-and-discover-gallery.md` | ✅ Done | 2026-07-02 | Plan §6 · SPN-03 (**P3** gallery; P0 header) |
-| 05 | `05-shadcn-library-adoption.md` | ✅ Done | 2026-07-06 | Plan §3 · CLAUDE.md code style · iSkolar blueprint §6 |
-| 06 | `06-onboarding-layout-and-startup-type.md` | ✅ Client done (onboarding fields corrected) · 🔨 server built against the earlier wrong fields, needs a follow-up pass | 2026-07-19 | Owner-directed addition — see doc for plan-note |
+| 03 | `03-shadcn-library-adoption.md` | ✅ Done | 2026-07-06 | Plan §3 · CLAUDE.md code style · iSkolar blueprint §6 |
+| 04 | `04-onboarding-layout-and-startup-type.md` | ✅ Client done · ✅ server live | 2026-07-19 | Owner-directed addition — see doc for plan-note |
+| 05 | `05-foundation.md` | ✅ Client done · ✅ server live | 2026-07-03 | Plan §3/§6/§7 · PLT-01…06 · STU-01/02 · SPN-01/02 |
+| 06 | `06-submission.md` | ✅ Client done · ✅ server live | 2026-07-13 | Plan §6–7 · STU-03…STU-11 |
+| 07 | `07-review.md` | ✅ Client done · ✅ server live | 2026-07-06 | Plan §6–7 · ADM-01/03/04/05/06 |
+| 08 | `08-discovery-contact.md` | ✅ Client done · ✅ server live · 🔨 linked-member picker open | 2026-07-06 | Plan §6–7 · SPN-03…08 · STU-12/13 · PLT-07/08 |
+| 09 | `09-grants-funding.md` | ✅ Client done · ✅ server live | 2026-07-20 | Plan §4/§6–7 · STU-14/15/16 · SPN-09/10/11 · ADM-02 |
+| 10 | `10-monetization-deal-flow.md` | ✅ Client done · ✅ server live | 2026-07-15 | Plan §4/§6–7 · STU-17/18 · SPN-12…16 · ADM-07 |
 
-> **P0 lives in one place.** The former standalone build docs `02-auth-session-wiring.md`
-> (PLT-01/02/03) and `05-p0-foundation-client.md` (PLT-04/05, profiles) were **folded into**
-> [`phases/P0-foundation.md`](./phases/P0-foundation.md) → "Realized Build — Client" so P0 has a
-> single canonical record instead of scattered `NN` entries. `03` (student dashboard) is **P1**
-> and `04`'s Discover gallery is **P3** — only its HEADER/RoleNav belongs to P0 — so those stay
-> as their own docs, cross-linked from P0.
+> **Numbering note (2026-07-24 documentation pass):** phase numbers `05`–`10` follow product-phase
+> order (Foundation → Submission → Review → Discovery & Contact → Grants & Funding →
+> Monetization), not strict day-by-day chronology — some UI fragments (the dashboard, the header,
+> the Discover gallery shell) were originally built early and are now folded into the phase doc
+> that actually owns that surface, rather than kept as separate fragment docs. `02` is a
+> permanently retired gap (an early standalone auth-wiring doc was folded into `05-foundation.md`
+> before this pass) — not reused.
 
 > **Package-manager migration (Bun → pnpm)** — done 2026-06-30 (`01-pnpm-migration.md`). The client keeps its Node/Vite runtime; only the package manager changed (lockfile + docs, no source change). The server's runtime migration (Bun → Node 24) is the next phase.
 >
-> **Student dashboard** — done 2026-07-02 (`03-student-dashboard.md`). `/student/home` rebuilt as a 1:1 port of the design-template STUDENT DASHBOARD (profile sidebar + stat tiles + pipeline-tracker project cards). `/student/projects` redirects to it; destructive lifecycle actions moved to the detail page.
->
-> **App header + Discover gallery** — done 2026-07-02 (`04-app-header-and-discover-gallery.md`). The signed-in top nav was rebuilt to the design-template HEADER (role-aware Discover · Grants · My Projects + bell + user pill); `/discover` now renders the showcase gallery and `/grants` is a P4 placeholder.
->
-> **Shadcn/Radix adoption + library audit** — done 2026-07-06 (`05-shadcn-library-adoption.md`).
+> **Shadcn/Radix adoption + library audit** — done 2026-07-06 (`03-shadcn-library-adoption.md`).
 > An audit found several packages installed by mirroring the iskolar-main reference but never
 > exercised (empty Shadcn scaffold, unused `cn()`/cva/lenis/tw-animate). Fixed by adopting
 > **Shadcn for behavior, template classes for visuals**: restyled `ui/` primitives (Dialog,
@@ -64,9 +60,7 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 > menus, settings toggle, admin tab-rail, and the design-template TOAST — zero visual drift.
 > Standing rule: a package enters `package.json` only with a consumer in the same change.
 >
-> **P0 foundation (client)** — done 2026-07-03, documented in `phases/P0-foundation.md` →
-> "Realized Build — Client". Turned on client route guards (SSR-safe, effect-based), replaced
-> the `lib/account` stubs with real endpoint calls, and wired onboarding role-confirm + profile
-> edit. Rebuilt onboarding, profile-view (`/u/$userId`), and profile-edit surfaces 1:1 to the
-> design-template. The server half of P0 is handed off in
-> `academy-server/documentation/phases/P0-foundation-server.md`.
+> **Foundation** — done 2026-07-03 (`05-foundation.md`). Client route guards (SSR-safe,
+> effect-based), real `account` endpoint calls replacing stubs, onboarding role-confirm, profile
+> edit/view, the shared signed-in header, and the visitor landing — all rebuilt 1:1 to the
+> design-template. Server half: `academy-server/documentation/03-foundation-server.md`.

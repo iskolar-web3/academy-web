@@ -9,7 +9,7 @@ import {
 
 /**
  * Grant API — calls the `grant` slice on academy-server (see that repo's
- * `documentation/phases/P4-grants-funding-server.md` for the contract). No draft state: a
+ * `documentation/07-grants-funding-server.md` for the contract). No draft state: a
  * grant is created and the required title-proposal PDF is uploaded in **one** multipart
  * request (matching the template's single "Publish grant request" button — there is no
  * two-step create-then-upload the user ever sees). The fund action is the simulated-

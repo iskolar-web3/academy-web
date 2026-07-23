@@ -9,7 +9,7 @@ import {
 
 /**
  * Discover API — calls the `discover` slice on academy-server (contract in that repo's
- * `documentation/phases/P3-discovery-contact-server.md`). Published-only projections;
+ * `documentation/06-discovery-contact-server.md`). Published-only projections;
  * search/filter/sort run **server-side** (tsvector search; Trending = upvotes last 30 days,
  * Top = all-time). The teaser read is public (no cookie) for the visitor landing (PLT-06).
  */

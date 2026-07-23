@@ -13,7 +13,7 @@ import { type AcademyUser, academyUserSchema } from "#/lib/auth/model";
 
 /**
  * Account API. Calls the `account` slice on `academy-server` (see that repo's
- * `documentation/phases/P0-foundation-server.md` for the endpoint contract). Own-profile
+ * `documentation/03-foundation-server.md` for the endpoint contract). Own-profile
  * reads/writes (`me`) return `MyAccountProfile` — `AccountProfile` plus the
  * onboarding-only fields (gender/birthDate/phone/educationLevel), PII never returned by
  * the public by-id endpoint. The SSO cookie rides along via `apiFetch`.
