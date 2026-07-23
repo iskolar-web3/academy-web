@@ -83,6 +83,7 @@ export function Hero() {
 	}
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: cosmetic mouse-parallax only (shifts decorative background glyphs); nothing here is an activatable control, so no keyboard equivalent applies.
 		<section
 			className="relative overflow-hidden"
 			onMouseMove={onMove}
