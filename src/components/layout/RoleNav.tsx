@@ -82,12 +82,12 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 	const onLogout = async () => {
 		setOpen(null);
 		await logout();
-		navigate({ to: "/login" });
+		navigate({ to: "/" });
 	};
 
 	return (
 		<header className="sticky top-0 z-40 border-line border-b bg-[rgba(248,250,255,0.86)] backdrop-blur-md">
-			<div className="container-page flex h-[66px] items-center justify-between">
+			<div className="container-page relative flex h-[66px] items-center justify-between">
 				<Link to="/" className="flex items-center gap-[11px]">
 					<img src="/logo-academy.png" alt="" className="h-[38px] w-auto" />
 					<span className="text-base uppercase tracking-[0.16em] text-action">
@@ -95,7 +95,10 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 					</span>
 				</Link>
 
-				<nav className="hidden items-center gap-1.5 md:flex">
+				{/* Centered on the header itself, not just "between" the logo and the
+				    account pill — those two sides are rarely the same width (a long
+				    display name in the pill used to visibly drag this off-center). */}
+				<nav className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 hidden items-center gap-1.5 md:flex">
 					{NAV[activeRole].map((item) => (
 						<Link
 							key={item.to}
@@ -182,14 +185,12 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 						<DropdownMenuTrigger asChild>
 							<button
 								type="button"
+								title={name}
 								className={cn(
-									"flex h-[42px] items-center gap-[9px] rounded-[12px] border bg-surface-card py-0 pr-2 pl-[15px] transition duration-150 hover:bg-surface-sunken active:scale-[0.97]",
+									"flex size-[42px] flex-none items-center justify-center rounded-[12px] border bg-surface-card transition duration-150 hover:bg-surface-sunken active:scale-[0.97]",
 									open === "profile" ? "border-action" : "border-line",
 								)}
 							>
-								<span className="hidden text-[13.5px] text-content-heading sm:block">
-									{name}
-								</span>
 								<span className="flex size-[30px] items-center justify-center rounded-[9px] bg-action text-[12.5px] text-white">
 									{initialsOf(name)}
 								</span>
@@ -229,11 +230,8 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 
 							<DropdownMenuItem asChild>
 								<Link
-									to={
-										activeRole === AcademyRole.Sponsor
-											? "/sponsor/profile"
-											: "/student/profile"
-									}
+									to="/u/$userId"
+									params={{ userId: user?.academyUserId ?? "" }}
 								>
 									<User className="size-[18px] text-action" aria-hidden />
 									Profile
@@ -260,9 +258,11 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 								) : null}
 							</DropdownMenuItem>
 							{activeRole === AcademyRole.Student ? (
-								<DropdownMenuItem>
-									<Lock className="size-[18px] text-action" aria-hidden />
-									My pitch vaults
+								<DropdownMenuItem asChild>
+									<Link to="/student/vaults">
+										<Lock className="size-[18px] text-action" aria-hidden />
+										My pitch vaults
+									</Link>
 								</DropdownMenuItem>
 							) : null}
 							{activeRole === AcademyRole.Sponsor ? (

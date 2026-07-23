@@ -16,8 +16,15 @@ export const PROJECT_STATUSES = [
 ] as const;
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 
-export const PROJECT_TYPES = ["idea", "thesis_capstone"] as const;
+export const PROJECT_TYPES = ["idea", "thesis_capstone", "startup"] as const;
 export type ProjectType = (typeof PROJECT_TYPES)[number];
+
+/** Human label for a project type — the single source the picker, cards, and review queue share. */
+export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
+	idea: "Idea / MVP",
+	thesis_capstone: "Thesis / Capstone",
+	startup: "Startup",
+};
 
 export const CATEGORIES = [
 	"EdTech",
@@ -78,6 +85,13 @@ export interface Project {
 	upvotes: number;
 	hue: number;
 	school: string;
+	/**
+	 * Verified Builder badge (P5, ADM-07) — additive, admin-granted, never gates anything.
+	 * Correction: earlier code stood this in with `status === "published"` (`ProjectDetailView`)
+	 * and a hardcoded `true` (`discover/model.ts`'s landing-teaser mapper) — both wrong, since
+	 * a badge is a separate, selectively-granted signal, not automatic from publishing.
+	 */
+	verified: boolean;
 }
 
 /** The fields a create/update accepts (status + lifecycle/display metadata are server-owned). */
@@ -90,6 +104,7 @@ export type ProjectInput = Omit<
 	| "upvotes"
 	| "hue"
 	| "school"
+	| "verified"
 >;
 
 const urlOrEmpty = z.union([z.url(), z.literal("")]);
@@ -132,6 +147,7 @@ export const projectSchema = z.object({
 	upvotes: z.number(),
 	hue: z.number(),
 	school: z.string(),
+	verified: z.boolean(),
 });
 
 export const projectListSchema = z.array(projectSchema);

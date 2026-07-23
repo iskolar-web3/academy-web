@@ -1,8 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { SignInPopover } from "#/components/landing/SignInPopover";
 
 /**
  * Slim public top bar for the visitor landing — logo + a single sign-in entry.
- * Sign-in routes to the /login auth page, which redirects to iSkolar SSO.
+ * Sign-in opens a popover anchored below this button — there's no separate `/login`
+ * page; guards/logout redirect back to the landing page instead.
  */
 export function LandingHeader() {
 	return (
@@ -18,9 +19,11 @@ export function LandingHeader() {
 						Academy
 					</span>
 				</div>
-				<Link to="/login" className="btn btn-secondary h-11 px-6 text-sm">
-					Sign in
-				</Link>
+				<SignInPopover>
+					<button type="button" className="btn btn-secondary h-11 px-6 text-sm">
+						Sign in
+					</button>
+				</SignInPopover>
 			</div>
 		</header>
 	);

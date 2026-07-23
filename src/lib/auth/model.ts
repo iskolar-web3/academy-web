@@ -49,6 +49,8 @@ export const academyUserSchema = z.object({
 	iskolarUserId: z.string(),
 	academyRole: academyRoleSchema,
 	roleConfirmed: z.boolean(),
+	/** True once the basic-info onboarding step (name + school/org) is submitted. */
+	onboardingCompleted: z.boolean(),
 	displayName: z.string().nullable(),
 	avatarUrl: z.string().nullable(),
 	createdAt: z.string(),

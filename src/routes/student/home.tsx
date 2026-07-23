@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
+import { AdsPanel } from "#/components/layout/AdsPanel";
+import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { IncomingInvites } from "#/components/project/IncomingInvites";
 import { MyProjectCard } from "#/components/project/MyProjectCard";
 import { SubmitProjectModal } from "#/components/project/SubmitProjectModal";
-import { useSession } from "#/hooks/auth/useSession";
+import { useProfilePanel } from "#/hooks/account/useProfilePanel";
 import { useMyGrants } from "#/hooks/grant/useMyGrants";
 import { useMyProjects } from "#/hooks/project/useMyProjects";
 import { formatPeso, grantStatusMeta } from "#/lib/grant/helper";
@@ -12,44 +14,32 @@ import { dashboardStats } from "#/lib/project/helper";
 
 /**
  * Student dashboard (STU-09) — a 1:1 build of the design-template STUDENT DASHBOARD:
- * a sticky profile sidebar, four stat tiles, and the owned-project list with lifecycle
- * pipeline trackers. Profile detail (school/skills) is placeholder until the profile API
- * lands (STU-01/02); the name comes from the live session.
+ * a sticky profile sidebar (now the shared `AppPageLayout` left column), four stat
+ * tiles, and the owned-project list with lifecycle pipeline trackers, plus the
+ * right-column ad slot.
  */
 export const Route = createFileRoute("/student/home")({
 	component: StudentHome,
 });
 
-/** First letters of the first two words — "test-student-1" → "TS". */
-function initialsOf(name: string): string {
-	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
-	const letters = parts.slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "");
-	return letters.join("") || "S";
-}
-
 function StudentHome() {
-	const { user } = useSession();
+	const panel = useProfilePanel();
 	const { data: projects = [], isLoading } = useMyProjects();
 	const { data: myGrants = [] } = useMyGrants();
 	const stats = dashboardStats(projects);
 	const [submitOpen, setSubmitOpen] = useState(false);
 
-	const name = user?.displayName || user?.iskolarUserId || "Student";
-	const profile = {
-		userId: user?.iskolarUserId || "me",
-		name,
-		initials: initialsOf(name),
-		role: "Student",
-		// Placeholder profile detail until the profile API lands (STU-01/02).
-		school: "UP Diliman",
-		since: "iSkolar Academy member",
-		skills: ["Machine Learning", "React Native", "Mobile", "UX"],
-	};
-
 	return (
-		<div className="grid grid-cols-1 gap-7 lg:grid-cols-[282px_1fr] lg:items-start">
-			<StudentProfileCard profile={profile} />
-
+		<AppPageLayout
+			left={
+				panel ? (
+					<StudentProfileCard profile={panel} />
+				) : (
+					<div className="h-64 animate-pulse rounded-[18px] bg-surface-card" />
+				)
+			}
+			right={<AdsPanel />}
+		>
 			<div>
 				<div className="mb-[22px] flex items-center justify-end gap-2.5">
 					<Link
@@ -140,6 +130,6 @@ function StudentHome() {
 			{submitOpen ? (
 				<SubmitProjectModal onClose={() => setSubmitOpen(false)} />
 			) : null}
-		</div>
+		</AppPageLayout>
 	);
 }

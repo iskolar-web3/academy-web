@@ -37,7 +37,7 @@ export function GrantForm() {
 	const [file, setFile] = useState<File | null>(null);
 	const [fileError, setFileError] = useState<string | null>(null);
 
-	const { register, watch, setValue, getValues } = useForm<GrantFormValues>({
+	const { register, watch, setValue, handleSubmit } = useForm<GrantFormValues>({
 		resolver: zodResolver(grantFormSchema),
 		defaultValues: emptyGrantFormValues(),
 	});
@@ -57,31 +57,52 @@ export function GrantForm() {
 		setFile(picked);
 	};
 
-	const onPublish = async () => {
-		const v = getValues();
-		if (!v.title.trim() || !v.category || !v.purpose.trim() || !v.targetRaw) {
-			toast.error("Fill in the grant details before publishing.");
-			return;
-		}
-		if (!ownershipDeclared) {
-			toast.error("Confirm the ownership declaration.");
-			return;
-		}
-		if (!file) {
-			toast.error("Upload the scanned title proposal (PDF).");
-			return;
-		}
-		try {
-			const created = await create.mutateAsync({
-				input: grantFormToInput(v),
-				file,
-			});
-			toast.success("Grant request published");
-			navigate({ to: "/grants/$grantId", params: { grantId: created.id } });
-		} catch (err) {
-			toast.error(err instanceof Error ? err.message : "Something went wrong.");
-		}
-	};
+	// Routed through RHF's handleSubmit so grantFormSchema's length limits (title,
+	// purpose, techText, teamNote) actually run — they were previously declared via
+	// the resolver but never invoked, since this used to read getValues() directly.
+	const onPublish = handleSubmit(
+		async (v) => {
+			const input = grantFormToInput(v);
+			// The schema allows a blank category/purpose (matches the lax-draft
+			// pattern elsewhere) — grants have no draft state, so these are still
+			// required at publish time, same as before.
+			if (!input.title || !input.category || !input.purpose) {
+				toast.error("Fill in the grant details before publishing.");
+				return;
+			}
+			// `targetRaw` is a free-text string ("abc" passes a bare non-empty check) —
+			// validate the parsed number instead, since grants have no draft state to
+			// silently coerce a bad amount to 0 in.
+			if (input.target <= 0) {
+				toast.error("Enter a valid target amount.");
+				return;
+			}
+			if (!ownershipDeclared) {
+				toast.error("Confirm the ownership declaration.");
+				return;
+			}
+			if (!file) {
+				toast.error("Upload the scanned title proposal (PDF).");
+				return;
+			}
+			try {
+				const created = await create.mutateAsync({
+					input,
+					file,
+				});
+				toast.success("Grant request published");
+				navigate({ to: "/grants/$grantId", params: { grantId: created.id } });
+			} catch (err) {
+				toast.error(
+					err instanceof Error ? err.message : "Something went wrong.",
+				);
+			}
+		},
+		(errors) => {
+			const firstMessage = Object.values(errors)[0]?.message;
+			toast.error(firstMessage ?? "Fix the highlighted fields.");
+		},
+	);
 
 	return (
 		<div className="flex flex-col gap-[18px]">

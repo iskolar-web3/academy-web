@@ -37,9 +37,11 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 | **P2** | [`phases/P2-review.md`](./phases/P2-review.md) | ✅ Client done · ✅ server live | 2026-07-06 | Plan §6–7 · ADM-01/03/04/05/06 |
 | **P3** | [`phases/P3-discovery-contact.md`](./phases/P3-discovery-contact.md) | ✅ Client done · ✅ server live · 🔨 linked-member picker open | 2026-07-06 | Plan §6–7 · SPN-03…08 · STU-12/13 · PLT-07/08 |
 | **P4** | [`phases/P4-grants-funding.md`](./phases/P4-grants-funding.md) → Realized Build | ✅ Client done · ✅ server live | 2026-07-13 | Plan §4/§6–7 · STU-14/15/16 · SPN-09/10/11 · ADM-02 |
+| **P5** | [`phases/P5-monetization-deal-flow.md`](./phases/P5-monetization-deal-flow.md) → Realized Build | ✅ Client done · ✅ server live | 2026-07-15 | Plan §4/§6–7 · STU-17/18 · SPN-12…16 · ADM-07 |
 | 03 | `03-student-dashboard.md` | ✅ Done | 2026-07-02 | Plan §6–7 (**P1**) · STU-09/10/11 |
 | 04 | `04-app-header-and-discover-gallery.md` | ✅ Done | 2026-07-02 | Plan §6 · SPN-03 (**P3** gallery; P0 header) |
 | 05 | `05-shadcn-library-adoption.md` | ✅ Done | 2026-07-06 | Plan §3 · CLAUDE.md code style · iSkolar blueprint §6 |
+| 06 | `06-onboarding-layout-and-startup-type.md` | ✅ Client done (onboarding fields corrected) · 🔨 server built against the earlier wrong fields, needs a follow-up pass | 2026-07-19 | Owner-directed addition — see doc for plan-note |
 
 > **P0 lives in one place.** The former standalone build docs `02-auth-session-wiring.md`
 > (PLT-01/02/03) and `05-p0-foundation-client.md` (PLT-04/05, profiles) were **folded into**

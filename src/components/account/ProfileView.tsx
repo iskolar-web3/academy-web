@@ -1,5 +1,10 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { type AccountProfile, roleLabel } from "#/lib/account/model";
+import {
+	type AccountProfile,
+	EDUCATION_LEVEL_LABELS,
+	type MyAccountProfile,
+	roleLabel,
+} from "#/lib/account/model";
 import type { ShowcaseProject } from "#/lib/discover/model";
 import { statusChipClass } from "#/lib/project/helper";
 
@@ -35,15 +40,78 @@ const panelCls =
 const asideLabelCls =
 	"mb-3.5 font-mono text-[11.5px] uppercase tracking-[0.16em] text-action/60";
 
+/** "2004-03-12" → "March 12, 2004" — no time-of-day, so no timezone shift to worry about. */
+function formatBirthDate(iso: string): string {
+	const [year, month, day] = iso.split("-").map(Number);
+	return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	});
+}
+
+/**
+ * The onboarding-only fields (gender/birthDate/phone/educationLevel) — visible only to
+ * the profile's own owner (`ProfileView`'s `own` prop is only ever passed then). Rows
+ * with no value for this role/account are simply omitted, not shown blank.
+ */
+function MyDetailsPanel({ own }: { own: MyAccountProfile }) {
+	const rows: { label: string; value: string }[] = [];
+	if (own.gender) {
+		rows.push({
+			label: "Gender",
+			value: `${own.gender[0].toUpperCase()}${own.gender.slice(1)}`,
+		});
+	}
+	if (own.birthDate) {
+		rows.push({ label: "Birth date", value: formatBirthDate(own.birthDate) });
+	}
+	if (own.phone) rows.push({ label: "Phone", value: own.phone });
+	if (own.educationLevel) {
+		rows.push({
+			label: "Education level",
+			value: EDUCATION_LEVEL_LABELS[own.educationLevel],
+		});
+	}
+	if (rows.length === 0) return null;
+
+	return (
+		<div className={panelCls}>
+			<div className={asideLabelCls}>Your details</div>
+			<dl className="flex flex-col gap-2.5">
+				{rows.map((r) => (
+					<div
+						key={r.label}
+						className="flex items-center justify-between gap-3"
+					>
+						<dt className="text-[12.5px] text-content-faint">{r.label}</dt>
+						<dd className="text-[13.5px] text-content-heading">{r.value}</dd>
+					</div>
+				))}
+			</dl>
+			<p className="mt-3.5 border-[#eef1fa] border-t pt-3 font-mono text-[10.5px] text-content-ghost">
+				Only visible to you.
+			</p>
+		</div>
+	);
+}
+
 export function ProfileView({
 	profile,
 	canEdit,
 	work,
+	own,
 }: {
 	profile: AccountProfile;
 	canEdit?: boolean;
 	/** The user's published showcase work (STU-02) — students only. */
 	work?: ShowcaseProject[];
+	/**
+	 * The richer self-view record (gender/birthDate/phone/educationLevel) — only ever
+	 * passed when `canEdit` is true (viewing your own profile). Never fetched for anyone
+	 * else's profile; these are PII, not part of the public `AccountProfile` shape.
+	 */
+	own?: MyAccountProfile | null;
 }) {
 	const router = useRouter();
 	const editTo =
@@ -195,6 +263,8 @@ export function ProfileView({
 								</div>
 							</div>
 						) : null}
+
+						{own ? <MyDetailsPanel own={own} /> : null}
 					</aside>
 				</div>
 			</div>

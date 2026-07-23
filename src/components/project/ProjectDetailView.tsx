@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
+import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
 /**
  * Project detail — a 1:1 port of the design-template PROJECT DETAIL: a gradient cover
@@ -16,11 +17,6 @@ import type { Project } from "#/lib/project/model";
  *  - `sponsor`/`public`  → the `interact` slot (wired upvote + interest, composed by the
  *    route so this stays presentational).
  */
-
-const TYPE_LABEL: Record<Project["type"], string> = {
-	idea: "Idea / MVP",
-	thesis_capstone: "Thesis / Capstone",
-};
 
 function initialsOf(name: string): string {
 	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
@@ -92,7 +88,7 @@ export function ProjectDetailView({
 							<h1 className="text-[32px] text-content-heading">
 								{project.title}
 							</h1>
-							{project.status === "published" ? (
+							{project.verified ? (
 								<span className="inline-flex items-center gap-1.5 rounded-[7px] border border-success-bd bg-success-bg px-2.5 py-1 text-[12px] text-verified">
 									✔ Verified Builder
 								</span>

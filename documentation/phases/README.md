@@ -28,7 +28,7 @@ Cross-cutting concerns (`auth.tsx`, `lib/api.ts`, `integrations/tanstack-query/`
 | P1 | `P1-submission.md` | Project draft → MVP gate → members/consent → ownership → dashboard/lifecycle | STU-03…11 | 🔨 In progress | P0 |
 | P2 | `P2-review.md` | Admin review queue, quality review, approve/return/reject, moderation, metrics | ADM-01/03/04/05/06 | 📋 Planned | P1 |
 | P3 | `P3-discovery-contact.md` | Browse + search + filters, all-in-one card, express interest, notifications, upvotes | SPN-03…08, PLT-07/08, STU-12/13 | 📋 Planned | P2 |
-| P4 | `P4-grants-funding.md` | Grants page, grant request, browse/simulated fund (PayMongo pass deferred), oversight | STU-14…16, SPN-09…11, ADM-02 | ✅ Client done · 🔨 server pending | P0 (no longer §9/Lumen-gated — see `next-steps-lumen-p4-p5.md`) |
-| P5 | `P5-monetization-deal-flow.md` | Subscriptions/entitlements, vault + consent, deal-flow/saved-search/watchlist, badges | STU-17/18, SPN-12…16, ADM-07 | 📋 Planned | P4 + §9 billing |
+| P4 | `P4-grants-funding.md` | Grants page, grant request, browse/simulated fund (PayMongo pass deferred), oversight | STU-14…16, SPN-09…11, ADM-02 | ✅ Client done · ✅ server live | P0 (no longer §9/Lumen-gated — see `next-steps-lumen-p4-p5.md`) |
+| P5 | `P5-monetization-deal-flow.md` | Subscriptions/entitlements (simulated checkout), vault + consent, deal-flow/watchlist/alerts, badges | STU-17/18, SPN-12…16, ADM-07 | ✅ Client done · 🔨 server pending | P4 (no longer §9/Lumen-gated — see `next-steps-lumen-p4-p5.md`) |
 
 > **Traces-to discipline:** every phase links back to `documents/iskolar-academy-{prd,plan}.md` (FR-IDs · plan §) and the four `documents/user-stories/*.csv` modules. Keep the loop closed so plan, stories, and these scopes never drift. Open product decisions live in plan §9 / PRD §12 and `documents/iskolar-academy-tbd.md`.

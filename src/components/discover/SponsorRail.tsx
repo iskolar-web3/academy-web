@@ -1,12 +1,25 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useWatchlist } from "#/hooks/saved-search/useWatchlist";
+import { useEntitlement } from "#/hooks/subscription/useEntitlement";
+import { useMySubscription } from "#/hooks/subscription/useMySubscription";
+import { useSubscriptionMutations } from "#/hooks/subscription/useSubscriptionMutations";
+import { planInfo } from "#/lib/subscription/model";
 
 /**
- * Sponsor rail — a 1:1 port of the design-template `SponsorRail.dc.html`: the 320px sticky
- * sidebar shown beside the Discover gallery (and deal-flow) **for sponsors only**. Four
+ * Sponsor rail — a 1:1 port of the design-template `SponsorRail.dc.html`: the sticky
+ * left-column panel shown beside the Discover gallery (and deal-flow) **for sponsors
+ * only** — width comes from `AppPageLayout`'s left track, not this component. Four
  * cards: go-live alerts + watchlist, the sponsor's subscriptions, suggested-to-follow, and
- * the current plan (links to `/sponsor/subscription`). Mock data until the follow/watch
- * model lands (P3/P5); static → SSR-safe.
+ * the current plan (links to `/sponsor/subscription`).
+ *
+ * **P5 reality check:** go-live alerts, watchlist count, and the plan card are now real
+ * (`Subscription`/`useWatchlist`). "Your subscriptions"/"Suggested to follow" **stay mock**
+ * — deliberately, not as an oversight. There is no "sponsor follows a builder" relationship
+ * anywhere else in this app, and no story (SPN-12…16) asks for one; the design-template's
+ * own SPONSOR DEAL-FLOW feed turned out to be decorative flavor text over real published
+ * projects, not a real follow-and-post system either (see `sponsor/home.tsx`). Building a
+ * real follow backend for this one rail panel would be scope with no story behind it.
  */
 
 interface Follow {
@@ -111,17 +124,22 @@ function FollowRow({
 }
 
 export function SponsorRail() {
-	const [alerts, setAlerts] = useState(true);
+	// "Follow a builder" stays mock — see the header comment. Watchlist/alerts/plan are real.
 	const [followed, setFollowed] = useState<Record<string, boolean>>({
 		aralbot: true,
 		tindalink: true,
 	});
-
 	const toggle = (id: string) => setFollowed((m) => ({ ...m, [id]: !m[id] }));
-	const watchCount = Object.values(followed).filter(Boolean).length;
+
+	const { data: subscription } = useMySubscription();
+	const { data: watchIds = [] } = useWatchlist();
+	const { setAlerts } = useSubscriptionMutations();
+	const alertsEntitled = useEntitlement("savedSearchAlerts");
+	const alertsOn = subscription?.alertsEnabled ?? false;
+	const tier = subscription ? planInfo(subscription.tier) : null;
 
 	return (
-		<aside className="hidden w-[320px] flex-none flex-col gap-4 lg:sticky lg:top-[88px] lg:flex">
+		<aside className="hidden w-full flex-col gap-4 lg:sticky lg:top-[88px] lg:flex">
 			{/* Go-live alerts + watchlist */}
 			<div className={cardCls}>
 				<div className="mb-3.5 flex items-center justify-between">
@@ -130,29 +148,30 @@ export function SponsorRail() {
 							Go-live alerts
 						</div>
 						<div className="font-mono text-[11.5px] text-content-faint">
-							{alerts ? "On" : "Off"}
+							{alertsEntitled ? (alertsOn ? "On" : "Off") : "Alpha+ only"}
 						</div>
 					</div>
 					<button
 						type="button"
 						role="switch"
-						aria-checked={alerts}
+						aria-checked={alertsOn}
 						aria-label="Go-live alerts"
-						onClick={() => setAlerts((a) => !a)}
-						className={`relative h-[26px] w-[46px] flex-none rounded-full transition-colors ${
-							alerts ? "bg-action" : "bg-line"
+						disabled={!alertsEntitled}
+						onClick={() => setAlerts.mutate(!alertsOn)}
+						className={`relative h-[26px] w-[46px] flex-none rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+							alertsOn ? "bg-action" : "bg-line"
 						}`}
 					>
 						<span
 							className={`absolute top-[3px] size-5 rounded-full bg-white shadow-sm transition-all ${
-								alerts ? "left-[23px]" : "left-[3px]"
+								alertsOn ? "left-[23px]" : "left-[3px]"
 							}`}
 						/>
 					</button>
 				</div>
 				<div className="flex items-center justify-between border-[#eef1fa] border-t pt-[13px]">
 					<span className="text-[13.5px] text-content-muted">Watchlist</span>
-					<span className="text-[15px] text-action">{watchCount}</span>
+					<span className="text-[15px] text-action">{watchIds.length}</span>
 				</div>
 			</div>
 
@@ -193,15 +212,17 @@ export function SponsorRail() {
 			>
 				<div className="mb-2 flex items-center justify-between">
 					<span className="font-mono text-[11.5px] uppercase tracking-[0.16em] text-action/60">
-						Plan · Alpha
+						Plan · {tier?.name ?? "…"}
 					</span>
 					<span className="text-[12px] text-action">Manage →</span>
 				</div>
 				<div className="mb-[3px] text-[14px] text-content-heading">
-					3 of 5 seats used
+					{subscription
+						? `${subscription.seats} seat${subscription.seats === 1 ? "" : "s"} billed`
+						: "…"}
 				</div>
 				<div className="font-mono text-[12.5px] text-content-faint">
-					₱12,000 / mo
+					{tier?.price ?? ""}
 				</div>
 			</Link>
 		</aside>

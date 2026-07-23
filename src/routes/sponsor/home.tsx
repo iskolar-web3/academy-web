@@ -1,35 +1,56 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ProjectCard } from "#/components/project/ProjectCard";
-import { publicTeaserQuery } from "#/lib/discover/api";
-import { toProjectCardData } from "#/lib/discover/model";
+import { DealFlowCard } from "#/components/discover/DealFlowCard";
+import { SponsorRail } from "#/components/discover/SponsorRail";
+import { AdsPanel } from "#/components/layout/AdsPanel";
+import { AppPageLayout } from "#/components/layout/AppPageLayout";
+import { publishedProjectsQuery } from "#/lib/discover/api";
 
 /**
- * Sponsor home — placeholder until the P5 deal-flow screen. Shows the latest published
- * teaser cards from the live showcase; full browse/filter/interest lives on /discover.
+ * Sponsor deal-flow (SPN-13) — a 1:1 port of the design-template SPONSOR DEAL-FLOW's
+ * layout (feed + SponsorRail, now `AppPageLayout`'s left column, with the right-column
+ * ad slot), reusing P3's real published-project data (trending sort) instead of the
+ * template's decorative "posts by followed builders" framing — see `DealFlowCard`'s
+ * docstring for why. No entitlement gate on the board itself (deal-flow scouting is
+ * available at every tier per the template; watchlisting specific projects is the
+ * Alpha+ gated action, enforced per-card).
  */
 export const Route = createFileRoute("/sponsor/home")({
 	component: SponsorHome,
 });
 
 function SponsorHome() {
-	const { data } = useQuery(publicTeaserQuery());
-	const cards = (data ?? []).slice(0, 3).map(toProjectCardData);
+	const {
+		data: projects = [],
+		isLoading,
+		isError,
+	} = useQuery(publishedProjectsQuery({ sort: "trending" }));
 
 	return (
-		<div>
-			<p className="eyebrow mb-2">Scout & back</p>
-			<h1 className="text-3xl text-content-heading">Discover student work</h1>
-			<p className="mt-2 text-content-soft">
-				Browse, filter, and express interest on Discover. Grants and deal-flow
-				arrive in P4 · P5.
+		<AppPageLayout left={<SponsorRail />} right={<AdsPanel />}>
+			<p className="mb-5 text-[14px] text-content-faint">
+				Updates from published student work, ranked by community traction.
 			</p>
-
-			<div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-				{cards.map((project) => (
-					<ProjectCard key={project.id} project={project} />
-				))}
+			<div className="flex flex-col gap-4">
+				{isLoading ? (
+					<p className="text-content-soft">Loading…</p>
+				) : isError ? (
+					<p className="text-danger">Couldn't load deal-flow.</p>
+				) : projects.length === 0 ? (
+					<div className="card-surface p-10 text-center">
+						<p className="text-content-heading">Nothing published yet</p>
+						<p className="mt-1.5 text-[14px] text-content-soft">
+							Published student work will show up here as it ships.
+						</p>
+					</div>
+				) : (
+					projects
+						.slice(0, 6)
+						.map((project) => (
+							<DealFlowCard key={project.id} project={project} />
+						))
+				)}
 			</div>
-		</div>
+		</AppPageLayout>
 	);
 }

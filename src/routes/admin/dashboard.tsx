@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { BadgeGrantForm } from "#/components/admin/BadgeGrantForm";
 import { MetricsPanel } from "#/components/admin/MetricsPanel";
 import { ModerationPanel } from "#/components/admin/ModerationPanel";
 import { ReviewDecisionModal } from "#/components/admin/ReviewDecisionModal";
@@ -26,6 +27,7 @@ const TABS = [
 	{ key: "queue", label: "Review queue" },
 	{ key: "moderation", label: "Moderation" },
 	{ key: "metrics", label: "Metrics" },
+	{ key: "badges", label: "Badges" },
 ] as const;
 
 function AdminConsole() {
@@ -80,6 +82,9 @@ function AdminConsole() {
 					</TabsContent>
 					<TabsContent value="metrics">
 						<MetricsPanel />
+					</TabsContent>
+					<TabsContent value="badges">
+						<BadgeGrantForm />
 					</TabsContent>
 				</div>
 			</Tabs>

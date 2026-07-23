@@ -4,6 +4,7 @@ import type {
 	ProjectFormValues,
 	ProjectInput,
 	ProjectStatus,
+	ProjectType,
 } from "#/lib/project/model";
 
 /** Pure helpers for the project domain — status machine, MVP gate, form mappers. */
@@ -203,6 +204,19 @@ export function triggersReReview(
 // (the single create + edit surface): a live demo and public repo are required, the demo
 // video is optional, plus the ownership + consent declarations — matching the design-template
 // SUBMIT WIZARD. The server re-validates it on submit (never trust the client gate).
+
+/**
+ * A thesis/capstone claims academic credit; a startup claims investor-facing legitimacy —
+ * both need a supporting document before publishing. An idea/prototype doesn't (unchanged).
+ */
+export function requiresDocumentUpload(type: ProjectType): boolean {
+	return type === "thesis_capstone" || type === "startup";
+}
+
+/** What the upload gate calls the document, per type — same `documents.ts` storage either way. */
+export function documentLabel(type: ProjectType): string {
+	return type === "startup" ? "pitch deck" : "thesis / capstone paper";
+}
 
 /** Map form values → the fields a create/update accepts. */
 export function formToProjectInput(v: ProjectFormValues): ProjectInput {

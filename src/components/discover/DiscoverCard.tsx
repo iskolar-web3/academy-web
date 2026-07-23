@@ -3,6 +3,7 @@ import { UpvoteButton } from "#/components/project/UpvoteButton";
 import { useToggleUpvote } from "#/hooks/upvote/useToggleUpvote";
 import type { ShowcaseProject } from "#/lib/discover/model";
 import { projectCover } from "#/lib/project/helper";
+import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
 /**
  * Showcase gallery card — a 1:1 port of the design-template GALLERY card: striped hue
@@ -11,11 +12,6 @@ import { projectCover } from "#/lib/project/helper";
  * and the text block open the project detail (`/projects/:id`); the upvote button stays
  * outside that link. Renders the live published projection (`ShowcaseProject`).
  */
-
-const TYPE_LABEL: Record<ShowcaseProject["type"], string> = {
-	idea: "Idea / MVP",
-	thesis_capstone: "Thesis / Capstone",
-};
 
 function initialsOf(name: string): string {
 	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
@@ -50,8 +46,16 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 
 			<div className="flex min-h-0 flex-1 flex-col px-[17px] pt-4 pb-[17px]">
 				<Link to={to} params={params} className="flex min-h-0 flex-1 flex-col">
-					<span className="mb-3.5 truncate text-[18.5px] leading-tight text-content-heading">
+					<span className="mb-3.5 flex items-center gap-1.5 truncate text-[18.5px] leading-tight text-content-heading">
 						{project.title}
+						{project.verified ? (
+							<span
+								title="Verified Builder"
+								className="text-[14px] text-verified"
+							>
+								✔
+							</span>
+						) : null}
 					</span>
 					<div className="mb-[7px] flex items-center gap-[7px] overflow-hidden">
 						<span className="chip chip--category flex-none">

@@ -2,14 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "#/auth";
 import { ProfileView } from "#/components/account/ProfileView";
-import { useProfile } from "#/hooks/account/useProfile";
+import { myProfileQuery, profileQuery } from "#/lib/account/api";
 import { publishedProjectsQuery } from "#/lib/discover/api";
 
 /**
- * Public profile (STU-02 / SPN-02). Reads the real profile via `useProfile(userId)`
- * (→ `GET /accounts/:id/profile`) plus the user's published showcase work (STU-02,
- * `GET /discover/projects?owner=…`). Under `_app` because viewing a profile is a
- * signed-in surface; `canEdit` is true only when the viewer is looking at themselves.
+ * Public profile (STU-02 / SPN-02). Viewing your own profile fetches the richer
+ * `GET /accounts/me/profile` (adds the onboarding-only fields — gender/birthDate/phone/
+ * educationLevel — rendered as a "Your details" panel only you can see); viewing anyone
+ * else's fetches the public `GET /accounts/:id/profile`, which never returns those PII
+ * fields. Plus the user's published showcase work (STU-02, `GET /discover/projects?owner=…`).
+ * Under `_app` because viewing a profile is a signed-in surface.
  */
 export const Route = createFileRoute("/_app/u/$userId")({
 	component: PublicProfile,
@@ -18,7 +20,12 @@ export const Route = createFileRoute("/_app/u/$userId")({
 function PublicProfile() {
 	const { userId } = Route.useParams();
 	const { user } = useAuth();
-	const { data, isLoading, isError } = useProfile(userId);
+	const canEdit = user?.academyUserId === userId;
+
+	const own = useQuery({ ...myProfileQuery(), enabled: canEdit });
+	const other = useQuery({ ...profileQuery(userId), enabled: !canEdit });
+	const { data, isLoading, isError } = canEdit ? own : other;
+
 	const isStudent = data?.role === "student";
 	const work = useQuery({
 		...publishedProjectsQuery({ owner: userId }),
@@ -47,7 +54,8 @@ function PublicProfile() {
 	return (
 		<ProfileView
 			profile={data}
-			canEdit={user?.academyUserId === userId}
+			canEdit={canEdit}
+			own={canEdit ? own.data : null}
 			work={isStudent ? (work.data ?? []) : undefined}
 		/>
 	);

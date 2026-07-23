@@ -96,9 +96,14 @@ Stand up the **separate** Grants track for starting-stage theses: a student crea
 
 ## Dependencies & Open Items
 
-- **Gating:** §9.8 funds model, §9.9 KYC timing, §9.10 platform fee, §9.11 currency/limits/refunds — *blocked, do not assume*.
-- **Open:** §9.2 (video N/A here), Didit KYC UI — **no dedicated story exists** for the verification screen; will need one once §9.9 lands.
-- **Gap surfaced:** stories cover grant create/receive/graduate but not edit/cancel-own/dashboard — this doc adds `_student/grants/` to cover it; confirm with product.
+> ~~**Gating:** §9.8–9.11 — blocked, do not assume.~~ **Superseded by the roadmap revision
+> at the top of this doc (2026-07-13):** the fund flow shipped as a simulated checkout
+> without waiting on any of these — they now only gate the eventual PayMongo pass, not this
+> phase. Kept below for historical trace-back only.
+
+- ~~**Gating:** §9.8 funds model, §9.9 KYC timing, §9.10 platform fee, §9.11 currency/limits/refunds — *blocked, do not assume*.~~
+- **Open:** §9.2 (video N/A here), Didit KYC UI — **no dedicated story exists** for the verification screen; will need one once §9.9 lands (still genuinely open — unrelated to the simulated-checkout revision).
+- ~~**Gap surfaced:** stories cover grant create/receive/graduate but not edit/cancel-own/dashboard — this doc adds `_student/grants/` to cover it; confirm with product.~~ **Resolved differently in the Realized Build:** no `_student/grants/` route was added — the gap is filled by the `/student/home` dashboard's "Grant payouts" section instead (matches the template; see Realized Build above).
 
 ## Verification Plan
 
@@ -121,8 +126,9 @@ actually shows rather than the doc's original assumptions:
 - **The fund flow is inline in the grant detail's sticky rail, not a separate `FundDialog`
   modal.** The template models three states directly on the page (`grantReqOpen` → a form →
   `grantReqSubmitted` → a success state) — there's no dialog component anywhere in this
-  flow. Built as `GrantFundPanel` (idle/redirecting/success), composed into
-  `GrantDetailView`'s right rail, not a `Dialog`.
+  flow. Built as `GrantFundPanel` (idle/checkout/processing/success — see the 2026-07-20 fix
+  in Open Items below for the mock-checkout rebuild), composed into `GrantDetailView`'s
+  right rail, not a `Dialog`.
 - **The template's form also asks for "Your name"/"Company / fund"** — dropped. The
   sponsor's identity is already known from their session (same reasoning as SPN-07's org
   gate); re-typing it would just duplicate data already on file. Only **Reason** + **Amount**
@@ -171,8 +177,9 @@ actually shows rather than the doc's original assumptions:
 - **`grant_funded` notification** now links to `/student/home` (where "Grant payouts"
   lives) instead of the generic `/grants` gallery it pointed to as a P4 forward-stub.
 - **Simulated checkout, not a placeholder or a real charge** — per
-  `next-steps-lumen-p4-p5.md`'s payments decision: Authorize → a client-side ~1.8s
-  "Redirecting to PayMongo…" pause → a real `POST /grants/:id/fund` write. This is the
+  `next-steps-lumen-p4-p5.md`'s payments decision: Submit → a mock PayMongo checkout screen
+  → Pay → a client-side multi-stage processing pause → a real `POST /grants/:id/fund` write
+  (see the 2026-07-20 Open Items entry for the checkout screen's build history). This is the
   first real usage of the server's `src/payments.ts` module (simulated internals) — the
   same module P5's tier-subscribe flow will reuse.
 
@@ -186,7 +193,7 @@ actually shows rather than the doc's original assumptions:
 | `src/hooks/grant/{useGrants,useMyGrants,useGrantMutations}.ts` | hooks | Query + mutation wrappers |
 | `src/components/grant/GrantCard.tsx` | component | Gallery card (GRANTS GALLERY) |
 | `src/components/grant/GrantDetailView.tsx` | component | Two-column detail + fund rail (GRANT DETAIL + FUND FLOW) |
-| `src/components/grant/GrantFundPanel.tsx` | component | Inline sponsor fund flow (idle/redirecting/success) |
+| `src/components/grant/GrantFundPanel.tsx` | component | Inline sponsor fund flow (idle/checkout/processing/success) |
 | `src/components/grant/GrantForm.tsx` | component | Create-request form (CREATE GRANT REQUEST) |
 | `src/routes/_app/grants.tsx` | route | Gallery (real; was the P4 nav placeholder) |
 | `src/routes/_app/grants.$grantId.tsx` | route | Detail + fund |
@@ -206,16 +213,56 @@ actually shows rather than the doc's original assumptions:
 
 - ~~**Server not yet built**~~ **RESOLVED (2026-07-13):** `grant/` slice + `src/payments.ts`
   shipped — `academy-server/documentation/phases/P4-grants-funding-server.md` (51/51
-  in-process). Two things the server team caught and fixed before implementing, worth
-  knowing about even though nothing on the client needed to change: (1) `GrantForm`'s own
-  publish gate checks `!v.targetRaw` (a non-empty *string*), so typing non-numeric garbage
-  in the target field silently maps to `target: 0` via `grantFormToInput` and would have
-  passed the client's own gate — the server independently rejects `target <= 0`; (2) the
-  create endpoint is strict end-to-end (blank title/category/purpose also 422 server-side,
-  not just target), since a grant has no draft state to justify any laxity.
+  in-process + 7/7 cross-phase regression). The server team's own reference pass caught two
+  things: (1) `GrantForm`'s publish gate checked `!v.targetRaw` (a non-empty *string*), so
+  typing non-numeric garbage in the target field silently mapped to `target: 0` via
+  `grantFormToInput` and passed the client's own gate — **fixed client-side same day**: the
+  gate now validates the parsed `input.target > 0` before submitting, in addition to the
+  server's independent `target <= 0` rejection; (2) the create endpoint is strict
+  end-to-end (blank title/category/purpose also 422 server-side, not just target), since a
+  grant has no draft state to justify any laxity.
 - **STU-16 graduation** — reuses the P1 submit flow unchanged; no new code needed, not
   separately tested yet (needs a published grant to exist first).
 - **"🔒 Pitch vaults" dashboard button** — P5, not added; the template's third dashboard
   action button stays out of scope until then.
 - **PayMongo pass** (deferred, see roadmap doc) will need to add a pending/async state to
   `GrantFundPanel`'s success flow once real capture is webhook-driven instead of immediate.
+- ~~**"View grant" did nothing when clicked**~~ **RESOLVED (2026-07-20):** a real routing
+  bug, not a data or UI issue — `routes/_app/grants.tsx` (the gallery) and
+  `grants.$grantId.tsx` (the detail) shared the `grants` file prefix, which TanStack
+  Router's flat-file convention silently treats as parent/child (the detail route needed
+  an `<Outlet/>` in the gallery route to render into, and there was none). The URL changed
+  and the correct grant fetched successfully on every click — confirmed via the server
+  request log — there was just nowhere for the result to display. Fixed by renaming the
+  gallery route to `grants.index.tsx` (exact-match index, no implicit child slot),
+  confirmed via `routeTree.gen.ts`'s regenerated parent wiring and a live browser
+  re-drive of the click. See `website-structure.md`'s "A list + detail pair sharing a path
+  prefix must use `.index.tsx`" note for the durable convention this establishes.
+- ~~**"Submit request went straight to success, no visible payment process"**~~ **RESOLVED
+  in two passes (2026-07-20):** **Pass 1** added a `confirm` review step (Amount/Reason/
+  grant title, Cancel/Authorize) between the form and the "Redirecting to PayMongo…" pause,
+  reasoning the pause was actually firing (confirmed live, screenshot at t+700ms shows the
+  spinner) and the real gap was the missing confirm step, not the pause itself. **The owner
+  rejected this on sight** — a confirm dialog plus a one-line spinner still isn't a
+  "process," it's a confirmation. **Pass 2** rebuilt the post-Authorize step as an actual
+  mock PayMongo checkout screen: its own header bar (`🔒 checkout.paymongo.com`), a
+  PayMongo-styled order summary (grant + amount + reason), a working GCash/Card payment-
+  method toggle (Card shows read-only mock card-number/expiry/CVC fields), and a "Pay ₱X"
+  button — replacing the plain confirm dialog entirely (no separate confirm step anymore;
+  the checkout screen doubles as the review). Clicking Pay runs a **multi-stage** processing
+  sequence ("Verifying payment method…" → "Processing payment…" → "Finalizing your
+  contribution…", ~900ms each, with a stage-dot indicator) instead of one static spinner
+  caption, so the checkout reads as a real multi-step process rather than an instant blip.
+  Flow is now idle → **checkout** (mock gateway page) → **processing** (staged) → success.
+  **Bug found and fixed during this pass:** the checkout screen's grant-title line used
+  `truncate` (which forces `white-space: nowrap`), and neither the `<aside>` nor its grid
+  ancestor had `min-width: 0` — a classic CSS Grid/flex blowout, where a nowrap child forces
+  its container wider than the grid track, confirmed live (a Playwright click on the "Card"
+  toggle failed because the sponsored ads column, now overlapped, was intercepting pointer
+  events at that position). Fixed by dropping `truncate` (grant titles just wrap normally,
+  same as everywhere else this component shows a title) and adding `min-w-0` to
+  `GrantDetailView`'s `<aside>` as a durable guard against the same class of bug recurring.
+  Verified live end-to-end (Playwright, all five states: form → GCash checkout → Card
+  checkout → both processing stages → success) against the real GabayTek grant the owner
+  tested with; test contributions from both passes were deleted and the grant's raised/
+  backers cache recomputed back to its real ₱6,767 / 1 backer afterward.

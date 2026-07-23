@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
 import { Reveal } from "#/components/landing/Reveal";
+import { SignInPopover } from "#/components/landing/SignInPopover";
 
 export function LandingCta() {
 	return (
@@ -13,9 +13,11 @@ export function LandingCta() {
 					or start scouting talent.
 				</p>
 				<div className="mt-7 flex justify-center">
-					<Link to="/login" className="btn btn-primary">
-						Sign in with iSkolar
-					</Link>
+					<SignInPopover>
+						<button type="button" className="btn btn-primary">
+							Sign in with iSkolar
+						</button>
+					</SignInPopover>
 				</div>
 			</Reveal>
 		</section>

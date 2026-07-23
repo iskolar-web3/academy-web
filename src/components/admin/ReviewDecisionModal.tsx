@@ -17,8 +17,13 @@ import {
 } from "#/components/ui/dialog";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
 import { thesisPaperUrl } from "#/lib/project/api";
-import { projectCover } from "#/lib/project/helper";
+import {
+	documentLabel,
+	projectCover,
+	requiresDocumentUpload,
+} from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
+import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
 /**
  * Admin review modal — a 1:1 port of the design-template ADMIN REVIEW MODAL: a 680px sheet
@@ -28,11 +33,6 @@ import type { Project } from "#/lib/project/model";
  * doesn't depict) because a return is only useful with actionable feedback (ADM-04). Closes on
  * ✕ / backdrop / Escape.
  */
-
-const TYPE_LABEL: Record<Project["type"], string> = {
-	idea: "Idea / MVP",
-	thesis_capstone: "Thesis / Capstone",
-};
 
 const MVP_LINKS = [
 	{ key: "demo", Icon: MonitorPlay, label: "Live demo" },
@@ -244,7 +244,7 @@ export function ReviewDecisionModal({
 								/>
 								Consented to Academy review and public showcase.
 							</div>
-							{project.type === "thesis_capstone" &&
+							{requiresDocumentUpload(project.type) &&
 							project.ownership.thesisPaperName ? (
 								<a
 									href={thesisPaperUrl(project.id)}
@@ -252,7 +252,8 @@ export function ReviewDecisionModal({
 									rel="noreferrer"
 									className="text-[13px] text-action underline"
 								>
-									View thesis paper — {project.ownership.thesisPaperName}
+									View {documentLabel(project.type)} —{" "}
+									{project.ownership.thesisPaperName}
 								</a>
 							) : null}
 						</div>

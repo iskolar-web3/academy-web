@@ -1,8 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
+import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
 import { SponsorRail } from "#/components/discover/SponsorRail";
+import { AdsPanel } from "#/components/layout/AdsPanel";
+import { AppPageLayout } from "#/components/layout/AppPageLayout";
+import { useProfilePanel } from "#/hooks/account/useProfilePanel";
 import { useSession } from "#/hooks/auth/useSession";
 import { useProjectGallery } from "#/hooks/discover/useProjectGallery";
 import { AcademyRole } from "#/lib/auth/model";
@@ -12,8 +16,9 @@ import { GALLERY_SORTS, type GallerySort } from "#/lib/discover/model";
  * Discover / showcase gallery (SPN-03/04/05) — a 1:1 port of the design-template GALLERY:
  * search + Filters (sort + category) toolbar, a result count, and the project card grid.
  * Search/filter/sort state lives in the **URL search params** (shareable, back-button
- * correct) and runs **server-side** against the published projection; sponsors also get
- * the SponsorRail sidebar.
+ * correct) and runs **server-side** against the published projection. Left column is
+ * `SponsorRail` for sponsors or the profile panel for student/admin; right column is the
+ * ad slot.
  */
 
 type GallerySearchParams = {
@@ -56,6 +61,7 @@ const CATEGORIES = [
 function Discover() {
 	const { role } = useSession();
 	const isSponsor = role === AcademyRole.Sponsor;
+	const panel = useProfilePanel();
 	const search = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
 	const [filterOpen, setFilterOpen] = useState(false);
@@ -95,7 +101,18 @@ function Discover() {
 	}, [filterOpen]);
 
 	return (
-		<div>
+		<AppPageLayout
+			left={
+				isSponsor ? (
+					<SponsorRail />
+				) : panel ? (
+					<StudentProfileCard profile={panel} />
+				) : (
+					<div className="h-64 animate-pulse rounded-[18px] bg-surface-card" />
+				)
+			}
+			right={<AdsPanel />}
+		>
 			<div className="mb-[18px] flex items-center gap-3">
 				<div className="relative flex-1">
 					<Search
@@ -207,25 +224,20 @@ function Discover() {
 				) : null}
 			</div>
 
-			<div className="flex items-start gap-6">
-				<div className="min-w-0 flex-1">
-					{!gallery.isLoading && !gallery.isError && projects.length === 0 ? (
-						<div className="card-surface p-10 text-center">
-							<p className="text-content-heading">No projects match</p>
-							<p className="mt-1.5 text-[14px] text-content-soft">
-								Try a different search or clear the category filter.
-							</p>
-						</div>
-					) : (
-						<div className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
-							{projects.map((project) => (
-								<DiscoverCard key={project.id} project={project} />
-							))}
-						</div>
-					)}
+			{!gallery.isLoading && !gallery.isError && projects.length === 0 ? (
+				<div className="card-surface p-10 text-center">
+					<p className="text-content-heading">No projects match</p>
+					<p className="mt-1.5 text-[14px] text-content-soft">
+						Try a different search or clear the category filter.
+					</p>
 				</div>
-				{isSponsor ? <SponsorRail /> : null}
-			</div>
-		</div>
+			) : (
+				<div className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
+					{projects.map((project) => (
+						<DiscoverCard key={project.id} project={project} />
+					))}
+				</div>
+			)}
+		</AppPageLayout>
 	);
 }

@@ -1,14 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "#/auth";
 import { useConfirmRole } from "#/hooks/auth/useConfirmRole";
-import { getDefaultPathOfRole } from "#/lib/api";
 import { AcademyRole } from "#/lib/auth/model";
 
 /**
  * Role confirmation (PLT-04) — a port of the design-template ONBOARDING screen: an eyebrow,
  * a heading, and a vertical list of role cards. Confirming persists the role via
  * `POST /accounts/me/role` (`useConfirmRole`), which flips `roleConfirmed` so the guard lets
- * the user into their area. One click per role. A sponsor is routed to
- * `/sponsor/subscription` to pick a tier (no more sponsor sub-kind step).
+ * the user into their area. One click per role. Basic-info (name + school/org) is the next
+ * onboarding step for everyone — a sponsor picks a subscription tier after that.
  */
 export const Route = createFileRoute("/_onboarding/role-select")({
 	component: RoleSelect,
@@ -48,21 +49,18 @@ const ROLE_CARDS: RoleCard[] = [
 
 function RoleSelect() {
 	const navigate = useNavigate();
+	const { user } = useAuth();
 	const confirm = useConfirmRole();
+
+	// Role already confirmed (e.g. back button) — this step is done, move on.
+	useEffect(() => {
+		if (user?.roleConfirmed) navigate({ to: "/basic-info" });
+	}, [user?.roleConfirmed, navigate]);
 
 	const onRole = (role: AcademyRole) => {
 		confirm.mutate(
 			{ role, kind: null },
-			{
-				onSuccess: () =>
-					navigate({
-						// A sponsor picks a subscription tier next; others go straight in.
-						to:
-							role === AcademyRole.Sponsor
-								? "/sponsor/subscription"
-								: getDefaultPathOfRole(role),
-					}),
-			},
+			{ onSuccess: () => navigate({ to: "/basic-info" }) },
 		);
 	};
 

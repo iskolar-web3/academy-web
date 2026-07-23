@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import {
 	type MotionValue,
 	motion,
@@ -13,6 +12,7 @@ import {
 	Lightbulb,
 	type LucideIcon,
 } from "lucide-react";
+import { SignInPopover } from "#/components/landing/SignInPopover";
 
 interface Glyph {
 	Icon: LucideIcon;
@@ -151,9 +151,14 @@ export function Hero() {
 					</p>
 
 					<div className="mt-10 flex flex-wrap items-center gap-4">
-						<Link to="/login" className="btn btn-primary h-14 px-9 text-lg">
-							Sign in with iSkolar
-						</Link>
+						<SignInPopover>
+							<button
+								type="button"
+								className="btn btn-primary h-14 px-9 text-lg"
+							>
+								Sign in with iSkolar
+							</button>
+						</SignInPopover>
 						<button
 							type="button"
 							className="btn btn-secondary h-14 px-9 text-lg"

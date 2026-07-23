@@ -150,8 +150,10 @@ phase doc's Realized Build, kept here too since this guide predates that pass):
   detail's Fund action with the template's amount-entry UI; **Authorize** triggers a ~2s
   client-side "Redirecting to PayMongo…" state, then calls `src/payments.ts`'s
   `createContribution(grantId, amount)` (built now, simulated internals — see build order
-  below), which writes a real `grant_contribution` + `transaction_ledger` row
-  (`provider: 'simulated'`) and bumps the grant's raised total; **Cancel** just closes the
+  below), which writes a real `grant_contribution` row (~~+ `transaction_ledger`~~ — no
+  separate ledger table shipped, `grant_contribution`'s own `provider` column + append-only
+  discipline **is** the ledger; see "Server delivered" below) and bumps the grant's raised
+  total; **Cancel** just closes the
   modal, no change. `LedgerReceipt` and the sponsor "My funded grants" page (SPN-11) read
   this real (simulated) data — no empty state needed. `grant_funded` notifications fire for
   real (client union + ₱ renderer already shipped in P3). The modal's copy must say plainly
@@ -169,8 +171,9 @@ not tiered, so no pricing/escrow/KYC decision is even relevant yet):**
 1. `src/documents.ts` + `document` migration — already built via the P1 retrofit, reuse as-is.
 2. `src/payments.ts` — **new cross-cutting module, created now** (not deferred to Step 4).
    Simulated internals: `createContribution(grantId, amount)` writes the
-   `grant_contribution` + `transaction_ledger` rows synchronously (`provider: 'simulated'`,
-   no external call) and returns success — the client supplies the ~2s "redirecting" pause,
+   `grant_contribution` row (the ledger itself — no separate `transaction_ledger` table,
+   see "Server delivered" below) synchronously (`provider: 'simulated'`, no external call)
+   and returns success — the client supplies the ~2s "redirecting" pause,
    the server doesn't need an artificial delay. Gated by `PAYMENTS_SIMULATED` (Rule 0.7) from
    the moment this file exists.
 3. `lib/grant` model/api · create-request form with real proposal-PDF upload · gallery
@@ -198,9 +201,25 @@ floats) — get these right now so Step 4 doesn't have to fix sloppy foundations
 
 ---
 
-## Step 2 — P5 Monetization & Deal-flow
+## Step 2 — P5 Monetization & Deal-flow — done 2026-07-15, client + server
 
-**Scope source:** `P5-monetization-deal-flow.md`, **with these corrections:**
+The client shipped: real subscription tiers (`TierConfirmModal`'s simulated checkout,
+reusing `src/payments.ts`), a real deal-flow board over P3 data, a real watchlist +
+go-live-alerts toggle, the student pitch-vault page with 14-day access grants, a
+sponsor-side vault-access button + document read, and an admin Badges tab — plus fixing two
+pre-existing wrong stand-ins for the Verified Builder badge. Full corrections list and file
+inventory in `phases/P5-monetization-deal-flow.md` → "Realized Build — Client". Server done
+the same day — `academy-server/documentation/phases/P5-monetization-server.md` (67/67
+in-process) — reused both `src/payments.ts` (P4) and `@/documents` (P1 retrofit) as-is, no
+new cross-cutting modules. Two design gaps found and closed before implementing: Venture
+Partner subscribe attempts are now rejected server-side (the client's own `PlanTable` never
+offers it as self-serve, but nothing else stopped a direct call), and re-requesting vault
+access after `denied`/`revoked` now reopens the same grant instead of a silent no-op
+forever (matching what `VaultAccessButton`'s UI already promises).
+
+**Scope source (kept for the record):** `P5-monetization-deal-flow.md` was authoritative for
+stories/slices before the reference pass, **with these corrections** (folded into the phase
+doc's Realized Build, kept here too since this guide predates that pass):
 
 - **Deal-flow = `sponsor/home.tsx` grown up** (it was scaffolded from SPONSOR DEAL-FLOW
   §~813: Open board, go-live alerts, watchlist count, subscriptions, suggested-to-follow
@@ -214,8 +233,14 @@ floats) — get these right now so Step 4 doesn't have to fix sloppy foundations
 - **No saved-searches management page in the template** — saved-search UX is the
   go-live-alerts toggle (rail + settings) over watched criteria; drop the planned
   `saved-searches.tsx` route or fold it into deal-flow. **No dedicated watchlist page**
-  either (count + card toggles). **No admin badge-grant surface** (ADM-07) — needs a
-  product/template decision or composition inside the admin console; ask before building.
+  either (count + card toggles).
+- **No admin badge-grant surface (ADM-07), but not blocked** — no template screen exists,
+  but the plan's own §9.15 already recommends "manual admin grant in v1, deploy-ping/repo
+  parsing later" (matches the original P5 doc's own Decisions section) — the *source*
+  question is settled, only the *UI location* needs composing. Resolved here: add a
+  **"Badges" tab** to the existing admin console (alongside Queue/Moderation/Metrics — a
+  fourth `TabsTrigger`, same pattern as the other three), with a simple form (pick a
+  project + badge kind + evidence upload via `documents.ts`). No product ask needed.
 - **SPN-08's list surface** (sponsor's sent interests) lands here on the deal-flow board —
   decided in P3.
 - Verified Builder ✔ renders on gallery cards (§~262) and project detail (§~445).
@@ -229,9 +254,9 @@ floats) — get these right now so Step 4 doesn't have to fix sloppy foundations
 - **Tier subscribe is a simulated checkout, not a flat block or a silent default** (Rule
   0.6 — supersedes the earlier "auto top-tier default" idea, replaced same-day by the
   owner). Clicking a tier in `PlanTable` opens a confirm modal listing that tier's real
-  features (from the §9.12 **entitlement matrix**, still needed — see the decision
-  checklist) and its price (borrow the template's illustrative `tierInfo` seed, e.g.
-  ₱12,000/mo for Alpha, flagged provisional pending §9.12's real pricing call); **Authorize**
+  features and its price (borrow the template's illustrative `tierInfo` seed, e.g.
+  ₱12,000/mo for Alpha, flagged provisional pending §9.12's real *pricing* call — the
+  feature list itself is settled, see below); **Authorize**
   → the same ~2s "Redirecting to PayMongo…" pause → `src/payments.ts`'s
   `subscribeToTier(sponsorId, tier)` (simulated internals, same module P4 already built)
   upserts a real `subscription` row (`provider: 'simulated'`) → success state; **Cancel**
@@ -241,6 +266,24 @@ floats) — get these right now so Step 4 doesn't have to fix sloppy foundations
   money action, so it skips the confirm-modal ceremony) — implementer's call if that changes.
   Invoices list stays empty (no recurring billing cycle runs in simulated mode; that's
   Step 4). Same modal-copy requirement as P4: state plainly this is a prototype.
+- **The §9.12 "entitlement matrix" is already settled — reuse it, don't re-decide it.**
+  What each tier unlocks is spelled out in `documents/iskolar-academy-plan.md` §4
+  (Scout: browse/filter/express-interest; Alpha: vault-access-requests + saved-search
+  go-live alerts + private watchlists; Venture Partner: promoted placement/incubation/CRM
+  export — all 🔸 *later*, not v1), matches the template's `planFeat`/`tierInfo` seeds
+  exactly, and is **already hardcoded** in the currently-live `sponsor/subscription.tsx`
+  mock's `PLANS` array. Carry that array's feature lists over as-is into the real
+  `subscription/model.ts` entitlement keys — only §9.12's **pricing** (the actual peso
+  amount, seat costs, free-trial) is still open, not the feature breakdown. Same for
+  §9.15 (badge source, see above) — the plan document already answers more of §9 than its
+  own "open items" list admits; check the body text, not just the numbered list, before
+  treating something as blocked.
+- **Vault access-grant duration: pick a default now, don't block on it.** Plan §4 already
+  settles that grants are **time-bounded and revocable**; only the *exact* default duration
+  and watermarking are genuinely open (§9.14). Recommend **30 days**, admin/student-facing
+  as an editable field on the grant (not hardcoded), so the number can change later without
+  a migration. **Watermarking has no stated v1 requirement anywhere in the plan** — skip it
+  entirely for now rather than inventing scope; note it as a real (non-blocking) Open Item.
 
 **Client slices** per the phase doc: `subscription` (+ `useEntitlement` as a UX-only mirror —
 the server's `requireEntitlement()` is the enforcer) · `vault` · `saved-search`/watchlist ·
@@ -249,16 +292,21 @@ storage + short-lived signed links; AES-256 applies to S3 media only, not vault 
 the target state Step 3 migrates toward — during P5 itself, protection is "auth-gated
 Postgres read," documented above, which is a stricter-not-looser interim.
 
-**Server handoff produced:** `P5-monetization-server.md` — `subscription/` (plan/tier model +
-`requireEntitlement()` wired into `auth.ts`, backed by `src/payments.ts`'s
-`subscribeToTier()` in simulated mode) · `vault/` (access-grant model + real document
-read/write via `documents.ts`) · `saved-search`/`watchlist` (+ the go-live-alert emit **on
-publish**, which touches the P2 review `decide()` path — that's this phase's cross-slice
-landmine) · `badge/` (grant model + evidence via `documents.ts`) · migration `00008` → DB v8
-(`subscription` table with the same `provider` column discipline as P4's ledger). **Not
-yet:** real PayMongo recurring billing, dunning, invoices — Step 4. MRR can be a real query
-over the simulated `subscription` rows (cheap, and more honest than illustrative constants
-now that real rows exist) or stay illustrative — implementer's call, either is fine for now.
+**Server delivered:** `P5-monetization-server.md` — `subscription/` (plan/tier model,
+`requireEntitlement()` now real in `auth.ts` via a small `EntitlementResolver` interface,
+backed by `src/payments.ts`'s `subscribeToTier()` in simulated mode) · `vault/` (7 routes:
+implicit per-project vaults, 14-day access grants, owner/approved-sponsor document reads
+via `documents.ts`) · `watchlist/` (toggle, mirrors `upvote`, entitlement-gated) · `badge/`
+(one admin route, evidence via `documents.ts`) · migration `00009` → DB v9 (confirmed
+`00008` was still the latest before claiming this number). **Correction:** the go-live-alert
+emit did **not** ship with this phase — it stayed exactly the open item the client doc
+already flagged (no defined trigger criteria, no saved query to match against); an earlier
+draft of this guide described it as "this phase's cross-slice landmine" touching the P2
+`decide()` path, but that was never built and isn't tracked as a landmine in the server's
+own handoff doc — see that doc's Open Items instead. **Not yet:** real PayMongo recurring
+billing, dunning, invoices — Step 4. MRR can be a real query over the simulated
+`subscription` rows (cheap, and more honest than illustrative constants now that real rows
+exist) or stay illustrative — implementer's call, either is fine for now.
 
 ---
 
@@ -457,6 +505,6 @@ process** → **verification plan** (in-process assertions + e2e against the liv
 | Blocks | Decision (plan §9) |
 |---|---|
 | Nothing in Step 1 (P4) — the simulated fund flow needs no pricing/escrow/KYC decision (amount is free-entry, capture is synchronous-simulated) | — (§9.8–9.11 moved to Step 4 below) |
-| Step 2 (P5) start | §9.12's **entitlement matrix only** (what each tier unlocks) — pricing/seats are payment-specific and moved to Step 4; the tier modal borrows the template's illustrative price meanwhile · §9.14 vault grant duration/revoke/watermark · §9.15 badge source (manual admin recommended for v1) |
+| **Nothing blocks Step 2 (P5) start either** — every item this row used to list turned out already settled in `documents/iskolar-academy-plan.md`'s own body text (not just its numbered open-items list): the §9.12 entitlement matrix (what each tier unlocks) is spelled out in plan §4 and already hardcoded in the live `sponsor/subscription.tsx` mock; §9.14's revoke/time-bounded policy is settled in plan §4 (only the exact default duration is a free parameter — 30 days recommended, see Step 2); §9.15's badge source is settled ("manual admin grant in v1" per the plan's own recommendation). | — (only §9.12's *pricing* and §9.13 dunning remain genuinely open, both moved to Step 4) |
 | Step 3 (Lumen pass) start | Staging `LUMEN_WALLET_*` credentials · OwnerAddress = org wallet? (recommended) · backfill approach for interim-stored documents |
 | Step 4 (PayMongo pass) start | §9.8 escrow vs direct · §9.9 KYC timing (Didit) · §9.10 platform fee · §9.11 currency/min-max/refunds · §9.12's pricing/seats · §9.13 dunning · PayMongo API keys + webhook registration · disposition of Steps 1–2's simulated seed data |

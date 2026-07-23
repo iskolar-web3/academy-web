@@ -33,13 +33,18 @@ export function useRouteGuard(mode: GuardMode): { allowed: boolean } {
 
 	if (!isLoading) {
 		if (!isSignedIn) {
-			redirectTo = "/login";
+			redirectTo = "/";
 		} else if (mode.kind === "onboarding") {
-			// Already confirmed → they don't belong in onboarding; bounce to their area.
-			if (user?.roleConfirmed) redirectTo = getDefaultPathOfRole(role);
-			else allowed = true;
+			// Fully onboarded already → they don't belong in onboarding; bounce to their area.
+			if (user?.roleConfirmed && user?.onboardingCompleted) {
+				redirectTo = getDefaultPathOfRole(role);
+			} else {
+				allowed = true;
+			}
 		} else if (!user?.roleConfirmed) {
 			redirectTo = "/role-select";
+		} else if (!user?.onboardingCompleted) {
+			redirectTo = "/basic-info";
 		} else if (mode.kind === "role" && role !== mode.role) {
 			redirectTo = getDefaultPathOfRole(role);
 		} else {

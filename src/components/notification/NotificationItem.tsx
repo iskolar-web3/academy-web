@@ -54,9 +54,11 @@ function linkOf(n: AcademyNotification): { to: string; params?: object } {
 			// field on the notification, the dashboard's "Grant payouts" list is the next
 			// best real target (P4 correction — see the phase doc's Open Items).
 			return { to: "/student/home" };
+		case "vault_request":
+			// Matches the template's own seed exactly: go:{ screen: 'vaults' } (P5).
+			return { to: "/student/vaults" };
 		case "member_invite":
 		case "review_decision":
-		case "vault_request":
 			return { to: "/student/home" };
 	}
 }

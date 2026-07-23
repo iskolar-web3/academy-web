@@ -29,7 +29,7 @@ function Settings() {
 
 	const onLogout = async () => {
 		await logout();
-		navigate({ to: "/login" });
+		navigate({ to: "/" });
 	};
 
 	return (

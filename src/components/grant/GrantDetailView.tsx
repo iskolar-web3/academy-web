@@ -89,7 +89,7 @@ export function GrantDetailView({
 			</div>
 
 			{/* right: fund flow */}
-			<aside className="card-surface sticky top-[84px] rounded-[16px] p-6">
+			<aside className="card-surface sticky top-[84px] min-w-0 rounded-[16px] p-6">
 				<div className="mb-[11px] h-[9px] overflow-hidden rounded-full bg-[#eef1fa]">
 					<div
 						className={`h-full rounded-full transition-[width] duration-300 ${barColor}`}

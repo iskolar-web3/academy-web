@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { InterestButton } from "#/components/interest/InterestButton";
 import { ProjectDetailView } from "#/components/project/ProjectDetailView";
 import { UpvoteButton } from "#/components/project/UpvoteButton";
+import { VaultAccessButton } from "#/components/vault/VaultAccessButton";
 import { useSession } from "#/hooks/auth/useSession";
 import { useToggleUpvote } from "#/hooks/upvote/useToggleUpvote";
 import { AcademyRole } from "#/lib/auth/model";
@@ -70,7 +71,13 @@ function PublicProjectDetail() {
 							title={`Upvote ${project.title}`}
 						/>
 						{viewer === "sponsor" ? (
-							<InterestButton projectId={project.id} />
+							<>
+								<InterestButton projectId={project.id} />
+								<VaultAccessButton
+									projectId={project.id}
+									status={project.vaultAccessStatus}
+								/>
+							</>
 						) : null}
 						<p className="mt-2.5 text-center font-mono text-[12px] leading-[1.5] text-content-faint">
 							Interest reveals only you

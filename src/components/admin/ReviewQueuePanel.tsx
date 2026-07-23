@@ -1,15 +1,11 @@
 import type { Project } from "#/lib/project/model";
+import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
 /**
  * Review queue (ADM-01) — a 1:1 port of the design-template ADMIN › REVIEW QUEUE: an intro
  * line then a column of submission cards (title · type pill · school · submitted · MVP-link
  * summary) each opening the review modal. Pass / fail, no scoring.
  */
-
-const TYPE_LABEL: Record<Project["type"], string> = {
-	idea: "Idea / MVP",
-	thesis_capstone: "Thesis / Capstone",
-};
 
 /** MVP-link summary line; missing a required demo/repo turns it into a red warning. */
 function linkSummary(p: Project): { label: string; danger: boolean } {

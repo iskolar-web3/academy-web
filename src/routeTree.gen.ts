@@ -16,19 +16,20 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as OnboardingRouteImport } from './routes/_onboarding'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as StudentVaultsRouteImport } from './routes/student/vaults'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
 import { Route as StudentHomeRouteImport } from './routes/student/home'
 import { Route as SponsorSubscriptionRouteImport } from './routes/sponsor/subscription'
 import { Route as SponsorProfileRouteImport } from './routes/sponsor/profile'
 import { Route as SponsorHomeRouteImport } from './routes/sponsor/home'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
-import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as OnboardingRoleSelectRouteImport } from './routes/_onboarding/role-select'
+import { Route as OnboardingBasicInfoRouteImport } from './routes/_onboarding/basic-info'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
-import { Route as AppGrantsRouteImport } from './routes/_app/grants'
 import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
 import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
+import { Route as AppGrantsIndexRouteImport } from './routes/_app/grants.index'
 import { Route as StudentProjectsNewRouteImport } from './routes/student/projects/new'
 import { Route as StudentGrantsNewRouteImport } from './routes/student/grants/new'
 import { Route as AppUUserIdRouteImport } from './routes/_app/u.$userId'
@@ -69,6 +70,11 @@ const PublicIndexRoute = PublicIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PublicRoute,
 } as any)
+const StudentVaultsRoute = StudentVaultsRouteImport.update({
+  id: '/vaults',
+  path: '/vaults',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -99,14 +105,14 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
-const PublicLoginRoute = PublicLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => PublicRoute,
-} as any)
 const OnboardingRoleSelectRoute = OnboardingRoleSelectRouteImport.update({
   id: '/role-select',
   path: '/role-select',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const OnboardingBasicInfoRoute = OnboardingBasicInfoRouteImport.update({
+  id: '/basic-info',
+  path: '/basic-info',
   getParentRoute: () => OnboardingRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -119,11 +125,6 @@ const AppNotificationsRoute = AppNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => AppRoute,
 } as any)
-const AppGrantsRoute = AppGrantsRouteImport.update({
-  id: '/grants',
-  path: '/grants',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppDiscoverRoute = AppDiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
@@ -133,6 +134,11 @@ const StudentProjectsIndexRoute = StudentProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
   getParentRoute: () => StudentRoute,
+} as any)
+const AppGrantsIndexRoute = AppGrantsIndexRouteImport.update({
+  id: '/grants/',
+  path: '/grants/',
+  getParentRoute: () => AppRoute,
 } as any)
 const StudentProjectsNewRoute = StudentProjectsNewRouteImport.update({
   id: '/projects/new',
@@ -155,9 +161,9 @@ const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppGrantsGrantIdRoute = AppGrantsGrantIdRouteImport.update({
-  id: '/$grantId',
-  path: '/$grantId',
-  getParentRoute: () => AppGrantsRoute,
+  id: '/grants/$grantId',
+  path: '/grants/$grantId',
+  getParentRoute: () => AppRoute,
 } as any)
 const StudentProjectsProjectIdIndexRoute =
   StudentProjectsProjectIdIndexRouteImport.update({
@@ -178,22 +184,23 @@ export interface FileRoutesByFullPath {
   '/sponsor': typeof SponsorRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
-  '/grants': typeof AppGrantsRouteWithChildren
   '/notifications': typeof AppNotificationsRoute
   '/settings': typeof AppSettingsRoute
+  '/basic-info': typeof OnboardingBasicInfoRoute
   '/role-select': typeof OnboardingRoleSelectRoute
-  '/login': typeof PublicLoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/sponsor/home': typeof SponsorHomeRoute
   '/sponsor/profile': typeof SponsorProfileRoute
   '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/vaults': typeof StudentVaultsRoute
   '/grants/$grantId': typeof AppGrantsGrantIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/u/$userId': typeof AppUUserIdRoute
   '/student/grants/new': typeof StudentGrantsNewRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
+  '/grants/': typeof AppGrantsIndexRoute
   '/student/projects/': typeof StudentProjectsIndexRoute
   '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
   '/student/projects/$projectId/': typeof StudentProjectsProjectIdIndexRoute
@@ -204,22 +211,23 @@ export interface FileRoutesByTo {
   '/sponsor': typeof SponsorRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/discover': typeof AppDiscoverRoute
-  '/grants': typeof AppGrantsRouteWithChildren
   '/notifications': typeof AppNotificationsRoute
   '/settings': typeof AppSettingsRoute
+  '/basic-info': typeof OnboardingBasicInfoRoute
   '/role-select': typeof OnboardingRoleSelectRoute
-  '/login': typeof PublicLoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/sponsor/home': typeof SponsorHomeRoute
   '/sponsor/profile': typeof SponsorProfileRoute
   '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/vaults': typeof StudentVaultsRoute
   '/grants/$grantId': typeof AppGrantsGrantIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/u/$userId': typeof AppUUserIdRoute
   '/student/grants/new': typeof StudentGrantsNewRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
+  '/grants': typeof AppGrantsIndexRoute
   '/student/projects': typeof StudentProjectsIndexRoute
   '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
   '/student/projects/$projectId': typeof StudentProjectsProjectIdIndexRoute
@@ -233,23 +241,24 @@ export interface FileRoutesById {
   '/sponsor': typeof SponsorRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/_app/discover': typeof AppDiscoverRoute
-  '/_app/grants': typeof AppGrantsRouteWithChildren
   '/_app/notifications': typeof AppNotificationsRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_onboarding/basic-info': typeof OnboardingBasicInfoRoute
   '/_onboarding/role-select': typeof OnboardingRoleSelectRoute
-  '/_public/login': typeof PublicLoginRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/sponsor/home': typeof SponsorHomeRoute
   '/sponsor/profile': typeof SponsorProfileRoute
   '/sponsor/subscription': typeof SponsorSubscriptionRoute
   '/student/home': typeof StudentHomeRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/vaults': typeof StudentVaultsRoute
   '/_public/': typeof PublicIndexRoute
   '/_app/grants/$grantId': typeof AppGrantsGrantIdRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/_app/u/$userId': typeof AppUUserIdRoute
   '/student/grants/new': typeof StudentGrantsNewRoute
   '/student/projects/new': typeof StudentProjectsNewRoute
+  '/_app/grants/': typeof AppGrantsIndexRoute
   '/student/projects/': typeof StudentProjectsIndexRoute
   '/student/projects/$projectId/edit': typeof StudentProjectsProjectIdEditRoute
   '/student/projects/$projectId/': typeof StudentProjectsProjectIdIndexRoute
@@ -262,22 +271,23 @@ export interface FileRouteTypes {
     | '/sponsor'
     | '/student'
     | '/discover'
-    | '/grants'
     | '/notifications'
     | '/settings'
+    | '/basic-info'
     | '/role-select'
-    | '/login'
     | '/admin/dashboard'
     | '/sponsor/home'
     | '/sponsor/profile'
     | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/student/vaults'
     | '/grants/$grantId'
     | '/projects/$projectId'
     | '/u/$userId'
     | '/student/grants/new'
     | '/student/projects/new'
+    | '/grants/'
     | '/student/projects/'
     | '/student/projects/$projectId/edit'
     | '/student/projects/$projectId/'
@@ -288,22 +298,23 @@ export interface FileRouteTypes {
     | '/sponsor'
     | '/student'
     | '/discover'
-    | '/grants'
     | '/notifications'
     | '/settings'
+    | '/basic-info'
     | '/role-select'
-    | '/login'
     | '/admin/dashboard'
     | '/sponsor/home'
     | '/sponsor/profile'
     | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/student/vaults'
     | '/grants/$grantId'
     | '/projects/$projectId'
     | '/u/$userId'
     | '/student/grants/new'
     | '/student/projects/new'
+    | '/grants'
     | '/student/projects'
     | '/student/projects/$projectId/edit'
     | '/student/projects/$projectId'
@@ -316,23 +327,24 @@ export interface FileRouteTypes {
     | '/sponsor'
     | '/student'
     | '/_app/discover'
-    | '/_app/grants'
     | '/_app/notifications'
     | '/_app/settings'
+    | '/_onboarding/basic-info'
     | '/_onboarding/role-select'
-    | '/_public/login'
     | '/admin/dashboard'
     | '/sponsor/home'
     | '/sponsor/profile'
     | '/sponsor/subscription'
     | '/student/home'
     | '/student/profile'
+    | '/student/vaults'
     | '/_public/'
     | '/_app/grants/$grantId'
     | '/_app/projects/$projectId'
     | '/_app/u/$userId'
     | '/student/grants/new'
     | '/student/projects/new'
+    | '/_app/grants/'
     | '/student/projects/'
     | '/student/projects/$projectId/edit'
     | '/student/projects/$projectId/'
@@ -398,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicIndexRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/student/vaults': {
+      id: '/student/vaults'
+      path: '/vaults'
+      fullPath: '/student/vaults'
+      preLoaderRoute: typeof StudentVaultsRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/student/profile': {
       id: '/student/profile'
       path: '/profile'
@@ -440,18 +459,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginRouteImport
-      parentRoute: typeof PublicRoute
-    }
     '/_onboarding/role-select': {
       id: '/_onboarding/role-select'
       path: '/role-select'
       fullPath: '/role-select'
       preLoaderRoute: typeof OnboardingRoleSelectRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/_onboarding/basic-info': {
+      id: '/_onboarding/basic-info'
+      path: '/basic-info'
+      fullPath: '/basic-info'
+      preLoaderRoute: typeof OnboardingBasicInfoRouteImport
       parentRoute: typeof OnboardingRoute
     }
     '/_app/settings': {
@@ -468,13 +487,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNotificationsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/grants': {
-      id: '/_app/grants'
-      path: '/grants'
-      fullPath: '/grants'
-      preLoaderRoute: typeof AppGrantsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/discover': {
       id: '/_app/discover'
       path: '/discover'
@@ -488,6 +500,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/student/projects/'
       preLoaderRoute: typeof StudentProjectsIndexRouteImport
       parentRoute: typeof StudentRoute
+    }
+    '/_app/grants/': {
+      id: '/_app/grants/'
+      path: '/grants'
+      fullPath: '/grants/'
+      preLoaderRoute: typeof AppGrantsIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/student/projects/new': {
       id: '/student/projects/new'
@@ -519,10 +538,10 @@ declare module '@tanstack/react-router' {
     }
     '/_app/grants/$grantId': {
       id: '/_app/grants/$grantId'
-      path: '/$grantId'
+      path: '/grants/$grantId'
       fullPath: '/grants/$grantId'
       preLoaderRoute: typeof AppGrantsGrantIdRouteImport
-      parentRoute: typeof AppGrantsRoute
+      parentRoute: typeof AppRoute
     }
     '/student/projects/$projectId/': {
       id: '/student/projects/$projectId/'
@@ -541,43 +560,35 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AppGrantsRouteChildren {
-  AppGrantsGrantIdRoute: typeof AppGrantsGrantIdRoute
-}
-
-const AppGrantsRouteChildren: AppGrantsRouteChildren = {
-  AppGrantsGrantIdRoute: AppGrantsGrantIdRoute,
-}
-
-const AppGrantsRouteWithChildren = AppGrantsRoute._addFileChildren(
-  AppGrantsRouteChildren,
-)
-
 interface AppRouteChildren {
   AppDiscoverRoute: typeof AppDiscoverRoute
-  AppGrantsRoute: typeof AppGrantsRouteWithChildren
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppGrantsGrantIdRoute: typeof AppGrantsGrantIdRoute
   AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
   AppUUserIdRoute: typeof AppUUserIdRoute
+  AppGrantsIndexRoute: typeof AppGrantsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDiscoverRoute: AppDiscoverRoute,
-  AppGrantsRoute: AppGrantsRouteWithChildren,
   AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppGrantsGrantIdRoute: AppGrantsGrantIdRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
   AppUUserIdRoute: AppUUserIdRoute,
+  AppGrantsIndexRoute: AppGrantsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface OnboardingRouteChildren {
+  OnboardingBasicInfoRoute: typeof OnboardingBasicInfoRoute
   OnboardingRoleSelectRoute: typeof OnboardingRoleSelectRoute
 }
 
 const OnboardingRouteChildren: OnboardingRouteChildren = {
+  OnboardingBasicInfoRoute: OnboardingBasicInfoRoute,
   OnboardingRoleSelectRoute: OnboardingRoleSelectRoute,
 }
 
@@ -586,12 +597,10 @@ const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
 )
 
 interface PublicRouteChildren {
-  PublicLoginRoute: typeof PublicLoginRoute
   PublicIndexRoute: typeof PublicIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
-  PublicLoginRoute: PublicLoginRoute,
   PublicIndexRoute: PublicIndexRoute,
 }
 
@@ -626,6 +635,7 @@ const SponsorRouteWithChildren =
 interface StudentRouteChildren {
   StudentHomeRoute: typeof StudentHomeRoute
   StudentProfileRoute: typeof StudentProfileRoute
+  StudentVaultsRoute: typeof StudentVaultsRoute
   StudentGrantsNewRoute: typeof StudentGrantsNewRoute
   StudentProjectsNewRoute: typeof StudentProjectsNewRoute
   StudentProjectsIndexRoute: typeof StudentProjectsIndexRoute
@@ -636,6 +646,7 @@ interface StudentRouteChildren {
 const StudentRouteChildren: StudentRouteChildren = {
   StudentHomeRoute: StudentHomeRoute,
   StudentProfileRoute: StudentProfileRoute,
+  StudentVaultsRoute: StudentVaultsRoute,
   StudentGrantsNewRoute: StudentGrantsNewRoute,
   StudentProjectsNewRoute: StudentProjectsNewRoute,
   StudentProjectsIndexRoute: StudentProjectsIndexRoute,

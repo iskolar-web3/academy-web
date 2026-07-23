@@ -15,10 +15,12 @@ import { useSession } from "#/hooks/auth/useSession";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
 import { thesisPaperUrl } from "#/lib/project/api";
 import {
+	documentLabel,
 	emptyFormValues,
 	formToProjectInput,
 	isValidUrl,
 	projectToFormValues,
+	requiresDocumentUpload,
 	triggersReReview,
 } from "#/lib/project/helper";
 import {
@@ -85,6 +87,7 @@ export function SubmitProjectModal({
 		name: "members",
 	});
 
+	const title = watch("title");
 	const links = watch("links");
 	const type = watch("type");
 	const category = watch("category");
@@ -110,6 +113,7 @@ export function SubmitProjectModal({
 	// Submission gate — matches the fields the template wizard collects (a live demo and a
 	// public repo are required; the demo video is optional; ownership + consent declared).
 	const gateIssues: string[] = [];
+	if (!title || title.trim().length < 2) gateIssues.push("Add a project title");
 	if (!category) gateIssues.push("Pick a category");
 	if ((pitch ?? "").trim().length < 8) gateIssues.push("Add a one-line pitch");
 	if (!isValidUrl(links?.demo ?? ""))
@@ -118,8 +122,36 @@ export function SubmitProjectModal({
 		gateIssues.push("Add a valid public repository URL");
 	if (!ownershipDeclared) gateIssues.push("Confirm the ownership declaration");
 	if (!consented) gateIssues.push("Consent to review & public showcase");
-	if (type === "thesis_capstone" && !thesisPaperName)
-		gateIssues.push("Upload the thesis / capstone paper");
+	if (requiresDocumentUpload(type) && !thesisPaperName)
+		gateIssues.push(`Upload the ${documentLabel(type)}`);
+
+	// Per-step slice of the gate — "Continue" used to advance unconditionally
+	// regardless of that step's own required fields (the reported bug: MVP step's
+	// "required" URLs didn't actually block advancing). Team (step 2) has no
+	// required fields of its own today, same as before.
+	const stepIssues: string[][] = [
+		[
+			!title || title.trim().length < 2 ? "Add a project title" : null,
+			!category ? "Pick a category" : null,
+			(pitch ?? "").trim().length < 8 ? "Add a one-line pitch" : null,
+		].filter((issue): issue is string => issue !== null),
+		[
+			!isValidUrl(links?.demo ?? "") ? "Add a valid live demo URL" : null,
+			!isValidUrl(links?.repo ?? "")
+				? "Add a valid public repository URL"
+				: null,
+		].filter((issue): issue is string => issue !== null),
+		[],
+		[
+			!ownershipDeclared ? "Confirm the ownership declaration" : null,
+			!consented ? "Consent to review & public showcase" : null,
+			requiresDocumentUpload(type) && !thesisPaperName
+				? `Upload the ${documentLabel(type)}`
+				: null,
+		].filter((issue): issue is string => issue !== null),
+		gateIssues,
+	];
+	const currentStepIssues = stepIssues[step] ?? [];
 
 	const onPickFile = (file: File | undefined) => {
 		if (!file) return;
@@ -262,6 +294,14 @@ export function SubmitProjectModal({
 									{...register("pitch")}
 								/>
 							</div>
+							<div>
+								<div className={fieldLabelCls}>Purpose</div>
+								<textarea
+									className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
+									placeholder="The problem this solves and who it's for — shown on the project page under Purpose."
+									{...register("purpose")}
+								/>
+							</div>
 							<div className="flex gap-3.5">
 								<div className="flex-1">
 									<div className={fieldLabelCls}>Category</div>
@@ -279,6 +319,7 @@ export function SubmitProjectModal({
 									<select className={inputCls} {...register("type")}>
 										<option value="idea">Idea / prototype</option>
 										<option value="thesis_capstone">Thesis / capstone</option>
+										<option value="startup">Startup</option>
 									</select>
 								</div>
 							</div>
@@ -298,38 +339,48 @@ export function SubmitProjectModal({
 											key: "demo",
 											Icon: MonitorPlay,
 											ph: "Live demo URL (required)",
+											hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.) — reviewers just need a working link, not your own infrastructure.",
 										},
 										{
 											key: "repo",
 											Icon: Github,
 											ph: "Public repository URL (required)",
+											hint: null,
 										},
 										{
 											key: "video",
 											Icon: Play,
 											ph: "Demo video URL (optional)",
+											hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
 										},
 									] as const
-								).map(({ key, Icon, ph }) => {
+								).map(({ key, Icon, ph, hint }) => {
 									const value = links?.[key] ?? "";
 									return (
-										<div key={key} className="flex items-center gap-3">
-											<span className="flex w-8 flex-none justify-center text-action">
-												<Icon
-													className="size-5"
-													strokeWidth={1.6}
-													aria-hidden
+										<div key={key} className="flex flex-col gap-1">
+											<div className="flex items-center gap-3">
+												<span className="flex w-8 flex-none justify-center text-action">
+													<Icon
+														className="size-5"
+														strokeWidth={1.6}
+														aria-hidden
+													/>
+												</span>
+												<input
+													className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
+														value && !isValidUrl(value)
+															? "border-danger"
+															: "border-line"
+													}`}
+													placeholder={ph}
+													{...register(`links.${key}`)}
 												/>
-											</span>
-											<input
-												className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
-													value && !isValidUrl(value)
-														? "border-danger"
-														: "border-line"
-												}`}
-												placeholder={ph}
-												{...register(`links.${key}`)}
-											/>
+											</div>
+											{hint ? (
+												<p className="pl-11 font-mono text-[11px] text-content-faint">
+													{hint}
+												</p>
+											) : null}
 										</div>
 									);
 								})}
@@ -442,7 +493,7 @@ export function SubmitProjectModal({
 									</span>
 								</label>
 
-								{type === "thesis_capstone" ? (
+								{requiresDocumentUpload(type) ? (
 									<div className="flex items-center gap-[11px] rounded-[11px] border border-[#c3d0f2] border-dashed bg-surface-sunken p-3.5">
 										<Upload
 											className="size-[18px] flex-none text-action"
@@ -450,7 +501,8 @@ export function SubmitProjectModal({
 										/>
 										<div className="flex-1">
 											<div className="text-[14px] text-content-heading">
-												{thesisPaperName ?? "Thesis paper (PDF)"}
+												{thesisPaperName ??
+													`${documentLabel(type).charAt(0).toUpperCase()}${documentLabel(type).slice(1)} (PDF)`}
 												{editing &&
 												project.ownership.thesisPaperName &&
 												!thesisFile ? (
@@ -465,7 +517,7 @@ export function SubmitProjectModal({
 												) : null}
 											</div>
 											<div className="mt-0.5 font-mono text-[11.5px] text-content-faint">
-												Required for thesis / capstone, stored in the Lumen
+												Required for {documentLabel(type)}, stored in the Lumen
 												document vault
 											</div>
 											{fileError ? (
@@ -533,6 +585,14 @@ export function SubmitProjectModal({
 				</div>
 
 				{/* Footer */}
+				{!isLast && currentStepIssues.length > 0 ? (
+					<p className="px-7 pb-2 text-[12.5px] text-danger">
+						{currentStepIssues[0]}
+						{currentStepIssues.length > 1
+							? ` (+${currentStepIssues.length - 1} more)`
+							: ""}
+					</p>
+				) : null}
 				<div className="flex items-center justify-between px-7 pt-[18px] pb-6">
 					<Button
 						variant="secondary"
@@ -554,6 +614,7 @@ export function SubmitProjectModal({
 					) : (
 						<Button
 							size="lg"
+							disabled={currentStepIssues.length > 0}
 							onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
 							className="rounded-[10px] px-[26px] text-[15px] shadow-none"
 						>
