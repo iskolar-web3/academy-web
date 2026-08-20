@@ -1,6 +1,8 @@
-# academy-client — Build Phase Plans (P0 → P5)
+# academy-client — Build Phase Plans
 
-**Forward-looking** companion to the build-order docs in `../`. Where `NN-*.md` documents *what was built* after the fact, this folder documents *what is planned to be built* — the implementation scope of each product phase **before** any code lands, expressed in the same file-by-file narrative style.
+**Forward-looking** companion to the build-order docs in `../`. Where `../NN-*.md` documents *what was built* after the fact, this folder documents *what is planned to be built* — the implementation scope of a product phase **before** any code lands, expressed in the same file-by-file narrative style, step by step.
+
+Also in this folder (not phase plans, kept here alongside them): [`website-structure.md`](./website-structure.md) (the living folder-architecture/route-group/URL-map reference), [`next-steps-lumen-p4-p5.md`](./next-steps-lumen-p4-p5.md) (the standing Lumen/real-PayMongo roadmap guide), and [`manual-testing-guide.md`](./manual-testing-guide.md) (a single-file, click-through test script covering the whole shipped system, auth through every feature phase).
 
 Each phase doc is scoped by the **hybrid Vertical Slice Architecture** we locked for `academy-client`: a feature is reconstructed across four folders sharing one domain name —
 
@@ -22,13 +24,11 @@ Cross-cutting concerns (`auth.tsx`, `lib/api.ts`, `integrations/tanstack-query/`
 
 ## Phase index
 
-| Phase | Doc | Theme | Stories | Status | Depends on |
-|---|---|---|---|:---:|---|
-| P0 | `P0-foundation.md` | SSO, provisioning, role onboarding, security envelope, profiles, visitor landing | PLT-01…06, STU-01/02, SPN-01/02 | 📋 Planned | §3 token contract |
-| P1 | `P1-submission.md` | Project draft → MVP gate → members/consent → ownership → dashboard/lifecycle | STU-03…11 | 📋 Planned | P0 |
-| P2 | `P2-review.md` | Admin review queue, quality review, approve/return/reject, moderation, metrics | ADM-01/03/04/05/06 | 📋 Planned | P1 |
-| P3 | `P3-discovery-contact.md` | Browse + search + filters, all-in-one card, express interest, notifications, upvotes | SPN-03…08, PLT-07/08, STU-12/13 | 📋 Planned | P2 |
-| P4 | `P4-grants-funding.md` | Grants page, grant request, browse/fund (PayMongo), payouts/ledger, oversight | STU-14…16, SPN-09…11, ADM-02 | 📋 Planned | P0 + §9 money-model |
-| P5 | `P5-monetization-deal-flow.md` | Subscriptions/entitlements, vault + consent, deal-flow/saved-search/watchlist, badges | STU-17/18, SPN-12…16, ADM-07 | 📋 Planned | P4 + §9 billing |
+*No phase is currently in planning.* Phases 0–5 (Foundation → Monetization & Deal-Flow) all
+shipped client + server and their content migrated to `../05-foundation.md` through
+`../10-monetization-deal-flow.md` — see the progress table in `../README.md`. The next phase to
+land here, when one is scoped, follows the same **Goal → Stories in Scope → Planned Build →
+Implementation Process → Decisions & Trade-offs → Dependencies & Open Items → Verification Plan**
+shape described above, named `PN-<kebab-title>.md`.
 
 > **Traces-to discipline:** every phase links back to `documents/iskolar-academy-{prd,plan}.md` (FR-IDs · plan §) and the four `documents/user-stories/*.csv` modules. Keep the loop closed so plan, stories, and these scopes never drift. Open product decisions live in plan §9 / PRD §12 and `documents/iskolar-academy-tbd.md`.

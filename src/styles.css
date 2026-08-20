@@ -1,124 +1,484 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   iSkolar Academy — design foundation
+   Visual source of truth: design-template/iskolar-academy (Claude Design handoff).
+   Palette decision: .dc.html mockups win (brand-blue primary).
+
+   Tokens are named by WHERE THEY'RE USED (surface / content / line / interactive /
+   status / premium), not by hue. The Shadcn semantic tokens (:root) point straight
+   at this palette, so it is the single source of truth and every Shadcn component
+   themes automatically.
+
+   Pick the right utility for the job:
+     • theming-aware (flip in dark mode) → Shadcn utilities: bg-background, bg-card,
+       text-foreground, text-muted-foreground, border-border, bg-primary …
+     • fixed brand palette / extra tones → role utilities below: bg-surface-tint,
+       text-content-soft, text-content-heading, bg-success-bg, text-action …
+   ───────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Source+Code+Pro:wght@400;600&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Brand palette, named by usage → utility classes ────────────────────── */
+@theme {
+	/* Type */
+	--font-sans: 'Bree Serif', serif;          /* the single brand typeface — body, UI, headings */
+	--font-display: 'Bree Serif', serif;
+	--font-mono: 'Source Code Pro', Menlo, Monaco, Consolas, monospace;
+
+	/* Surface — page & component backgrounds */
+	--color-surface: #eef4ff;                    /* app canvas */
+	--color-surface-sunken: #f0f7ff;             /* inset panels */
+	--color-surface-card: #fefefd;               /* cards, sheets (warm white) */
+	--color-surface-tint: #eaf0ff;               /* chip / badge fill, hover */
+	--color-surface-overlay: #ffffff;            /* popovers, modals */
+
+	/* Content — text & icons (strong → faint) */
+	--color-content: #16213f;                    /* primary text */
+	--color-content-heading: #1f2a52;            /* deepest navy — headings */
+	--color-content-strong: #3f4a6b;
+	--color-content-body: #4a5578;
+	--color-content-muted: #56608a;
+	--color-content-soft: #6b7596;
+	--color-content-faint: #8893b5;
+	--color-content-ghost: #9aa6cc;
+
+	/* Line — hairline borders & dividers */
+	--color-line: #d3dcf6;
+
+	/* Interactive — actions, links, accents */
+	--color-action: #3a52a6;                     /* primary action, links, highlighter */
+	--color-action-hover: #3f58b2;
+	--color-on-action: #f0f7ff;                  /* text/icons on an action surface */
+	--color-highlight: #607ef2;                  /* trending, light accent */
+
+	/* Status — feedback (foreground / background / border) */
+	--color-success: #1a8a73;
+	--color-success-bg: #e1f8f1;
+	--color-success-bd: #bdeede;
+	--color-danger: #b4232a;                      /* returned / error / reject */
+	--color-danger-bg: #fde7e7;
+	--color-danger-bd: #f6d4d4;
+	--color-warning: #9a6a08;                     /* past_due / expiring / awaiting action (gold-family) */
+	--color-warning-bg: #fdf3e0;
+	--color-warning-bd: #f6e4bc;
+	--color-info: #3a52a6;                        /* under review / in progress */
+	--color-info-bg: #eaf0ff;
+	--color-info-bd: #dbe4fb;
+	--color-neutral: #6b7596;                     /* draft / withdrawn / closed */
+	--color-neutral-bg: #eef1fa;
+	--color-neutral-bd: #e0e6f3;
+	--color-verified: #0fa888;                    /* trust mark on real work */
+
+	/* Premium — logo & paid-tier chrome ONLY; never on landing */
+	--color-premium: #efa508;
+
+	/* Radius */
+	--radius: 0.75rem;                           /* base control radius (12px) */
+	--radius-control: 0.75rem;                   /* buttons, inputs */
+	--radius-card: 1rem;                         /* cards, panels (16px) */
+	--radius-modal: 1.25rem;                     /* dialogs / sheets (20px) */
+
+	/* Elevation */
+	--shadow-card: 0 6px 18px rgb(31 42 82 / 0.06);
+	--shadow-raise: 0 8px 22px rgb(31 42 82 / 0.06);
+	--shadow-pop: 0 18px 44px rgb(20 28 56 / 0.16);
+	--shadow-modal: 0 28px 60px rgb(20 28 56 / 0.28);
+}
+
+/* ── Shadcn semantic tokens → the palette above (single source of truth) ─── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.871 0.006 286.286);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.871 0.006 286.286);
+	--background: var(--color-surface);
+	--foreground: var(--color-content);
+	--card: var(--color-surface-card);
+	--card-foreground: var(--color-content);
+	--popover: var(--color-surface-overlay);
+	--popover-foreground: var(--color-content);
+	--primary: var(--color-action);              /* DECISION: brand-blue primary */
+	--primary-foreground: var(--color-on-action);
+	--secondary: var(--color-surface-tint);
+	--secondary-foreground: var(--color-action);
+	--muted: var(--color-neutral-bg);
+	--muted-foreground: var(--color-content-soft);
+	--accent: var(--color-surface-tint);
+	--accent-foreground: var(--color-action);
+	--destructive: var(--color-danger);
+	--destructive-foreground: var(--color-surface-card);
+	--border: var(--color-line);
+	--input: var(--color-line);
+	--ring: var(--color-action);
+	--chart-1: var(--color-action);
+	--chart-2: var(--color-highlight);
+	--chart-3: var(--color-verified);
+	--chart-4: var(--color-content-heading);
+	--chart-5: #7d93ee;
+	--radius: 0.75rem;
+	--sidebar: var(--color-surface-card);
+	--sidebar-foreground: var(--color-content);
+	--sidebar-primary: var(--color-action);
+	--sidebar-primary-foreground: var(--color-on-action);
+	--sidebar-accent: var(--color-surface-tint);
+	--sidebar-accent-foreground: var(--color-action);
+	--sidebar-border: var(--color-line);
+	--sidebar-ring: var(--color-action);
 }
 
+/* ── Dark mode (navy) — overrides the semantic tokens directly ──────────── */
 .dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.005 285.823);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.274 0.006 286.033);
-  --input: oklch(0.274 0.006 286.033);
-  --ring: oklch(0.442 0.017 285.786);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.274 0.006 286.033);
-  --sidebar-ring: oklch(0.442 0.017 285.786);
+	--background: #0e0e2c;
+	--foreground: #f0f7ff;
+	--card: #16183a;
+	--card-foreground: #f0f7ff;
+	--popover: #16183a;
+	--popover-foreground: #f0f7ff;
+	--primary: #607ef2;
+	--primary-foreground: #0e0e2c;
+	--secondary: #1d2148;
+	--secondary-foreground: #f0f7ff;
+	--muted: #1d2148;
+	--muted-foreground: #9aa6cc;
+	--accent: #1d2148;
+	--accent-foreground: #f0f7ff;
+	--destructive: #e8636a;
+	--destructive-foreground: #0e0e2c;
+	--border: #272b56;
+	--input: #272b56;
+	--ring: #607ef2;
+	--chart-1: #607ef2;
+	--chart-2: #3a52a6;
+	--chart-3: #31d0aa;
+	--chart-4: #7d93ee;
+	--chart-5: #9aa6cc;
+	--sidebar: #16183a;
+	--sidebar-foreground: #f0f7ff;
+	--sidebar-primary: #607ef2;
+	--sidebar-primary-foreground: #0e0e2c;
+	--sidebar-accent: #1d2148;
+	--sidebar-accent-foreground: #f0f7ff;
+	--sidebar-border: #272b56;
+	--sidebar-ring: #607ef2;
 }
 
+/* ── Bridge semantic tokens to Tailwind utilities (bg-card, text-primary…) ─ */
 @theme inline {
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ── Base ───────────────────────────────────────────────────────────────── */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground font-sans antialiased;
+	}
+}
+
+/* ── Fixed-geometry components + academic motifs ────────────────────────── */
+@layer components {
+	/* Eyebrow — uppercase mono section label with a ruled tick (syllabus kicker) */
+	.eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.875rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: rgb(58 82 166 / 0.7);
+	}
+	.eyebrow::before {
+		content: '';
+		width: 1.75rem;
+		height: 2px;
+		background: var(--color-action);
+		opacity: 0.55;
+	}
+
+	/* Highlighter-marker sweep behind keywords — at most one accent per view */
+	.hl-marker {
+		background-image: linear-gradient(transparent 58%, rgb(58 82 166 / 0.18) 0);
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		padding: 0 0.1em;
+	}
+	.hl-marker--bold {
+		background-image: linear-gradient(transparent 52%, rgb(58 82 166 / 0.28) 0);
+	}
+	.hl-marker--animate {
+		background-size: 0% 100%;
+		animation: dsMarker 0.5s 0.2s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+	}
+
+	/* Notebook rules + syllabus connectors */
+	.ruled-line {
+		height: 1px;
+		background: rgb(58 82 166 / 0.14);
+		border: 0;
+	}
+	.ruled-paper {
+		background-image: repeating-linear-gradient(
+			to bottom,
+			transparent 0,
+			transparent calc(1.75rem - 1px),
+			rgb(58 82 166 / 0.08) calc(1.75rem - 1px),
+			rgb(58 82 166 / 0.08) 1.75rem
+		);
+	}
+	.dotted-connector {
+		border-left: 2px dotted rgb(58 82 166 / 0.35);
+	}
+	.dotted-connector--h {
+		border-left: 0;
+		border-top: 2px dotted rgb(58 82 166 / 0.35);
+	}
+
+	/* Page container — centers content with a wide cap so it fills large viewports
+	   without stretching on ultrawide. ~1700px matches the design's full-bleed feel. */
+	.container-page {
+		width: 100%;
+		max-width: 1700px;
+		margin-inline: auto;
+		padding-inline: clamp(1.5rem, 4vw, 3rem);
+	}
+
+	/* Card frame */
+	.card-surface {
+		background: var(--color-surface-card);
+		border: 1px solid var(--color-line);
+		border-radius: var(--radius-card);
+		box-shadow: var(--shadow-card);
+	}
+
+	/* Chips — mono, 6px radius (category / tech / type / trending) */
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		padding: 0.25rem 0.6875rem;
+		border-radius: 0.375rem;
+		border: 1px solid transparent;
+		white-space: nowrap;
+	}
+	.chip--category {
+		color: var(--color-action);
+		background: var(--color-surface-tint);
+		border-color: var(--color-info-bd);
+	}
+	.chip--tech {
+		color: var(--color-content-muted);
+		background: #f0f3fb;
+	}
+	.chip--type {
+		color: var(--color-content-heading);
+		background: #dfe6fa;
+		border-color: #c3d0f2;
+	}
+	.chip--trending {
+		color: #fff;
+		background: var(--color-highlight);
+	}
+
+	/* Status pills — pill radius, mono (success / danger / info / neutral / verified) */
+	.status-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4375rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		padding: 0.25rem 0.6875rem;
+		border-radius: 9999px;
+		border: 1px solid transparent;
+	}
+	.status-pill--success {
+		color: var(--color-success);
+		background: var(--color-success-bg);
+		border-color: var(--color-success-bd);
+	}
+	.status-pill--danger {
+		color: var(--color-danger);
+		background: var(--color-danger-bg);
+		border-color: var(--color-danger-bd);
+	}
+	.status-pill--warning {
+		color: var(--color-warning);
+		background: var(--color-warning-bg);
+		border-color: var(--color-warning-bd);
+	}
+	.status-pill--info {
+		color: var(--color-info);
+		background: var(--color-info-bg);
+		border-color: var(--color-info-bd);
+	}
+	.status-pill--neutral {
+		color: var(--color-neutral);
+		background: var(--color-neutral-bg);
+		border-color: var(--color-neutral-bd);
+	}
+	.status-pill--verified {
+		color: var(--color-verified);
+		background: var(--color-success-bg);
+		border-color: var(--color-success-bd);
+	}
+
+	/* Brand buttons — fixed geometry from the Design System (height 3rem, 12px radius).
+	   Shadcn <Button> stays available for composed primitives; use these for the
+	   plain brand actions the mockups specify. */
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.625rem;
+		height: 3rem;
+		padding: 0 1.5rem;
+		border-radius: var(--radius-control);
+		font-family: var(--font-display);
+		font-size: 0.97rem;
+		cursor: pointer;
+		border: 1px solid transparent;
+		transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+			transform 0.15s ease, box-shadow 0.15s ease;
+	}
+	.btn-primary {
+		background: var(--color-action);
+		color: var(--color-on-action);
+		box-shadow: 0 6px 16px rgb(58 82 166 / 0.24);
+	}
+	.btn-primary:hover {
+		background: var(--color-action-hover);
+		transform: translateY(-2px);
+		box-shadow: 0 12px 28px rgb(58 82 166 / 0.34);
+	}
+	.btn-secondary {
+		background: var(--color-surface-card);
+		color: var(--color-action);
+		border-color: var(--color-line);
+	}
+	.btn-secondary:hover {
+		background: var(--color-surface-tint);
+	}
+	.btn-destructive {
+		background: var(--color-surface-card);
+		color: var(--color-danger);
+		border-color: var(--color-danger-bd);
+	}
+
+	/* Scrollbars (inherited from main) */
+	.custom-scrollbar::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+	.custom-scrollbar::-webkit-scrollbar-thumb {
+		background: #d1d5db;
+		border-radius: 9999px;
+	}
+	.no-scrollbar {
+		scrollbar-width: none;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+/* ── Motion (ported from the Design System file) ────────────────────────── */
+@keyframes dsFadeUp {
+	from { opacity: 0; transform: translateY(14px); }
+	to { opacity: 1; transform: none; }
+}
+@keyframes dsBadge {
+	0% { opacity: 0; transform: scale(0.7) translateY(4px); }
+	100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes dsCheck {
+	0% { opacity: 0; transform: scale(0.3); }
+	60% { transform: scale(1.18); }
+	100% { opacity: 1; transform: scale(1); }
+}
+@keyframes dsSpin {
+	to { transform: rotate(360deg); }
+}
+@keyframes dsToast {
+	from { opacity: 0; transform: translateX(28px) scale(0.96); }
+	to { opacity: 1; transform: none; }
+}
+@keyframes dsMarker {
+	to { background-size: 100% 100%; }
+}
+@keyframes dsFloat {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-9px); }
+}
+@keyframes maskUp {
+	from { transform: translateY(115%); }
+	to { transform: translateY(0); }
+}
+@keyframes dsPopIn {
+	from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@layer components {
+	.animate-fade-up { animation: dsFadeUp 0.3s ease both; }
+	.animate-pop-in { animation: dsPopIn 0.16s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
+	.animate-badge { animation: dsBadge 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+	.animate-check { animation: dsCheck 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+	.animate-spin-ds { animation: dsSpin 0.7s linear infinite; }
+	.animate-toast { animation: dsToast 0.32s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
+	.animate-float { animation: dsFloat 6s ease-in-out infinite; }
+	/* Masking reveal — text rises out from behind a clipped band (see Hero headline). */
+	.mask-reveal { animation: maskUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both; }
+	.mask-reveal-2 { animation-delay: 0.14s; }
+}
+
+/* Honor reduced-motion — neutralize all decorative animation */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+	.hl-marker--animate { background-size: 100% 100%; }
+	.btn-primary:hover { transform: none; }
 }
