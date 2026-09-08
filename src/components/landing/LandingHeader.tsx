@@ -11,13 +11,10 @@ export function LandingHeader() {
 			<div className="container-page flex h-18 items-center justify-between">
 				<div className="flex items-center gap-2.5">
 					<img
-						src="/logo-academy.png"
+						src="/combination-mark.png"
 						alt="iSkolar Academy"
-						className="h-10 w-auto"
+						className="h-40 w-auto"
 					/>
-					<span className="text-lg uppercase tracking-[0.16em] text-action">
-						Academy
-					</span>
 				</div>
 				<SignInPopover>
 					<button type="button" className="btn btn-secondary h-11 px-6 text-sm">

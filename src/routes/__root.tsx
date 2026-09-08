@@ -26,13 +26,18 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "iSkolar Academy",
+				title: "Academy",
 			},
 		],
 		links: [
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+			{
+				rel: "icon",
+				type: "image/png",
+				href: "/logo-academy.png",
 			},
 		],
 	}),

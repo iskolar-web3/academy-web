@@ -104,7 +104,6 @@ export function Hero() {
 			<div className="container-page relative z-10 grid items-center gap-12 pt-16 pb-14 sm:pt-24 lg:grid-cols-[1.05fr_.95fr]">
 				<div className="order-2 animate-fade-up lg:order-1">
 					<div className="mb-5 flex items-center gap-4">
-						<span className="h-[3px] w-14 rounded-full bg-content-faint" />
 						<span className="font-mono text-lg font-semibold uppercase tracking-[0.22em] text-content-faint">
 							A subsidiary of iSkolar
 						</span>
@@ -174,15 +173,8 @@ export function Hero() {
 					<img
 						src="/logo-academy.png"
 						alt="iSkolar Academy"
-						className="relative max-h-64 w-auto animate-float sm:max-h-[26rem]"
+						className="relative max-h-64 w-auto animate-float sm:max-h-[28rem]"
 					/>
-					<div className="relative mt-3 flex items-center gap-3.5">
-						<span className="h-0.5 w-12 bg-action/40" />
-						<span className="text-xl uppercase tracking-[0.42em] text-action">
-							Academy
-						</span>
-						<span className="h-0.5 w-12 bg-action/40" />
-					</div>
 				</div>
 			</div>
 		</section>
