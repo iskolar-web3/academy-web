@@ -329,8 +329,9 @@ export function SubmitProjectModal({
 					{step === 1 ? (
 						<div>
 							<p className={helperCls}>
-								Every published project must clear the MVP gate. Add at least a
-								live demo and a public repo.
+								Every published project must clear the MVP evidence track. Add a
+								live demo and a public repo; slow demos should be warmed up and
+								probed before any return decision.
 							</p>
 							<div className="flex flex-col gap-3.5">
 								{(
@@ -339,7 +340,7 @@ export function SubmitProjectModal({
 											key: "demo",
 											Icon: MonitorPlay,
 											ph: "Live demo URL (required)",
-											hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.) — reviewers just need a working link, not your own infrastructure.",
+											hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
 										},
 										{
 											key: "repo",
@@ -565,7 +566,7 @@ export function SubmitProjectModal({
 											? willReReview
 												? "You changed the title, category, or an MVP link — saving sends this published project back to the review queue."
 												: "Your changes are saved without a new review."
-											: "Your project goes to the Academy review queue. Reviewers check that the MVP runs and the purpose is clear, usually within 2 business days."}
+											: "Your project goes to the Academy review queue. Evidence checks prepare cited pass/return reasons, while reviewers keep final judgment on exceptions."}
 									</p>
 								</>
 							) : (

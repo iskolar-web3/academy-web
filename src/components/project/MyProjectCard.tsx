@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ProjectPipeline } from "#/components/project/ProjectPipeline";
+import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import {
 	dashboardAction,
 	projectCover,
@@ -48,6 +49,14 @@ export function MyProjectCard({ project }: { project: Project }) {
 						⚠ {project.returnedNote}
 					</div>
 				) : null}
+
+				<div className="mt-3">
+					<ReviewCheckPanel
+						project={project}
+						limit={4}
+						title="Submission tracker"
+					/>
+				</div>
 
 				<div className="mt-4 flex items-center justify-between border-[#eef1fa] border-t pt-3.5">
 					{project.status === "published" ? (

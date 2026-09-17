@@ -122,7 +122,7 @@ function Discover() {
 					<input
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
-						placeholder="Search projects, tech, schools…"
+						placeholder="Search projects, tech, or category..."
 						className="h-[46px] w-full rounded-[13px] border border-line bg-surface-card pr-4 pl-11 text-[15px] text-content outline-none focus:border-action"
 					/>
 				</div>

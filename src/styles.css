@@ -396,6 +396,9 @@
 	.btn-secondary:hover {
 		background: var(--color-surface-tint);
 	}
+	.btn:active {
+		transform: scale(0.97);
+	}
 	.btn-destructive {
 		background: var(--color-surface-card);
 		color: var(--color-danger);

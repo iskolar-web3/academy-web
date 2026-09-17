@@ -39,12 +39,19 @@ function Grants() {
 			}
 			right={<AdsPanel />}
 		>
-			<p className="mb-[26px] max-w-[620px] text-[16px] text-content-soft">
-				Back promising student work at the starting-thesis stage, before it has
-				an MVP. Each request is self-declared with a scanned title proposal and
-				goes live on submit; funds move securely through the platform toward its
-				target.
-			</p>
+			<div className="mb-[26px] rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
+				<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
+					Research / thesis track
+				</div>
+				<h1 className="mt-1 text-[26px] leading-tight text-content-heading">
+					Fund research before an MVP exists
+				</h1>
+				<p className="mt-1.5 max-w-[680px] text-[14.5px] leading-relaxed text-content-soft">
+					Grant requests use document-first evidence: title proposal, structure,
+					citation readiness, endorsement, similarity, and ethics routing.
+					Project MVP checks stay separate.
+				</p>
+			</div>
 
 			{isLoading ? (
 				<p className="text-content-soft">Loading grants…</p>

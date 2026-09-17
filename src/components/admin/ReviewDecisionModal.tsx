@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
 import {
 	Dialog,
@@ -198,6 +199,10 @@ export function ReviewDecisionModal({
 						) : (
 							<p className="text-[13px] text-content-soft">No MVP links.</p>
 						)}
+					</div>
+
+					<div className="mt-[18px]">
+						<ReviewCheckPanel project={project} title="Automated evidence" />
 					</div>
 
 					{project.isTeam && project.members.length > 0 ? (

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ReviewEvidenceChips } from "#/components/project/ReviewCheckPanel";
 import { UpvoteButton } from "#/components/project/UpvoteButton";
 import { useToggleUpvote } from "#/hooks/upvote/useToggleUpvote";
 import type { ShowcaseProject } from "#/lib/discover/model";
@@ -31,7 +32,7 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 	const params = { projectId: project.id };
 
 	return (
-		<div className="card-surface flex h-[452px] flex-col overflow-hidden rounded-[15px] transition-transform hover:-translate-y-1">
+		<div className="card-surface flex h-[488px] flex-col overflow-hidden rounded-[15px] transition-transform hover:-translate-y-1">
 			<Link
 				to={to}
 				params={params}
@@ -80,6 +81,9 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 						{more > 0 ? (
 							<span className="chip chip--tech flex-none">+{more} more</span>
 						) : null}
+					</div>
+					<div className="mb-[12px]">
+						<ReviewEvidenceChips project={project} max={2} />
 					</div>
 				</Link>
 

@@ -7,9 +7,17 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+const disableNetlifyPlugin = process.env.DISABLE_NETLIFY_PLUGIN === "true";
+
 const config = defineConfig({
 	resolve: { tsconfigPaths: true },
-	plugins: [devtools(), tailwindcss(), tanstackStart(), netlify(), viteReact()],
+	plugins: [
+		devtools(),
+		tailwindcss(),
+		tanstackStart(),
+		...(disableNetlifyPlugin ? [] : [netlify()]),
+		viteReact(),
+	],
 });
 
 export default config;

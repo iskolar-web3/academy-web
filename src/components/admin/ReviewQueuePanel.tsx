@@ -1,5 +1,9 @@
 import type { Project } from "#/lib/project/model";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
+import {
+	buildReviewChecks,
+	summarizeReviewChecks,
+} from "#/lib/project/reviewChecks";
 
 /**
  * Review queue (ADM-01) — a 1:1 port of the design-template ADMIN › REVIEW QUEUE: an intro
@@ -55,6 +59,7 @@ export function ReviewQueuePanel({
 				<div className="flex flex-col gap-3.5">
 					{projects.map((p) => {
 						const links = linkSummary(p);
+						const checkSummary = summarizeReviewChecks(buildReviewChecks(p));
 						return (
 							<div
 								key={p.id}
@@ -78,6 +83,19 @@ export function ReviewQueuePanel({
 											className={`font-mono text-[12.5px] ${links.danger ? "text-danger" : "text-content-faint"}`}
 										>
 											{links.label}
+										</div>
+										<div className="mt-3 flex flex-wrap gap-1.5">
+											<span className="status-pill status-pill--success text-[10.5px]">
+												{checkSummary.pass} ready
+											</span>
+											<span className="status-pill status-pill--info text-[10.5px]">
+												{checkSummary.pending} queued
+											</span>
+											{checkSummary.attention > 0 ? (
+												<span className="status-pill status-pill--warning text-[10.5px]">
+													{checkSummary.attention} needs action
+												</span>
+											) : null}
 										</div>
 									</div>
 									<button

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { GrantEvidenceChips } from "#/components/grant/GrantReviewPanel";
 import { formatPeso, fundingPct, grantStatusMeta } from "#/lib/grant/helper";
 import type { GrantRequest } from "#/lib/grant/model";
 
@@ -44,6 +45,10 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 			<p className="mb-[18px] flex-1 text-[14px] leading-normal text-content-soft">
 				{grant.purpose}
 			</p>
+
+			<div className="mb-4">
+				<GrantEvidenceChips grant={grant} />
+			</div>
 
 			<div className="mb-[10px] h-[9px] overflow-hidden rounded-full bg-[#eef1fa]">
 				<div

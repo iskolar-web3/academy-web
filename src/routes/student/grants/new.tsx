@@ -20,8 +20,8 @@ function CreateGrantRequest() {
 			</Link>
 			<h1 className="mb-1.5 text-[30px] text-action">Request a grant</h1>
 			<p className="mb-[26px] text-[15px] leading-normal text-content-soft">
-				For a thesis that is just starting, an approved title proposal but no
-				MVP yet. Self-declared, it goes live for sponsors the moment you submit.
+				For a thesis that is just starting: no MVP required, but the document
+				evidence track is different from startup project review.
 			</p>
 			<GrantForm />
 		</div>

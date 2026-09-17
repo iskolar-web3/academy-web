@@ -6,6 +6,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useEffect, useState } from "react";
 import { AuthProvider } from "#/auth";
 import { Toaster } from "#/components/ui/sonner";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
@@ -39,6 +40,33 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	shellComponent: RootDocument,
 });
 
+const enableDevtools = import.meta.env.VITE_ENABLE_DEVTOOLS !== "false";
+
+function ClientDevtools() {
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!enableDevtools || !mounted) return null;
+
+	return (
+		<TanStackDevtools
+			config={{
+				position: "bottom-right",
+			}}
+			plugins={[
+				{
+					name: "Tanstack Router",
+					render: <TanStackRouterDevtoolsPanel />,
+				},
+				TanStackQueryDevtools,
+			]}
+		/>
+	);
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		// suppressHydrationWarning on <html>/<body> ONLY: browser extensions (ColorZilla →
@@ -53,18 +81,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body suppressHydrationWarning>
 				<AuthProvider>{children}</AuthProvider>
 				<Toaster />
-				<TanStackDevtools
-					config={{
-						position: "bottom-right",
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-						TanStackQueryDevtools,
-					]}
-				/>
+				<ClientDevtools />
 				<Scripts />
 			</body>
 		</html>
