@@ -5,19 +5,21 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
 import viteReact from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 
-const disableNetlifyPlugin = process.env.DISABLE_NETLIFY_PLUGIN === "true";
+export default defineConfig(({ command, mode }) => {
+	const env = loadEnv(mode, process.cwd(), "");
+	const disableNetlifyPlugin =
+		command === "serve" || env.DISABLE_NETLIFY_PLUGIN === "true";
 
-const config = defineConfig({
-	resolve: { tsconfigPaths: true },
-	plugins: [
-		devtools(),
-		tailwindcss(),
-		tanstackStart(),
-		...(disableNetlifyPlugin ? [] : [netlify()]),
-		viteReact(),
-	],
+	return {
+		resolve: { tsconfigPaths: true },
+		plugins: [
+			devtools(),
+			tailwindcss(),
+			tanstackStart(),
+			...(disableNetlifyPlugin ? [] : [netlify()]),
+			viteReact(),
+		],
+	};
 });
-
-export default config;
