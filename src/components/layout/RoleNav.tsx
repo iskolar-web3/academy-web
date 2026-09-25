@@ -98,15 +98,16 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 				{/* Centered on the header itself, not just "between" the logo and the
 				    account pill — those two sides are rarely the same width (a long
 				    display name in the pill used to visibly drag this off-center). */}
-				<nav className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 hidden items-center gap-1.5 md:flex">
+				<nav className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 hidden items-center gap-5 md:flex">
 					{NAV[activeRole].map((item) => (
 						<Link
 							key={item.to}
 							to={item.to}
-							className="flex h-[38px] items-center rounded-[9px] px-[15px] font-sans text-[14.5px] transition-colors"
-							activeProps={{ className: "bg-[#e3ebfb] text-action" }}
+							className="flex h-[38px] items-center border-action/0 border-b-2 px-0 font-sans text-[14.5px] transition-colors"
+							activeProps={{ className: "border-action text-action" }}
 							inactiveProps={{
-								className: "text-content-muted hover:bg-surface-tint",
+								className:
+									"text-content-muted hover:border-action/30 hover:text-action",
 							}}
 						>
 							{item.label}
@@ -172,7 +173,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 								asChild
 								className="justify-center text-[13.5px] text-action"
 							>
-								<Link to="/notifications">See all notifications →</Link>
+								<Link to="/notifications">See all notifications</Link>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>

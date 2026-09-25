@@ -6,7 +6,7 @@ import type { GrantRequest } from "#/lib/grant/model";
 /**
  * Grants gallery card — a 1:1 port of the design-template GRANTS GALLERY card: title +
  * status badge, category/tech chips, purpose, funding progress bar, raised/target +
- * backers/age line, and a "View grant →" button. The whole card opens the grant detail
+ * backers/age line, and a "View grant" button. The whole card opens the grant detail
  * (funding itself happens there, not from the gallery).
  */
 export function GrantCard({ grant }: { grant: GrantRequest }) {
@@ -18,7 +18,7 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 		<Link
 			to="/grants/$grantId"
 			params={{ grantId: grant.id }}
-			className="card-surface flex flex-col rounded-[15px] p-[22px] transition-transform hover:-translate-y-1"
+			className="card-surface flex flex-col rounded-[15px] p-[22px] transition-colors hover:border-action"
 		>
 			<div className="mb-3 flex items-start justify-between gap-3.5">
 				<span className="text-[20px] leading-tight text-content-heading">
@@ -69,7 +69,7 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 			</div>
 
 			<span className="btn btn-primary flex h-11 items-center justify-center rounded-[10px] text-[15px]">
-				View grant →
+				View grant
 			</span>
 		</Link>
 	);

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ProjectPipeline } from "#/components/project/ProjectPipeline";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
+import { useProjectVerification } from "#/hooks/project/useProjectVerification";
 import {
 	dashboardAction,
 	projectCover,
@@ -15,6 +16,10 @@ import type { Project } from "#/lib/project/model";
  * pipeline tracker, an inline returned note, and a single contextual action.
  */
 export function MyProjectCard({ project }: { project: Project }) {
+	const verification = useProjectVerification(
+		project.id,
+		project.status !== "draft",
+	);
 	const status = statusMeta(project.status);
 	const action = dashboardAction(project.status);
 	const when =
@@ -53,8 +58,8 @@ export function MyProjectCard({ project }: { project: Project }) {
 				<div className="mt-3">
 					<ReviewCheckPanel
 						project={project}
-						limit={4}
 						title="Submission tracker"
+						checks={verification.data}
 					/>
 				</div>
 

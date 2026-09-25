@@ -1,11 +1,4 @@
-import {
-	ArrowUpRight,
-	Check,
-	Github,
-	MonitorPlay,
-	Play,
-	X,
-} from "lucide-react";
+import { Check, Github, MonitorPlay, Play, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
@@ -17,6 +10,7 @@ import {
 	DialogTitle,
 } from "#/components/ui/dialog";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
+import { useReviewVerification } from "#/hooks/review/useReviewQueue";
 import { thesisPaperUrl } from "#/lib/project/api";
 import {
 	documentLabel,
@@ -64,6 +58,7 @@ export function ReviewDecisionModal({
 	onClose: () => void;
 }) {
 	const { decide } = useReviewDecision();
+	const verification = useReviewVerification(project.id);
 	const [returning, setReturning] = useState(false);
 	const [note, setNote] = useState("");
 	const [noteError, setNoteError] = useState(false);
@@ -192,8 +187,7 @@ export function ReviewDecisionModal({
 									className="flex items-center gap-2.5 rounded-[10px] border border-info-bd px-[13px] py-[11px] text-[14px] text-content-heading transition-colors hover:bg-surface-sunken"
 								>
 									<Icon className="size-[17px] text-action" aria-hidden />
-									{label}
-									<ArrowUpRight className="ml-auto size-4 text-content-ghost" />
+									<span className="min-w-0 flex-1">{label}</span>
 								</a>
 							))
 						) : (
@@ -202,7 +196,11 @@ export function ReviewDecisionModal({
 					</div>
 
 					<div className="mt-[18px]">
-						<ReviewCheckPanel project={project} title="Automated evidence" />
+					<ReviewCheckPanel
+						project={project}
+						title="Automated evidence"
+						checks={verification.data}
+					/>
 					</div>
 
 					{project.isTeam && project.members.length > 0 ? (

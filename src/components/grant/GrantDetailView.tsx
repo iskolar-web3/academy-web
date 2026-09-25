@@ -80,7 +80,6 @@ export function GrantDetailView({
 								🔒 Lumen document vault, signed-link access
 							</div>
 						</div>
-						<span className="text-content-faint">↗</span>
 					</a>
 				) : null}
 				<p className="font-mono text-[12.5px] leading-normal text-content-faint">

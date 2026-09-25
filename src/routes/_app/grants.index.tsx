@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
-import { SponsorRail } from "#/components/discover/SponsorRail";
+import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { GrantCard } from "#/components/grant/GrantCard";
 import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
@@ -12,7 +12,8 @@ import { AcademyRole } from "#/lib/auth/model";
 /**
  * Grants gallery (SPN-09, P4) — a 1:1 port of the design-template GRANTS GALLERY: an intro
  * paragraph and the card grid (every grant regardless of status — open/funded/closed
- * alike, matching the template's unfiltered `GRANTS()` seed). Left column is `SponsorRail`
+ * alike, matching the template's unfiltered `GRANTS()` seed). Left column is the sponsor
+ * evidence rail
  * for sponsors or the profile panel for student/admin; right column is the ad slot. No
  * search/filter toolbar — the template doesn't have one on this screen.
  */
@@ -30,7 +31,7 @@ function Grants() {
 		<AppPageLayout
 			left={
 				isSponsor ? (
-					<SponsorRail />
+					<SponsorEvidenceRail />
 				) : panel ? (
 					<StudentProfileCard profile={panel} />
 				) : (

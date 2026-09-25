@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { DealFlowCard } from "#/components/discover/DealFlowCard";
-import { SponsorRail } from "#/components/discover/SponsorRail";
+import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { publishedProjectsQuery } from "#/lib/discover/api";
@@ -42,7 +42,7 @@ function SponsorHome() {
 		.slice(0, 6);
 
 	return (
-		<AppPageLayout left={<SponsorRail />} right={<AdsPanel />}>
+		<AppPageLayout left={<SponsorEvidenceRail />} right={<AdsPanel />}>
 			<div className="mb-5 rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
 				<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
 					Sponsor deal-flow

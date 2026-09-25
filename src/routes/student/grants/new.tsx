@@ -16,7 +16,7 @@ function CreateGrantRequest() {
 				to="/grants"
 				className="mb-[18px] inline-block text-[14.5px] text-action"
 			>
-				← All grants
+				All grants
 			</Link>
 			<h1 className="mb-1.5 text-[30px] text-action">Request a grant</h1>
 			<p className="mb-[26px] text-[15px] leading-normal text-content-soft">

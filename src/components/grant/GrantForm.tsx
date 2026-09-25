@@ -236,9 +236,9 @@ export function GrantForm() {
 				<div className="mt-3 grid gap-2 sm:grid-cols-2">
 					{[
 						"Title proposal stored",
-						"Citation / DOI check queued",
-						"School endorsement routed",
-						"Similarity review queued",
+						"Citation / DOI review",
+						"School endorsement review",
+						"Similarity and ethics routing",
 					].map((item) => (
 						<div
 							key={item}
@@ -248,6 +248,10 @@ export function GrantForm() {
 						</div>
 					))}
 				</div>
+				<p className="mt-3 text-[12px] leading-relaxed text-content-soft">
+					These are the review steps for the request. The checks will become
+					machine-backed as the Academy verification service is added.
+				</p>
 			</div>
 
 			<Button

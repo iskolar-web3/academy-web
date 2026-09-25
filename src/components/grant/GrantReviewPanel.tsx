@@ -24,14 +24,14 @@ const STATUS_META: Record<
 > = {
 	pass: {
 		Icon: CheckCircle2,
-		label: "Ready",
+		label: "Accepted",
 		rowClass: "border-success-bd bg-success-bg/55",
 		iconClass: "text-success",
 		pillClass: "status-pill--success",
 	},
 	pending: {
 		Icon: Clock3,
-		label: "Queued",
+		label: "Awaiting review",
 		rowClass: "border-info-bd bg-info-bg/65",
 		iconClass: "text-action",
 		pillClass: "status-pill--info",
@@ -95,7 +95,7 @@ export function GrantReviewPanel({
 						{title}
 					</div>
 					<div className="mt-1 text-[13px] text-content-soft">
-						{summary.pass} ready / {summary.pending} queued /{" "}
+						{summary.pass} accepted / {summary.pending} awaiting review /{" "}
 						{summary.attention} needs action
 					</div>
 				</div>
@@ -116,6 +116,10 @@ export function GrantReviewPanel({
 					<GrantCheckRow key={check.id} check={check} />
 				))}
 			</div>
+			<p className="mt-3 text-[11.5px] leading-relaxed text-content-faint">
+				These are document signals and routing notes. They are not automatic
+				funding decisions.
+			</p>
 		</div>
 	);
 }

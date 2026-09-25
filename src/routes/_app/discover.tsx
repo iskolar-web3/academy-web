@@ -3,7 +3,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
-import { SponsorRail } from "#/components/discover/SponsorRail";
+import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
@@ -104,7 +104,7 @@ function Discover() {
 		<AppPageLayout
 			left={
 				isSponsor ? (
-					<SponsorRail />
+					<SponsorEvidenceRail />
 				) : panel ? (
 					<StudentProfileCard profile={panel} />
 				) : (

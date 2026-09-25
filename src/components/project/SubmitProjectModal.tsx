@@ -1,6 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Github, MonitorPlay, Play, Upload, X } from "lucide-react";
-import { useState } from "react";
+import {
+	CheckCircle2,
+	Github,
+	MonitorPlay,
+	Play,
+	Upload,
+	X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "#/components/ui/button";
@@ -46,6 +53,7 @@ const inputCls =
 	"h-[46px] w-full rounded-[10px] border border-line bg-surface-card px-[14px] text-[15px] text-content-heading outline-none transition-colors focus:border-action";
 const fieldLabelCls = "mb-[7px] text-[13px] text-content-muted";
 const helperCls = "mb-4 text-[14px] leading-[1.5] text-content-soft";
+const LOCAL_DRAFT_PREFIX = "academy.project-draft";
 
 function initialsOf(name: string): string {
 	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
@@ -81,7 +89,42 @@ export function SubmitProjectModal({
 		resolver: zodResolver(projectFormSchema),
 		defaultValues: project ? projectToFormValues(project) : emptyFormValues(),
 	});
-	const { register, watch, setValue, control, getValues } = form;
+	const { register, watch, setValue, control, getValues, reset } = form;
+	const localDraftKey =
+		!editing && user?.iskolarUserId
+			? `${LOCAL_DRAFT_PREFIX}.${user.iskolarUserId}`
+			: null;
+
+	useEffect(() => {
+		if (!localDraftKey) return;
+		const raw = window.localStorage.getItem(localDraftKey);
+		if (!raw) return;
+
+		try {
+			const parsed = projectFormSchema.partial().safeParse(JSON.parse(raw));
+			if (parsed.success) {
+				reset({
+					...emptyFormValues(),
+					...parsed.data,
+					// File objects cannot survive localStorage. Make the upload explicit again.
+					thesisPaperName: "",
+				});
+			}
+		} catch {
+			window.localStorage.removeItem(localDraftKey);
+		}
+	}, [localDraftKey, reset]);
+
+	useEffect(() => {
+		if (!localDraftKey) return;
+		const subscription = form.watch((values) => {
+			window.localStorage.setItem(
+				localDraftKey,
+				JSON.stringify({ ...values, thesisPaperName: "" }),
+			);
+		});
+		return () => subscription.unsubscribe();
+	}, [form, localDraftKey]);
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "members",
@@ -94,6 +137,7 @@ export function SubmitProjectModal({
 	const pitch = watch("pitch");
 	const thesisPaperName = watch("thesisPaperName");
 	const ownershipDeclared = watch("ownershipDeclared");
+	const members = watch("members");
 	const name = user?.displayName || user?.iskolarUserId || "You";
 
 	const busy =
@@ -122,13 +166,31 @@ export function SubmitProjectModal({
 		gateIssues.push("Add a valid public repository URL");
 	if (!ownershipDeclared) gateIssues.push("Confirm the ownership declaration");
 	if (!consented) gateIssues.push("Consent to review & public showcase");
+	const teamConsentIssues = (() => {
+		if (!watch("isTeam")) return [];
+
+		const consents = (members ?? [])
+			.filter((member) => member.linked)
+			.map(
+				(member) =>
+					project?.members.find((existing) => existing.name === member.name)
+						?.consent ?? "pending",
+			);
+		if (consents.includes("declined")) {
+			return ["Resolve declined team member consent"];
+		}
+		return consents.includes("pending")
+			? ["Wait for all team members to accept their invitation"]
+			: [];
+	})();
+	gateIssues.push(...teamConsentIssues);
 	if (requiresDocumentUpload(type) && !thesisPaperName)
 		gateIssues.push(`Upload the ${documentLabel(type)}`);
 
 	// Per-step slice of the gate — "Continue" used to advance unconditionally
 	// regardless of that step's own required fields (the reported bug: MVP step's
-	// "required" URLs didn't actually block advancing). Team (step 2) has no
-	// required fields of its own today, same as before.
+	// "required" URLs didn't actually block advancing). Team consent is also required
+	// before submission when linked teammates are part of the project.
 	const stepIssues: string[][] = [
 		[
 			!title || title.trim().length < 2 ? "Add a project title" : null,
@@ -141,7 +203,7 @@ export function SubmitProjectModal({
 				? "Add a valid public repository URL"
 				: null,
 		].filter((issue): issue is string => issue !== null),
-		[],
+		teamConsentIssues,
 		[
 			!ownershipDeclared ? "Confirm the ownership declaration" : null,
 			!consented ? "Consent to review & public showcase" : null,
@@ -181,7 +243,7 @@ export function SubmitProjectModal({
 				}
 				// Draft/returned/withdrawn re-enter review explicitly; a published edit
 				// re-reviews itself server-side when MVP-critical fields change.
-				if (project.status === "draft" || project.status === "submitted") {
+				if (project.status === "draft") {
 					await submit.mutateAsync(project.id);
 				} else if (
 					project.status === "returned" ||
@@ -189,6 +251,7 @@ export function SubmitProjectModal({
 				) {
 					await resubmit.mutateAsync(project.id);
 				}
+				if (localDraftKey) window.localStorage.removeItem(localDraftKey);
 				toast.success(
 					willReReview ? "Saved — sent back to review" : "Changes saved",
 				);
@@ -201,10 +264,33 @@ export function SubmitProjectModal({
 				await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
 			}
 			await submit.mutateAsync(created.id);
+			if (localDraftKey) window.localStorage.removeItem(localDraftKey);
 			toast.success("Project submitted for review");
 			onClose();
 		} catch (err) {
 			toast.error(err instanceof Error ? err.message : "Something went wrong.");
+		}
+	};
+
+	const onSaveDraft = async () => {
+		try {
+			const input = formToProjectInput(getValues());
+			if (project) {
+				await update.mutateAsync({ id: project.id, input });
+				if (thesisFile) {
+					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
+				}
+			} else {
+				const created = await create.mutateAsync(input);
+				if (thesisFile) {
+					await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
+				}
+			}
+			if (localDraftKey) window.localStorage.removeItem(localDraftKey);
+			toast.success("Draft saved");
+			onClose();
+		} catch (err) {
+			toast.error(err instanceof Error ? err.message : "Could not save draft.");
 		}
 	};
 
@@ -266,7 +352,6 @@ export function SubmitProjectModal({
 												style={{ width: done ? "100%" : "0%" }}
 											/>
 										</div>
-										<span className="text-[14px] text-[#c3d0f2]">›</span>
 									</div>
 								) : null}
 							</div>
@@ -557,7 +642,10 @@ export function SubmitProjectModal({
 						<div className="py-[18px] text-center">
 							{gateIssues.length === 0 ? (
 								<>
-									<div className="mx-auto mb-4 text-[40px] text-action">↗</div>
+									<CheckCircle2
+										className="mx-auto mb-4 size-10 text-action"
+										aria-hidden
+									/>
 									<div className="mb-2 text-[19px] text-content-heading">
 										{editing ? "Save your changes" : "Ready to submit"}
 									</div>
@@ -594,15 +682,26 @@ export function SubmitProjectModal({
 							: ""}
 					</p>
 				) : null}
-				<div className="flex items-center justify-between px-7 pt-[18px] pb-6">
-					<Button
-						variant="secondary"
-						size="lg"
-						onClick={() => setStep((s) => Math.max(0, s - 1))}
-						className={cn("rounded-[10px] px-5", step === 0 && "invisible")}
-					>
-						← Back
-					</Button>
+				<div className="flex items-center justify-between gap-3 px-7 pt-[18px] pb-6">
+					<div className="flex items-center gap-2">
+						<Button
+							variant="secondary"
+							size="lg"
+							onClick={() => setStep((s) => Math.max(0, s - 1))}
+							className={cn("rounded-[10px] px-5", step === 0 && "invisible")}
+						>
+							Back
+						</Button>
+						<Button
+							variant="secondary"
+							size="lg"
+							disabled={busy}
+							onClick={onSaveDraft}
+							className="rounded-[10px] px-4"
+						>
+							Save draft
+						</Button>
+					</div>
 					{isLast ? (
 						<Button
 							size="lg"
@@ -619,7 +718,7 @@ export function SubmitProjectModal({
 							onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
 							className="rounded-[10px] px-[26px] text-[15px] shadow-none"
 						>
-							Continue →
+							Continue
 						</Button>
 					)}
 				</div>

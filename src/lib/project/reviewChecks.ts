@@ -1,5 +1,6 @@
 import { isValidUrl, requiresDocumentUpload } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
+import type { ProjectVerificationCheck } from "#/lib/project/verification";
 
 export type ReviewCheckStatus = "pass" | "pending" | "attention";
 
@@ -15,6 +16,22 @@ export interface ReviewCheckSummary {
 	pending: number;
 	attention: number;
 	label: string;
+}
+
+export function verificationChecksToReviewChecks(
+	checks: ProjectVerificationCheck[],
+): ReviewCheck[] {
+	return checks.map((check) => ({
+		id: check.id,
+		label: check.label,
+		status:
+			check.status === "pass"
+				? "pass"
+				: check.status === "attention" || check.status === "error"
+					? "attention"
+					: "pending",
+		evidence: check.evidence,
+	}));
 }
 
 function acceptedOrQueued(
@@ -58,8 +75,8 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 				: "attention",
 			evidence: hasDemo
 				? project.status === "published"
-					? "Accepted in review; automated probe can replace this later."
-					: "Valid URL captured; ready for warm-up probe."
+					? "Accepted during Academy review."
+					: "URL captured; Academy review will verify the running demo."
 				: "Add a working live demo URL before review.",
 		},
 		{
@@ -70,8 +87,8 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 				: "attention",
 			evidence: hasRepo
 				? githubParts.length >= 2
-					? "GitHub repo format detected; metadata checks can run."
-					: "Repo URL is present; public metadata probe is pending."
+					? "GitHub repository captured; Academy review will verify access."
+					: "Repository URL is present; public access still needs review."
 				: "Add a public repository URL.",
 		},
 		{
@@ -85,9 +102,9 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 						: "attention",
 			evidence:
 				project.status === "published"
-					? "Accepted by review; automate README/license lookup next."
+					? "Accepted during Academy review; README and license automation is next."
 					: hasRepo && githubParts.length >= 2
-						? "Ready for GitHub README and license lookup."
+						? "A public GitHub URL is ready for README and license review."
 						: "Use a public repo link so metadata can be checked.",
 		},
 		{
@@ -164,8 +181,8 @@ export function summarizeReviewChecks(
 		label: summary.attention
 			? `${summary.attention} needs action`
 			: summary.pending
-				? `${summary.pending} queued`
-				: "Ready",
+				? `${summary.pending} awaiting review`
+				: "Accepted",
 	};
 }
 

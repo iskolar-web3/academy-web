@@ -107,7 +107,7 @@ export function summarizeGrantChecks(checks: GrantCheck[]): GrantCheckSummary {
 		label: summary.attention
 			? `${summary.attention} needs action`
 			: summary.pending
-				? `${summary.pending} queued`
-				: "Ready",
+				? `${summary.pending} awaiting review`
+				: "Accepted",
 	};
 }

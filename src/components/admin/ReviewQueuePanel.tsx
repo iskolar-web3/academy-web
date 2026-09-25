@@ -85,11 +85,11 @@ export function ReviewQueuePanel({
 											{links.label}
 										</div>
 										<div className="mt-3 flex flex-wrap gap-1.5">
-											<span className="status-pill status-pill--success text-[10.5px]">
-												{checkSummary.pass} ready
-											</span>
-											<span className="status-pill status-pill--info text-[10.5px]">
-												{checkSummary.pending} queued
+							<span className="status-pill status-pill--success text-[10.5px]">
+								{checkSummary.pass} accepted
+							</span>
+							<span className="status-pill status-pill--info text-[10.5px]">
+								{checkSummary.pending} awaiting review
 											</span>
 											{checkSummary.attention > 0 ? (
 												<span className="status-pill status-pill--warning text-[10.5px]">
@@ -103,7 +103,7 @@ export function ReviewQueuePanel({
 										onClick={() => onOpen(p)}
 										className="h-[42px] whitespace-nowrap rounded-[11px] bg-action px-5 text-[13.5px] text-on-action shadow-[0_5px_14px_rgba(58,82,166,0.22)] transition-colors hover:bg-action-hover"
 									>
-										Review submission →
+										Review submission
 									</button>
 								</div>
 							</div>
