@@ -1,10 +1,4 @@
-import {
-	AnimatePresence,
-	motion,
-	useMotionValue,
-	useReducedMotion,
-	useSpring,
-} from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useState } from "react";
 
@@ -58,36 +52,13 @@ export function ProjectCard({ project, teaser = false }: ProjectCardProps) {
 		}
 	}
 
-	// Dimension — subtle 3D tilt following the cursor (Zajno "floating dimensionality").
-	const rxRaw = useMotionValue(0);
-	const ryRaw = useMotionValue(0);
-	const rotateX = useSpring(rxRaw, { stiffness: 150, damping: 15 });
-	const rotateY = useSpring(ryRaw, { stiffness: 150, damping: 15 });
-
-	function onTilt(e: React.MouseEvent<HTMLElement>) {
-		if (reduce) return;
-		const r = e.currentTarget.getBoundingClientRect();
-		rxRaw.set(-((e.clientY - r.top) / r.height - 0.5) * 8);
-		ryRaw.set(((e.clientX - r.left) / r.width - 0.5) * 8);
-	}
-	function resetTilt() {
-		rxRaw.set(0);
-		ryRaw.set(0);
-	}
-
 	return (
-		<div className="h-full [perspective:1000px]">
-			<motion.article
-				onMouseMove={onTilt}
-				onMouseLeave={resetTilt}
-				style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-				className="card-surface flex h-full flex-col overflow-hidden"
-			>
+		<div className="h-full">
+			<article className="card-surface flex h-full flex-col overflow-hidden transition-colors hover:border-action">
 				<div
 					className="relative flex h-32 items-start justify-between p-4"
 					style={{ background: project.cover }}
 				>
-					<div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.10)_9px,transparent_9px,transparent_20px)]" />
 					<span className="chip relative bg-[rgba(17,24,39,0.32)] text-white">
 						{project.category}
 					</span>
@@ -163,7 +134,7 @@ export function ProjectCard({ project, teaser = false }: ProjectCardProps) {
 						)}
 					</div>
 				</div>
-			</motion.article>
+			</article>
 		</div>
 	);
 }

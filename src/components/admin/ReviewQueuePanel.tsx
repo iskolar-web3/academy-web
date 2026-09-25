@@ -1,5 +1,9 @@
 import type { Project } from "#/lib/project/model";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
+import {
+	buildReviewChecks,
+	summarizeReviewChecks,
+} from "#/lib/project/reviewChecks";
 
 /**
  * Review queue (ADM-01) — a 1:1 port of the design-template ADMIN › REVIEW QUEUE: an intro
@@ -55,6 +59,7 @@ export function ReviewQueuePanel({
 				<div className="flex flex-col gap-3.5">
 					{projects.map((p) => {
 						const links = linkSummary(p);
+						const checkSummary = summarizeReviewChecks(buildReviewChecks(p));
 						return (
 							<div
 								key={p.id}
@@ -79,13 +84,26 @@ export function ReviewQueuePanel({
 										>
 											{links.label}
 										</div>
+										<div className="mt-3 flex flex-wrap gap-1.5">
+							<span className="status-pill status-pill--success text-[10.5px]">
+								{checkSummary.pass} accepted
+							</span>
+							<span className="status-pill status-pill--info text-[10.5px]">
+								{checkSummary.pending} awaiting review
+											</span>
+											{checkSummary.attention > 0 ? (
+												<span className="status-pill status-pill--warning text-[10.5px]">
+													{checkSummary.attention} needs action
+												</span>
+											) : null}
+										</div>
 									</div>
 									<button
 										type="button"
 										onClick={() => onOpen(p)}
 										className="h-[42px] whitespace-nowrap rounded-[11px] bg-action px-5 text-[13.5px] text-on-action shadow-[0_5px_14px_rgba(58,82,166,0.22)] transition-colors hover:bg-action-hover"
 									>
-										Review submission →
+										Review submission
 									</button>
 								</div>
 							</div>

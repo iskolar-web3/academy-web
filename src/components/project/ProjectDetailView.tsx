@@ -1,4 +1,4 @@
-import { ArrowUpRight, Github, Lock, MonitorPlay, Play } from "lucide-react";
+import { Github, Lock, MonitorPlay, Play } from "lucide-react";
 import type { ReactNode } from "react";
 import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
@@ -67,10 +67,6 @@ export function ProjectDetailView({
 					className="relative flex h-[200px] items-end p-6"
 					style={{ background: projectCover(project.hue) }}
 				>
-					<div
-						aria-hidden
-						className="absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.10)_11px,transparent_11px,transparent_24px)]"
-					/>
 					<div className="relative flex gap-2.5">
 						<span className="rounded-[7px] bg-[rgba(17,24,39,0.34)] px-[11px] py-[5px] font-mono text-[12px] text-white">
 							{project.category || "Uncategorized"}
@@ -195,8 +191,7 @@ export function ProjectDetailView({
 											className="flex items-center gap-2.5 rounded-[9px] border border-info-bd px-3 py-2.5 text-[14px] text-content-heading transition-colors hover:bg-surface-sunken"
 										>
 											<Icon className="size-[17px] text-action" aria-hidden />
-											{label}
-											<ArrowUpRight className="ml-auto size-4 text-content-ghost" />
+											<span className="min-w-0 flex-1">{label}</span>
 										</a>
 									))}
 								</div>

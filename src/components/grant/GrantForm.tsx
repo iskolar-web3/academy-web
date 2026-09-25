@@ -229,6 +229,31 @@ export function GrantForm() {
 				</label>
 			</div>
 
+			<div className="rounded-[13px] border border-info-bd bg-info-bg/70 p-4">
+				<div className="font-mono text-[11.5px] uppercase tracking-[0.16em] text-action/60">
+					Research evidence track
+				</div>
+				<div className="mt-3 grid gap-2 sm:grid-cols-2">
+					{[
+						"Title proposal stored",
+						"Citation / DOI review",
+						"School endorsement review",
+						"Similarity and ethics routing",
+					].map((item) => (
+						<div
+							key={item}
+							className="rounded-[10px] border border-info-bd bg-surface-card px-3 py-2 font-mono text-[11.5px] text-content-muted"
+						>
+							{item}
+						</div>
+					))}
+				</div>
+				<p className="mt-3 text-[12px] leading-relaxed text-content-soft">
+					These are the review steps for the request. The checks will become
+					machine-backed as the Academy verification service is added.
+				</p>
+			</div>
+
 			<Button
 				size="lg"
 				disabled={create.isPending}
@@ -238,7 +263,7 @@ export function GrantForm() {
 				{create.isPending ? "Publishing…" : "Publish grant request"}
 			</Button>
 			<p className="text-center font-mono text-[12px] text-content-faint">
-				No review gate. Sponsors can fund it as soon as it's live.
+				No demo or repo required. Research checks use the uploaded proposal.
 			</p>
 		</div>
 	);

@@ -9,43 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StudentRouteImport } from './routes/student'
-import { Route as SponsorRouteImport } from './routes/sponsor'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as PublicRouteImport } from './routes/_public'
-import { Route as OnboardingRouteImport } from './routes/_onboarding'
 import { Route as AppRouteImport } from './routes/_app'
-import { Route as PublicIndexRouteImport } from './routes/_public/index'
-import { Route as StudentVaultsRouteImport } from './routes/student/vaults'
-import { Route as StudentProfileRouteImport } from './routes/student/profile'
-import { Route as StudentHomeRouteImport } from './routes/student/home'
-import { Route as SponsorSubscriptionRouteImport } from './routes/sponsor/subscription'
-import { Route as SponsorProfileRouteImport } from './routes/sponsor/profile'
-import { Route as SponsorHomeRouteImport } from './routes/sponsor/home'
-import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
-import { Route as OnboardingRoleSelectRouteImport } from './routes/_onboarding/role-select'
-import { Route as OnboardingBasicInfoRouteImport } from './routes/_onboarding/basic-info'
-import { Route as AppSettingsRouteImport } from './routes/_app/settings'
-import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
+import { Route as OnboardingRouteImport } from './routes/_onboarding'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as SponsorRouteImport } from './routes/sponsor'
+import { Route as StudentRouteImport } from './routes/student'
 import { Route as AppDiscoverRouteImport } from './routes/_app/discover'
-import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
+import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as OnboardingBasicInfoRouteImport } from './routes/_onboarding/basic-info'
+import { Route as OnboardingRoleSelectRouteImport } from './routes/_onboarding/role-select'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as SponsorHomeRouteImport } from './routes/sponsor/home'
+import { Route as SponsorProfileRouteImport } from './routes/sponsor/profile'
+import { Route as SponsorSubscriptionRouteImport } from './routes/sponsor/subscription'
+import { Route as StudentHomeRouteImport } from './routes/student/home'
+import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentVaultsRouteImport } from './routes/student/vaults'
 import { Route as AppGrantsIndexRouteImport } from './routes/_app/grants.index'
-import { Route as StudentProjectsNewRouteImport } from './routes/student/projects/new'
-import { Route as StudentGrantsNewRouteImport } from './routes/student/grants/new'
-import { Route as AppUUserIdRouteImport } from './routes/_app/u.$userId'
-import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
 import { Route as AppGrantsGrantIdRouteImport } from './routes/_app/grants.$grantId'
+import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
+import { Route as AppUUserIdRouteImport } from './routes/_app/u.$userId'
+import { Route as StudentGrantsNewRouteImport } from './routes/student/grants/new'
+import { Route as StudentProjectsIndexRouteImport } from './routes/student/projects/index'
+import { Route as StudentProjectsNewRouteImport } from './routes/student/projects/new'
 import { Route as StudentProjectsProjectIdIndexRouteImport } from './routes/student/projects/$projectId/index'
 import { Route as StudentProjectsProjectIdEditRouteImport } from './routes/student/projects/$projectId/edit'
 
-const StudentRoute = StudentRouteImport.update({
-  id: '/student',
-  path: '/student',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SponsorRoute = SponsorRouteImport.update({
-  id: '/sponsor',
-  path: '/sponsor',
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/_onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -53,71 +55,19 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PublicRoute = PublicRouteImport.update({
-  id: '/_public',
+const SponsorRoute = SponsorRouteImport.update({
+  id: '/sponsor',
+  path: '/sponsor',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/_onboarding',
+const StudentRoute = StudentRouteImport.update({
+  id: '/student',
+  path: '/student',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRoute = AppRouteImport.update({
-  id: '/_app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PublicIndexRoute = PublicIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PublicRoute,
-} as any)
-const StudentVaultsRoute = StudentVaultsRouteImport.update({
-  id: '/vaults',
-  path: '/vaults',
-  getParentRoute: () => StudentRoute,
-} as any)
-const StudentProfileRoute = StudentProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => StudentRoute,
-} as any)
-const StudentHomeRoute = StudentHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => StudentRoute,
-} as any)
-const SponsorSubscriptionRoute = SponsorSubscriptionRouteImport.update({
-  id: '/subscription',
-  path: '/subscription',
-  getParentRoute: () => SponsorRoute,
-} as any)
-const SponsorProfileRoute = SponsorProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => SponsorRoute,
-} as any)
-const SponsorHomeRoute = SponsorHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => SponsorRoute,
-} as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
-const OnboardingRoleSelectRoute = OnboardingRoleSelectRouteImport.update({
-  id: '/role-select',
-  path: '/role-select',
-  getParentRoute: () => OnboardingRoute,
-} as any)
-const OnboardingBasicInfoRoute = OnboardingBasicInfoRouteImport.update({
-  id: '/basic-info',
-  path: '/basic-info',
-  getParentRoute: () => OnboardingRoute,
-} as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AppDiscoverRoute = AppDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
 const AppNotificationsRoute = AppNotificationsRouteImport.update({
@@ -125,14 +75,59 @@ const AppNotificationsRoute = AppNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => AppRoute,
 } as any)
-const AppDiscoverRoute = AppDiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
-const StudentProjectsIndexRoute = StudentProjectsIndexRouteImport.update({
-  id: '/projects/',
-  path: '/projects/',
+const OnboardingBasicInfoRoute = OnboardingBasicInfoRouteImport.update({
+  id: '/basic-info',
+  path: '/basic-info',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const OnboardingRoleSelectRoute = OnboardingRoleSelectRouteImport.update({
+  id: '/role-select',
+  path: '/role-select',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const SponsorHomeRoute = SponsorHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => SponsorRoute,
+} as any)
+const SponsorProfileRoute = SponsorProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SponsorRoute,
+} as any)
+const SponsorSubscriptionRoute = SponsorSubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => SponsorRoute,
+} as any)
+const StudentHomeRoute = StudentHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentVaultsRoute = StudentVaultsRouteImport.update({
+  id: '/vaults',
+  path: '/vaults',
   getParentRoute: () => StudentRoute,
 } as any)
 const AppGrantsIndexRoute = AppGrantsIndexRouteImport.update({
@@ -140,19 +135,9 @@ const AppGrantsIndexRoute = AppGrantsIndexRouteImport.update({
   path: '/grants/',
   getParentRoute: () => AppRoute,
 } as any)
-const StudentProjectsNewRoute = StudentProjectsNewRouteImport.update({
-  id: '/projects/new',
-  path: '/projects/new',
-  getParentRoute: () => StudentRoute,
-} as any)
-const StudentGrantsNewRoute = StudentGrantsNewRouteImport.update({
-  id: '/grants/new',
-  path: '/grants/new',
-  getParentRoute: () => StudentRoute,
-} as any)
-const AppUUserIdRoute = AppUUserIdRouteImport.update({
-  id: '/u/$userId',
-  path: '/u/$userId',
+const AppGrantsGrantIdRoute = AppGrantsGrantIdRouteImport.update({
+  id: '/grants/$grantId',
+  path: '/grants/$grantId',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
@@ -160,10 +145,25 @@ const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => AppRoute,
 } as any)
-const AppGrantsGrantIdRoute = AppGrantsGrantIdRouteImport.update({
-  id: '/grants/$grantId',
-  path: '/grants/$grantId',
+const AppUUserIdRoute = AppUUserIdRouteImport.update({
+  id: '/u/$userId',
+  path: '/u/$userId',
   getParentRoute: () => AppRoute,
+} as any)
+const StudentGrantsNewRoute = StudentGrantsNewRouteImport.update({
+  id: '/grants/new',
+  path: '/grants/new',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentProjectsIndexRoute = StudentProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentProjectsNewRoute = StudentProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => StudentRoute,
 } as any)
 const StudentProjectsProjectIdIndexRoute =
   StudentProjectsProjectIdIndexRouteImport.update({
@@ -361,32 +361,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/student': {
-      id: '/student'
-      path: '/student'
-      fullPath: '/student'
-      preLoaderRoute: typeof StudentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sponsor': {
-      id: '/sponsor'
-      path: '/sponsor'
-      fullPath: '/sponsor'
-      preLoaderRoute: typeof SponsorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_public': {
-      id: '/_public'
+    '/_app': {
+      id: '/_app'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof PublicRouteImport
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_onboarding': {
@@ -396,88 +375,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app': {
-      id: '/_app'
+    '/_public': {
+      id: '/_public'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AppRouteImport
+      preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_public/': {
-      id: '/_public/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof PublicIndexRouteImport
-      parentRoute: typeof PublicRoute
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/student/vaults': {
-      id: '/student/vaults'
-      path: '/vaults'
-      fullPath: '/student/vaults'
-      preLoaderRoute: typeof StudentVaultsRouteImport
-      parentRoute: typeof StudentRoute
+    '/sponsor': {
+      id: '/sponsor'
+      path: '/sponsor'
+      fullPath: '/sponsor'
+      preLoaderRoute: typeof SponsorRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/student/profile': {
-      id: '/student/profile'
-      path: '/profile'
-      fullPath: '/student/profile'
-      preLoaderRoute: typeof StudentProfileRouteImport
-      parentRoute: typeof StudentRoute
+    '/student': {
+      id: '/student'
+      path: '/student'
+      fullPath: '/student'
+      preLoaderRoute: typeof StudentRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/student/home': {
-      id: '/student/home'
-      path: '/home'
-      fullPath: '/student/home'
-      preLoaderRoute: typeof StudentHomeRouteImport
-      parentRoute: typeof StudentRoute
-    }
-    '/sponsor/subscription': {
-      id: '/sponsor/subscription'
-      path: '/subscription'
-      fullPath: '/sponsor/subscription'
-      preLoaderRoute: typeof SponsorSubscriptionRouteImport
-      parentRoute: typeof SponsorRoute
-    }
-    '/sponsor/profile': {
-      id: '/sponsor/profile'
-      path: '/profile'
-      fullPath: '/sponsor/profile'
-      preLoaderRoute: typeof SponsorProfileRouteImport
-      parentRoute: typeof SponsorRoute
-    }
-    '/sponsor/home': {
-      id: '/sponsor/home'
-      path: '/home'
-      fullPath: '/sponsor/home'
-      preLoaderRoute: typeof SponsorHomeRouteImport
-      parentRoute: typeof SponsorRoute
-    }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_onboarding/role-select': {
-      id: '/_onboarding/role-select'
-      path: '/role-select'
-      fullPath: '/role-select'
-      preLoaderRoute: typeof OnboardingRoleSelectRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
-    '/_onboarding/basic-info': {
-      id: '/_onboarding/basic-info'
-      path: '/basic-info'
-      fullPath: '/basic-info'
-      preLoaderRoute: typeof OnboardingBasicInfoRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
-    '/_app/settings': {
-      id: '/_app/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
+    '/_app/discover': {
+      id: '/_app/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/notifications': {
@@ -487,18 +417,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNotificationsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/discover': {
-      id: '/_app/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof AppDiscoverRouteImport
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/student/projects/': {
-      id: '/student/projects/'
-      path: '/projects'
-      fullPath: '/student/projects/'
-      preLoaderRoute: typeof StudentProjectsIndexRouteImport
+    '/_onboarding/basic-info': {
+      id: '/_onboarding/basic-info'
+      path: '/basic-info'
+      fullPath: '/basic-info'
+      preLoaderRoute: typeof OnboardingBasicInfoRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/_onboarding/role-select': {
+      id: '/_onboarding/role-select'
+      path: '/role-select'
+      fullPath: '/role-select'
+      preLoaderRoute: typeof OnboardingRoleSelectRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/_public/': {
+      id: '/_public/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/sponsor/home': {
+      id: '/sponsor/home'
+      path: '/home'
+      fullPath: '/sponsor/home'
+      preLoaderRoute: typeof SponsorHomeRouteImport
+      parentRoute: typeof SponsorRoute
+    }
+    '/sponsor/profile': {
+      id: '/sponsor/profile'
+      path: '/profile'
+      fullPath: '/sponsor/profile'
+      preLoaderRoute: typeof SponsorProfileRouteImport
+      parentRoute: typeof SponsorRoute
+    }
+    '/sponsor/subscription': {
+      id: '/sponsor/subscription'
+      path: '/subscription'
+      fullPath: '/sponsor/subscription'
+      preLoaderRoute: typeof SponsorSubscriptionRouteImport
+      parentRoute: typeof SponsorRoute
+    }
+    '/student/home': {
+      id: '/student/home'
+      path: '/home'
+      fullPath: '/student/home'
+      preLoaderRoute: typeof StudentHomeRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/vaults': {
+      id: '/student/vaults'
+      path: '/vaults'
+      fullPath: '/student/vaults'
+      preLoaderRoute: typeof StudentVaultsRouteImport
       parentRoute: typeof StudentRoute
     }
     '/_app/grants/': {
@@ -508,25 +501,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGrantsIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/student/projects/new': {
-      id: '/student/projects/new'
-      path: '/projects/new'
-      fullPath: '/student/projects/new'
-      preLoaderRoute: typeof StudentProjectsNewRouteImport
-      parentRoute: typeof StudentRoute
-    }
-    '/student/grants/new': {
-      id: '/student/grants/new'
-      path: '/grants/new'
-      fullPath: '/student/grants/new'
-      preLoaderRoute: typeof StudentGrantsNewRouteImport
-      parentRoute: typeof StudentRoute
-    }
-    '/_app/u/$userId': {
-      id: '/_app/u/$userId'
-      path: '/u/$userId'
-      fullPath: '/u/$userId'
-      preLoaderRoute: typeof AppUUserIdRouteImport
+    '/_app/grants/$grantId': {
+      id: '/_app/grants/$grantId'
+      path: '/grants/$grantId'
+      fullPath: '/grants/$grantId'
+      preLoaderRoute: typeof AppGrantsGrantIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/projects/$projectId': {
@@ -536,12 +515,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsProjectIdRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/grants/$grantId': {
-      id: '/_app/grants/$grantId'
-      path: '/grants/$grantId'
-      fullPath: '/grants/$grantId'
-      preLoaderRoute: typeof AppGrantsGrantIdRouteImport
+    '/_app/u/$userId': {
+      id: '/_app/u/$userId'
+      path: '/u/$userId'
+      fullPath: '/u/$userId'
+      preLoaderRoute: typeof AppUUserIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/student/grants/new': {
+      id: '/student/grants/new'
+      path: '/grants/new'
+      fullPath: '/student/grants/new'
+      preLoaderRoute: typeof StudentGrantsNewRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/projects/': {
+      id: '/student/projects/'
+      path: '/projects'
+      fullPath: '/student/projects/'
+      preLoaderRoute: typeof StudentProjectsIndexRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/projects/new': {
+      id: '/student/projects/new'
+      path: '/projects/new'
+      fullPath: '/student/projects/new'
+      preLoaderRoute: typeof StudentProjectsNewRouteImport
+      parentRoute: typeof StudentRoute
     }
     '/student/projects/$projectId/': {
       id: '/student/projects/$projectId/'

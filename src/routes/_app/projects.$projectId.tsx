@@ -56,7 +56,7 @@ function PublicProjectDetail() {
 				to="/discover"
 				className="mb-5 inline-block text-[14.5px] text-action"
 			>
-				← Back to showcase
+				Back to showcase
 			</Link>
 			<ProjectDetailView
 				project={project}

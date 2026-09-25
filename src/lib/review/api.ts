@@ -2,6 +2,10 @@ import { queryOptions } from "@tanstack/react-query";
 import { type ApiEnvelope, apiFetch } from "#/lib/api";
 import { type Project, projectListSchema } from "#/lib/project/model";
 import type { ModerationInput, ReviewDecisionInput } from "#/lib/review/model";
+import {
+	projectVerificationListSchema,
+	type ProjectVerificationCheck,
+} from "#/lib/project/verification";
 
 /**
  * Review API — calls the `review` slice on academy-server (contract in that repo's
@@ -17,6 +21,19 @@ export function reviewQueueQuery() {
 		queryFn: async (): Promise<Project[]> => {
 			const res = await apiFetch<ApiEnvelope<unknown>>("/admin/review/queue");
 			return projectListSchema.parse(res.data);
+		},
+	});
+}
+
+/** Persisted verification evidence for a submission opened by an admin. */
+export function reviewVerificationQuery(id: string) {
+	return queryOptions({
+		queryKey: ["review", "verification", id] as const,
+		queryFn: async (): Promise<ProjectVerificationCheck[]> => {
+			const res = await apiFetch<ApiEnvelope<unknown>>(
+				`/admin/review/${id}/verification`,
+			);
+			return projectVerificationListSchema.parse(res.data);
 		},
 	});
 }
