@@ -9,7 +9,7 @@ import { type ProfileEdit, profileEditSchema } from "#/lib/account/model";
 
 /**
  * Own-profile edit form (STU-01 / SPN-01) — a 1:1 port of the design-template EDIT
- * PROFILE PAGE: a card with a gradient header band, an overlapping avatar tile, and the
+ * PROFILE PAGE: a card with a quiet header band, an overlapping avatar tile, and the
  * four fields (Display name · Headline · School / organization · Bio). Same page for
  * every role — `org` maps to school (student) or organization (sponsor) server-side.
  *
@@ -80,7 +80,7 @@ export function ProfileEditForm() {
 				onClick={() => router.history.back()}
 				className="mb-[18px] text-[14.5px] text-action"
 			>
-				← Back
+				Back
 			</button>
 			<h1 className="mb-[22px] text-[32px] text-action">Edit profile</h1>
 
@@ -88,7 +88,7 @@ export function ProfileEditForm() {
 				onSubmit={handleSubmit(onSubmit)}
 				className="card-surface overflow-hidden rounded-[18px]"
 			>
-				<div className="h-24 bg-[linear-gradient(135deg,#3a52a6,#607ef2)]" />
+				<div className="h-24 border-line border-b bg-surface-tint" />
 				<div className="-mt-[42px] px-7 pb-7">
 					<span className="inline-flex size-[84px] items-center justify-center rounded-[24px] border-4 border-white bg-action text-[28px] text-white shadow-[0_10px_24px_rgba(31,42,82,0.2)]">
 						{initialsOf(displayName || "?")}

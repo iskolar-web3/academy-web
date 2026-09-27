@@ -1,4 +1,19 @@
-Welcome to your new TanStack Start app! 
+## Local development
+
+Run the frontend natively for the fastest hot reload:
+
+```powershell
+pnpm install
+pnpm dev
+```
+
+The frontend runs on `http://localhost:3000` and expects the backend at
+`http://localhost:5000`.
+
+PostgreSQL and the optional Docker profiles are defined in the sibling
+`academy-server/docker-compose.yml`.
+
+Welcome to your new TanStack Start app!
 
 # Getting Started
 

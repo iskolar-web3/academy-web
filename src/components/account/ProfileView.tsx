@@ -131,13 +131,13 @@ export function ProfileView({
 
 	return (
 		<main className="-mx-[clamp(1.5rem,4vw,3rem)] -mt-10 pb-20">
-			<div className="relative h-[210px] bg-[linear-gradient(135deg,#3a52a6,#607ef2)]">
+			<div className="relative h-[190px] border-line border-b bg-surface-tint">
 				<button
 					type="button"
 					onClick={() => router.history.back()}
-					className="absolute top-[18px] left-6 h-[38px] rounded-[11px] bg-white/20 px-4 text-[14px] text-white backdrop-blur-md transition-colors hover:bg-white/30"
+					className="absolute top-[18px] left-6 h-[38px] rounded-[11px] border border-line bg-surface-card px-4 text-[14px] text-action transition-colors hover:bg-background"
 				>
-					← Back
+					Back
 				</button>
 			</div>
 

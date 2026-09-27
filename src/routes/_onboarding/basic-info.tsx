@@ -113,7 +113,7 @@ function OnboardingShell({
 	onSubmit: () => void;
 	pending: boolean;
 	error?: string;
-	/** Shown as a "← Change type" link above the heading — sponsor's 3-way branch only. */
+	/** Shown above the heading for sponsor's 3-way branch only. */
 	onBack?: () => void;
 	subtitle?: string;
 }) {
@@ -125,7 +125,7 @@ function OnboardingShell({
 					onClick={onBack}
 					className="mb-4 text-[13px] text-action"
 				>
-					← Change type
+					Change type
 				</button>
 			) : null}
 			<div className="mb-8 text-center">
@@ -450,7 +450,7 @@ function SponsorTypeSelect({
 						key={c.type}
 						type="button"
 						onClick={() => onSelect(c.type)}
-						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-all hover:-translate-y-0.5 hover:border-action"
+						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-[border-color,background-color] hover:border-action hover:bg-surface-tint/60"
 					>
 						<span
 							className="flex size-[52px] flex-none items-center justify-center rounded-[15px] text-[20px] text-white"
@@ -464,7 +464,6 @@ function SponsorTypeSelect({
 								{c.desc}
 							</div>
 						</div>
-						<span className="text-[20px] text-action">→</span>
 					</button>
 				))}
 			</div>

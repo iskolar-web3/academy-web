@@ -121,7 +121,7 @@ function ProjectDetail() {
 				to="/student/home"
 				className="mb-5 inline-block text-[14.5px] text-action"
 			>
-				← Dashboard
+				Dashboard
 			</Link>
 			<ProjectDetailView project={project} viewer="owner" manage={manage} />
 		</div>

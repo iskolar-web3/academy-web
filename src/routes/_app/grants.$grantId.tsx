@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
-import { SponsorRail } from "#/components/discover/SponsorRail";
+import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { GrantDetailView } from "#/components/grant/GrantDetailView";
 import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
@@ -26,7 +26,7 @@ function GrantDetail() {
 	const { data: grant, isLoading, isError } = useGrant(grantId);
 
 	const left = isSponsor ? (
-		<SponsorRail />
+		<SponsorEvidenceRail />
 	) : panel ? (
 		<StudentProfileCard profile={panel} />
 	) : (
@@ -62,7 +62,7 @@ function GrantDetail() {
 				to="/grants"
 				className="mb-5 inline-block text-[14.5px] text-action"
 			>
-				← All grants
+				All grants
 			</Link>
 			<GrantDetailView grant={grant} isSponsor={isSponsor} />
 		</AppPageLayout>

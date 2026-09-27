@@ -6,8 +6,14 @@ import { AcademyRole } from "#/lib/auth/model";
  * the §3 token contract before relying on this in production.
  */
 
-export const BACKEND_URL =
+const PUBLIC_BACKEND_URL =
 	import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const INTERNAL_BACKEND_URL =
+	import.meta.env.VITE_BACKEND_URL_INTERNAL || PUBLIC_BACKEND_URL;
+
+export const BACKEND_URL = import.meta.env.SSR
+	? INTERNAL_BACKEND_URL
+	: PUBLIC_BACKEND_URL;
 
 export interface ApiEnvelope<T> {
 	message: string;

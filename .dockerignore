@@ -1,9 +1,11 @@
 node_modules
-.DS_Store
 dist
 dist-ssr
-*.local
+.git
+.gitignore
 .env
+.env.local
+.env.*.local
 .nitro
 .tanstack
 .wrangler
@@ -12,5 +14,4 @@ dist-ssr
 .netlify
 __unconfig*
 todos.json
-
 .claude

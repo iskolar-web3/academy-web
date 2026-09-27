@@ -1,0 +1,10 @@
+[build]
+  command = "pnpm build"
+  publish = "dist/client"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# TanStack Start's Nitro build auto-detects Netlify (NETLIFY env var set by
+# Netlify's build system) and emits the SSR function to .netlify/v1/functions —
+# no `functions` directive needed here.

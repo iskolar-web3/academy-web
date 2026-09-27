@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ReviewEvidenceChips } from "#/components/project/ReviewCheckPanel";
 import {
 	useToggleWatch,
 	useWatchlist,
@@ -86,6 +87,9 @@ export function DealFlowCard({ project }: { project: ShowcaseProject }) {
 								{t}
 							</span>
 						))}
+					</div>
+					<div className="mt-3">
+						<ReviewEvidenceChips project={project} />
 					</div>
 				</div>
 			</Link>
