@@ -156,7 +156,7 @@ export function Hero() {
 								type="button"
 								className="btn btn-primary h-14 px-9 text-lg"
 							>
-								Sign in with iSkolar
+								Continue with Google
 							</button>
 						</SignInPopover>
 						<button

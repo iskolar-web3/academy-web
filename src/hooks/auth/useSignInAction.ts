@@ -2,7 +2,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAuth } from "#/auth";
 import { getDefaultPathOfRole } from "#/lib/api";
-import { ssoLoginUrl } from "#/lib/auth/api";
+import {
+	googleLoginUrl,
+	isGoogleAuthEnabled,
+	ssoLoginUrl,
+} from "#/lib/auth/api";
 
 /**
  * Sign-in action state (PLT-02) behind the landing-page sign-in popover
@@ -20,6 +24,11 @@ export function useSignInAction() {
 		: "/role-select";
 
 	const onSignIn = async () => {
+		if (isGoogleAuthEnabled()) {
+			window.location.assign(googleLoginUrl());
+			return;
+		}
+
 		const sso = ssoLoginUrl();
 		if (sso) {
 			window.location.href = sso;

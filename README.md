@@ -10,6 +10,21 @@ pnpm dev
 The frontend runs on `http://localhost:3000` and expects the backend at
 `http://localhost:5000`.
 
+### Temporary Google Auth setup
+
+The web app currently uses the server-owned Google OAuth flow while the iSkolar SSO
+endpoint is being prepared. Copy `.env.example` to `.env` and use:
+
+```text
+VITE_BACKEND_URL=http://localhost:5000
+VITE_GOOGLE_AUTH_ENABLED=true
+VITE_GOOGLE_AUTH_URL=http://localhost:5000/auth/google
+```
+
+The Google client ID and secret belong in `academy-server/.env`, never in this repo.
+Clicking `Continue with Google` redirects to the server, which handles the callback
+and sends the browser back to the web app with an Academy session cookie.
+
 PostgreSQL and the optional Docker profiles are defined in the sibling
 `academy-server/docker-compose.yml`.
 

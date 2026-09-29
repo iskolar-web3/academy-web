@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { type ApiEnvelope, apiFetch } from "#/lib/api";
+import { BACKEND_URL, type ApiEnvelope, apiFetch } from "#/lib/api";
 import { type AcademyUser, academyUserSchema } from "#/lib/auth/model";
 
 /**
@@ -39,4 +39,13 @@ export function ssoLoginUrl(redirectTo = "/"): string {
 	const base = import.meta.env.VITE_ISKOLAR_SSO_URL;
 	if (!base) return "";
 	return `${base}?redirect=${encodeURIComponent(redirectTo)}`;
+}
+
+/** Temporary Google Auth entry point. The server owns the OAuth client secret. */
+export function isGoogleAuthEnabled(): boolean {
+	return import.meta.env.VITE_GOOGLE_AUTH_ENABLED === "true";
+}
+
+export function googleLoginUrl(): string {
+	return import.meta.env.VITE_GOOGLE_AUTH_URL || `${BACKEND_URL}/auth/google`;
 }
