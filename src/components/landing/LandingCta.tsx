@@ -9,13 +9,13 @@ export function LandingCta() {
 					Ready to put your work in front of the people who can fund it?
 				</h2>
 				<p className="mx-auto mt-4 max-w-md text-lg text-content-soft">
-					One iSkolar account gets you in. Showcase a project, request a grant,
-					or start scouting talent.
+					Use your Google account to showcase a project, request a grant, or start
+					scouting talent.
 				</p>
 				<div className="mt-7 flex justify-center">
 					<SignInPopover>
 						<button type="button" className="btn btn-primary">
-							Sign in with iSkolar
+							Continue with Google
 						</button>
 					</SignInPopover>
 				</div>
