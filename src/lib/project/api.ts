@@ -6,6 +6,10 @@ import {
 	projectListSchema,
 	projectSchema,
 } from "#/lib/project/model";
+import {
+	projectVerificationListSchema,
+	verificationIsActive,
+} from "#/lib/project/verification";
 
 /**
  * Project API — calls the `project` slice on academy-server (see that repo's
@@ -34,6 +38,22 @@ export function projectQuery(id: string) {
 			const res = await apiFetch<ApiEnvelope<unknown>>(`/projects/${id}`);
 			return projectSchema.parse(res.data);
 		},
+	});
+}
+
+/** Persisted automated and manual evidence checks. */
+export function projectVerificationQuery(id: string, enabled = true) {
+	return queryOptions({
+		queryKey: ["project", "verification", id] as const,
+		enabled,
+		queryFn: async () => {
+			const res = await apiFetch<ApiEnvelope<unknown>>(
+				`/projects/${id}/verification`,
+			);
+			return projectVerificationListSchema.parse(res.data);
+		},
+		refetchInterval: (query) =>
+			verificationIsActive(query.state.data) ? 3000 : false,
 	});
 }
 

@@ -103,7 +103,6 @@ export function VaultManager({ vaults }: { vaults: MyVault[] }) {
 											{d.meta}
 										</div>
 									</div>
-									<span className="text-content-faint">↗</span>
 								</a>
 							))}
 						</div>

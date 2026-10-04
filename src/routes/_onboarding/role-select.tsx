@@ -92,7 +92,7 @@ function RoleSelect() {
 						type="button"
 						disabled={busy}
 						onClick={() => onRole(r.role)}
-						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-all hover:-translate-y-0.5 hover:border-action disabled:cursor-not-allowed disabled:opacity-60"
+						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-[border-color,background-color] hover:border-action hover:bg-surface-tint/60 disabled:cursor-not-allowed disabled:opacity-60"
 					>
 						<span
 							className="flex size-[52px] flex-none items-center justify-center rounded-[15px] text-[20px] text-white"
@@ -106,7 +106,6 @@ function RoleSelect() {
 								{r.desc}
 							</div>
 						</div>
-						<span className="text-[20px] text-action">→</span>
 					</button>
 				))}
 			</div>

@@ -23,51 +23,49 @@ export function StudentProfileCard({
 }) {
 	return (
 		<aside className="flex flex-col gap-4 lg:sticky lg:top-[84px]">
-			<div className="card-surface overflow-hidden rounded-[18px]">
-				<div className="h-[70px] bg-[linear-gradient(135deg,#3a52a6,#607ef2)]" />
-				<div className="-mt-[34px] px-[22px] pb-[22px] text-center">
-					<span className="inline-flex size-[68px] items-center justify-center rounded-[20px] border-4 border-white bg-action text-2xl text-white shadow-[0_8px_18px_rgba(31,42,82,0.18)]">
+			<div className="rounded-[14px] border border-line bg-surface-card p-[18px] shadow-card">
+				<div className="flex items-start gap-3.5">
+					<span className="inline-flex size-[54px] flex-none items-center justify-center rounded-[14px] border border-info-bd bg-surface-tint text-[18px] text-action">
 						{profile.initials}
 					</span>
-					<div className="mt-3 text-[19px] text-content-heading">
-						{profile.name}
+					<div className="min-w-0 flex-1">
+						<div className="truncate text-[17px] text-content-heading">
+							{profile.name}
+						</div>
+						<div className="mt-0.5 text-[13px] text-content-soft">
+							{profile.role}
+						</div>
+						{profile.school ? (
+							<div className="mt-2 text-[13px] leading-snug text-action">
+								{profile.school}
+							</div>
+						) : null}
 					</div>
-					<div className="mt-[3px] font-mono text-[12px] text-content-faint">
-						{profile.role}
-					</div>
-					{profile.school ? (
-						<div className="mt-2 text-[13px] text-action">{profile.school}</div>
-					) : null}
-					<div className="mt-[3px] font-mono text-[11.5px] text-content-ghost">
+				</div>
+
+				<div className="mt-4 rounded-[10px] border border-line bg-surface-sunken/55 px-3 py-2.5">
+					<div className="font-mono text-[10.5px] text-content-faint">
 						{profile.since}
 					</div>
-
-					{profile.skills.length > 0 ? (
-						<>
-							<div className="my-4 h-px bg-[#eef1fa]" />
-							<div className="mb-4 flex flex-wrap justify-center gap-1.5">
-								{profile.skills.map((skill) => (
-									<span
-										key={skill}
-										className="rounded-full border border-info-bd bg-[#eef3ff] px-[9px] py-1 font-mono text-[11px] text-action"
-									>
-										{skill}
-									</span>
-								))}
-							</div>
-						</>
-					) : (
-						<div className="my-4 h-px bg-[#eef1fa]" />
-					)}
-
-					<Link
-						to="/u/$userId"
-						params={{ userId: profile.userId }}
-						className="btn btn-secondary h-[42px] w-full text-[14px]"
-					>
-						View public profile
-					</Link>
 				</div>
+
+				{profile.skills.length > 0 ? (
+					<div className="mt-4 flex flex-wrap gap-1.5">
+						{profile.skills.slice(0, 5).map((skill) => (
+							<span key={skill} className="chip chip--tech">
+								{skill}
+							</span>
+						))}
+					</div>
+				) : null}
+
+				<Link
+					to="/u/$userId"
+					params={{ userId: profile.userId }}
+					className="btn btn-secondary mt-5 h-10 w-full text-[13.5px]"
+				>
+					View public profile
+				</Link>
 			</div>
 		</aside>
 	);

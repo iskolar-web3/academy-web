@@ -5,12 +5,8 @@ import {
 	PopoverTrigger,
 } from "#/components/ui/popover";
 import { useSignInAction } from "#/hooks/auth/useSignInAction";
+import { isGoogleAuthEnabled } from "#/lib/auth/api";
 
-/**
- * Sign-in entry used by every "Sign in" button on the landing page: a popover
- * anchored below the trigger (not a centered modal), over `useSignInAction`. There is
- * no separate `/login` page.
- */
 const FEATURES = [
 	"Showcase your MVP to real sponsors",
 	"Request grants for a starting thesis",
@@ -20,6 +16,7 @@ const FEATURES = [
 export function SignInPopover({ children }: { children: ReactNode }) {
 	const { isSignedIn, checking, checked, onSignIn, onContinue } =
 		useSignInAction();
+	const googleAuthEnabled = isGoogleAuthEnabled();
 
 	return (
 		<Popover>
@@ -41,18 +38,19 @@ export function SignInPopover({ children }: { children: ReactNode }) {
 					Sign in to continue
 				</h2>
 				<p className="mt-1.5 text-[13.5px] leading-[1.5] text-content-soft">
-					Academy uses your iSkolar account — one login gets you in, no separate
-					password to manage.
+					{googleAuthEnabled
+						? "Use your Google account to access Academy."
+						: "Local authentication is ready for development testing."}
 				</p>
 
 				<ul className="mt-4 flex flex-col gap-2">
-					{FEATURES.map((f) => (
+					{FEATURES.map((feature) => (
 						<li
-							key={f}
+							key={feature}
 							className="flex items-start gap-2 text-[13px] text-content-muted"
 						>
 							<span className="mt-[3px] size-1.5 flex-none rounded-full bg-action" />
-							{f}
+							{feature}
 						</li>
 					))}
 				</ul>
@@ -74,18 +72,24 @@ export function SignInPopover({ children }: { children: ReactNode }) {
 						disabled={checking}
 						className="btn btn-primary h-12 w-full"
 					>
-						{checking ? "Checking…" : "Sign in with iSkolar"}
+						{checking
+							? "Checking..."
+							: googleAuthEnabled
+								? "Continue with Google"
+								: "Check local session"}
 					</button>
 				)}
 
 				{checked && !isSignedIn ? (
 					<p className="mt-3 text-xs text-danger">
-						No valid iSkolar session found. Mint a dev token and set the{" "}
+						No local session found. Mint a dev token and set the{" "}
 						<code>auth_token</code> cookie, then try again.
 					</p>
 				) : (
 					<p className="mt-3 text-center font-mono text-[11px] text-content-faint">
-						You'll be redirected to iSkolar to sign in.
+						{googleAuthEnabled
+							? "You'll be redirected to Google to sign in."
+							: "Use a local dev token to test sign-in."}
 					</p>
 				)}
 			</PopoverContent>

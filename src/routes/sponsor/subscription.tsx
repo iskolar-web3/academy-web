@@ -66,7 +66,7 @@ function Subscription() {
 					<p className="mt-1 text-[13.5px] text-content-soft">
 						Upgrade any time to unlock deal-flow tooling — or{" "}
 						<Link to="/sponsor/home" className="text-action">
-							continue to Deal-flow →
+							continue to Deal-flow
 						</Link>
 					</p>
 				</div>

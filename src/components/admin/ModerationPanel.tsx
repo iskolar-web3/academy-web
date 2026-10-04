@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { GrantEvidenceChips } from "#/components/grant/GrantReviewPanel";
 import { useGrantMutations } from "#/hooks/grant/useGrantMutations";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
 import { formatPeso } from "#/lib/grant/helper";
@@ -138,6 +139,9 @@ export function ModerationPanel({
 								</div>
 								<div className="font-mono text-[12px] text-content-faint">
 									{formatPeso(g.raised)} of {formatPeso(g.target)} raised
+								</div>
+								<div className="mt-2">
+									<GrantEvidenceChips grant={g} max={4} />
 								</div>
 							</div>
 							<button

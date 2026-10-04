@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ReviewEvidenceChips } from "#/components/project/ReviewCheckPanel";
 import { UpvoteButton } from "#/components/project/UpvoteButton";
 import { useToggleUpvote } from "#/hooks/upvote/useToggleUpvote";
 import type { ShowcaseProject } from "#/lib/discover/model";
@@ -6,7 +7,7 @@ import { projectCover } from "#/lib/project/helper";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
 /**
- * Showcase gallery card — a 1:1 port of the design-template GALLERY card: striped hue
+ * Showcase gallery card — a 1:1 port of the design-template GALLERY card: hue
  * cover + trending badge, title, category + type chips, school, 3-line pitch, tech chips
  * (+N more), overlapping member avatars, and the wired upvote control (PLT-08). The cover
  * and the text block open the project detail (`/projects/:id`); the upvote button stays
@@ -31,14 +32,13 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 	const params = { projectId: project.id };
 
 	return (
-		<div className="card-surface flex h-[452px] flex-col overflow-hidden rounded-[15px] transition-transform hover:-translate-y-1">
+		<div className="card-surface flex h-[488px] flex-col overflow-hidden rounded-[15px] transition-colors hover:border-action">
 			<Link
 				to={to}
 				params={params}
 				className="relative flex h-32 flex-none items-start justify-end p-3.5"
 				style={{ background: projectCover(project.hue) }}
 			>
-				<div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.10)_9px,transparent_9px,transparent_20px)]" />
 				{project.trending ? (
 					<span className="chip chip--trending relative">▲ Trending</span>
 				) : null}
@@ -80,6 +80,9 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 						{more > 0 ? (
 							<span className="chip chip--tech flex-none">+{more} more</span>
 						) : null}
+					</div>
+					<div className="mb-[12px]">
+						<ReviewEvidenceChips project={project} max={2} />
 					</div>
 				</Link>
 

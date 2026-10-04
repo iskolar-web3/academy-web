@@ -13,7 +13,7 @@ import { ValueProps } from "#/components/landing/ValueProps";
 export const Route = createFileRoute("/_public/")({
 	head: () => ({
 		meta: [
-			{ title: "iSkolar Academy — Student work, built to be seen & funded" },
+			{ title: "Academy - Student work, built to be seen & funded" },
 			{
 				name: "description",
 				content:

@@ -1,91 +1,58 @@
-type PlaceholderAd =
-	| {
-			id: string;
-			kind: "content";
-			eyebrow: string;
-			cover: string;
-			heading: string;
-			body: string;
-			cta: string;
-	  }
-	| {
-			id: string;
-			kind: "image";
-			src: string;
-			alt: string;
-	  };
+interface SponsoredNote {
+	id: string;
+	label: string;
+	heading: string;
+	body: string;
+	cta: string;
+}
 
-/**
- * Hardcoded placeholder ad slots — no ad provider is wired up yet, this exists to test
- * the right-column visual once the sponsor/student rails moved to the left column. Swap
- * for a real ad-serving integration later; the slot shape (right column, sticky, this
- * width) stays the same. `kind: "image"` is a plain creative dropped straight into
- * `public/` — no eyebrow/heading/body/CTA chrome around it, just the image.
- */
-const PLACEHOLDER_ADS: PlaceholderAd[] = [
+const SPONSORED_NOTES: SponsoredNote[] = [
 	{
 		id: "cloud-credits",
-		kind: "content",
-		eyebrow: "Sponsored",
-		cover: "linear-gradient(135deg,#1f2a52,#3a52a6)",
-		heading: "$5k in cloud credits for student MVPs",
-		body: "Ship your thesis backend on us — no card required for the first year.",
-		cta: "Claim credits",
+		label: "Sponsored",
+		heading: "Cloud credits for student MVPs",
+		body: "Apply for hosting credits once your demo and repository are ready.",
+		cta: "View offer",
 	},
 	{
 		id: "founder-fellowship",
-		kind: "content",
-		eyebrow: "Sponsored",
-		cover: "linear-gradient(135deg,#607ef2,#3a52a6)",
-		heading: "Apply: Founder Fellowship 2026",
-		body: "8-week program for student teams turning a thesis into a company.",
+		label: "Program",
+		heading: "Founder Fellowship 2026",
+		body: "Eight weeks for student teams turning a thesis into a company.",
 		cta: "See details",
-	},
-	{
-		id: "bingo-plus",
-		kind: "image",
-		src: "/images.jpg",
-		alt: "Sponsored",
 	},
 ];
 
 export function AdsPanel() {
 	return (
-		<aside className="flex flex-col gap-4 lg:sticky lg:top-[88px]">
-			{PLACEHOLDER_ADS.map((ad) =>
-				ad.kind === "image" ? (
-					<div
-						key={ad.id}
-						className="overflow-hidden rounded-2xl border border-dashed border-line"
-					>
-						<img src={ad.src} alt={ad.alt} className="w-full object-cover" />
+		<aside className="hidden flex-col gap-3 lg:sticky lg:top-[88px] lg:flex">
+			<div className="border-line border-b pb-3">
+				<div className="font-mono text-[10.5px] uppercase text-content-faint">
+					Opportunities
+				</div>
+			</div>
+			{SPONSORED_NOTES.map((ad) => (
+				<div
+					key={ad.id}
+					className="rounded-[14px] border border-line bg-surface-card p-4 shadow-card"
+				>
+					<div className="mb-2 font-mono text-[10.5px] uppercase text-content-faint">
+						{ad.label}
 					</div>
-				) : (
-					<div
-						key={ad.id}
-						className="overflow-hidden rounded-2xl border border-dashed border-line bg-surface-card"
-					>
-						<div className="h-[86px]" style={{ background: ad.cover }} />
-						<div className="p-[18px]">
-							<div className="mb-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-content-ghost">
-								{ad.eyebrow}
-							</div>
-							<div className="text-[14.5px] text-content-heading">
-								{ad.heading}
-							</div>
-							<p className="mt-1.5 text-[12.5px] text-content-faint">
-								{ad.body}
-							</p>
-							<button
-								type="button"
-								className="btn btn-secondary mt-3.5 h-9 w-full text-[13px]"
-							>
-								{ad.cta}
-							</button>
-						</div>
+					<div className="text-[14.5px] leading-snug text-content-heading">
+						{ad.heading}
 					</div>
-				),
-			)}
+					<p className="mt-1.5 text-[12.5px] leading-relaxed text-content-soft">
+						{ad.body}
+					</p>
+					<button
+						type="button"
+						className="mt-3 inline-flex h-8 items-center rounded-[8px] border border-line bg-surface-card px-3 text-[12.5px] text-action transition-colors hover:bg-surface-tint"
+					>
+						{ad.cta}
+					</button>
+				</div>
+			))}
 		</aside>
 	);
 }

@@ -13,7 +13,10 @@ import { toProjectCardData } from "#/lib/discover/model";
  * fill in when the query resolves.
  */
 export function RecentProjectsPreview() {
-	const { data } = useQuery(publicTeaserQuery());
+	const { data } = useQuery({
+		...publicTeaserQuery(),
+		enabled: typeof window !== "undefined",
+	});
 	const cards = (data ?? []).slice(0, 3).map(toProjectCardData);
 
 	return (

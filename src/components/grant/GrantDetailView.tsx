@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { GrantFundPanel } from "#/components/grant/GrantFundPanel";
+import { GrantReviewPanel } from "#/components/grant/GrantReviewPanel";
 import { grantProposalUrl } from "#/lib/grant/api";
 import { formatPeso, fundingPct, grantStatusMeta } from "#/lib/grant/helper";
 import type { GrantRequest } from "#/lib/grant/model";
@@ -79,13 +80,16 @@ export function GrantDetailView({
 								🔒 Lumen document vault, signed-link access
 							</div>
 						</div>
-						<span className="text-content-faint">↗</span>
 					</a>
 				) : null}
 				<p className="font-mono text-[12.5px] leading-normal text-content-faint">
-					Self-declared, no review gate. Contributions are captured through the
-					platform and recorded against the target.
+					Self-declared request with a research evidence track. Contributions
+					are captured through the platform and recorded against the target.
 				</p>
+
+				<div className="mt-5">
+					<GrantReviewPanel grant={grant} />
+				</div>
 			</div>
 
 			{/* right: fund flow */}

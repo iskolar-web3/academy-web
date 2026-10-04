@@ -39,7 +39,7 @@ function Settings() {
 				onClick={() => router.history.back()}
 				className="mb-[18px] text-[14.5px] text-action"
 			>
-				← Back
+				Back
 			</button>
 			<h1 className="mb-[22px] text-[32px] text-action">Settings</h1>
 
@@ -71,11 +71,9 @@ function Settings() {
 					className={`${linkRowCls} border-[#eef1fa] border-b`}
 				>
 					<span>Account &amp; security</span>
-					<span className="text-content-ghost">›</span>
 				</button>
 				<button type="button" className={linkRowCls}>
 					<span>Privacy &amp; visibility</span>
-					<span className="text-content-ghost">›</span>
 				</button>
 			</div>
 

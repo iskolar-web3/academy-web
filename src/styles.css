@@ -29,10 +29,10 @@
 	--font-mono: 'Source Code Pro', Menlo, Monaco, Consolas, monospace;
 
 	/* Surface — page & component backgrounds */
-	--color-surface: #eef4ff;                    /* app canvas */
+	--color-surface: #f3f6fd;                    /* app canvas */
 	--color-surface-sunken: #f0f7ff;             /* inset panels */
 	--color-surface-card: #fefefd;               /* cards, sheets (warm white) */
-	--color-surface-tint: #eaf0ff;               /* chip / badge fill, hover */
+	--color-surface-tint: #eef3ff;               /* chip / badge fill, hover */
 	--color-surface-overlay: #ffffff;            /* popovers, modals */
 
 	/* Content — text & icons (strong → faint) */
@@ -82,8 +82,8 @@
 	--radius-modal: 1.25rem;                     /* dialogs / sheets (20px) */
 
 	/* Elevation */
-	--shadow-card: 0 6px 18px rgb(31 42 82 / 0.06);
-	--shadow-raise: 0 8px 22px rgb(31 42 82 / 0.06);
+	--shadow-card: 0 3px 12px rgb(31 42 82 / 0.045);
+	--shadow-raise: 0 8px 18px rgb(31 42 82 / 0.06);
 	--shadow-pop: 0 18px 44px rgb(20 28 56 / 0.16);
 	--shadow-modal: 0 28px 60px rgb(20 28 56 / 0.28);
 }
@@ -385,8 +385,7 @@
 	}
 	.btn-primary:hover {
 		background: var(--color-action-hover);
-		transform: translateY(-2px);
-		box-shadow: 0 12px 28px rgb(58 82 166 / 0.34);
+		box-shadow: 0 8px 18px rgb(58 82 166 / 0.24);
 	}
 	.btn-secondary {
 		background: var(--color-surface-card);
@@ -395,6 +394,9 @@
 	}
 	.btn-secondary:hover {
 		background: var(--color-surface-tint);
+	}
+	.btn:active {
+		transform: scale(0.97);
 	}
 	.btn-destructive {
 		background: var(--color-surface-card);

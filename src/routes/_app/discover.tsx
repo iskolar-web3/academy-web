@@ -3,7 +3,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
-import { SponsorRail } from "#/components/discover/SponsorRail";
+import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
@@ -104,7 +104,7 @@ function Discover() {
 		<AppPageLayout
 			left={
 				isSponsor ? (
-					<SponsorRail />
+					<SponsorEvidenceRail />
 				) : panel ? (
 					<StudentProfileCard profile={panel} />
 				) : (
@@ -122,7 +122,7 @@ function Discover() {
 					<input
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
-						placeholder="Search projects, tech, schools…"
+						placeholder="Search projects, tech, or category..."
 						className="h-[46px] w-full rounded-[13px] border border-line bg-surface-card pr-4 pl-11 text-[15px] text-content outline-none focus:border-action"
 					/>
 				</div>
