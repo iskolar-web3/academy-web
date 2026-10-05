@@ -16,6 +16,14 @@ interface MyRouterContext {
 	queryClient: QueryClient;
 }
 
+const socialTitle =
+	"Academy | Student projects. Real potential. Greater impact.";
+const socialDescription =
+	"Share working student projects, seek thesis grants, and discover student talent. A subsidiary of iSkolar.";
+const socialImage = "https://academy.iskolar.io/og-academy.png";
+const socialImageAlt =
+	"Academy — Student projects. Real potential. Greater impact. A blue paper plane rises above an open book.";
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
 		meta: [
@@ -29,6 +37,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{
 				title: "Academy",
 			},
+			{ property: "og:type", content: "website" },
+			{ property: "og:site_name", content: "Academy" },
+			{ property: "og:title", content: socialTitle },
+			{ property: "og:description", content: socialDescription },
+			{ property: "og:image", content: socialImage },
+			{ property: "og:image:type", content: "image/png" },
+			{ property: "og:image:width", content: "1733" },
+			{ property: "og:image:height", content: "907" },
+			{ property: "og:image:alt", content: socialImageAlt },
+			{ name: "twitter:card", content: "summary_large_image" },
+			{ name: "twitter:title", content: socialTitle },
+			{ name: "twitter:description", content: socialDescription },
+			{ name: "twitter:image", content: socialImage },
+			{ name: "twitter:image:alt", content: socialImageAlt },
 		],
 		links: [
 			{
