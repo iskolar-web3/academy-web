@@ -137,16 +137,16 @@ export function Hero() {
 											}}
 										/>
 										<span className="relative">seen</span>
-									</span>{" "}
-									and funded.
+									</span>
+									.
 								</span>
 							</span>
 						</motion.span>
 					</h1>
 
 					<p className="mt-10 max-w-xl text-base leading-relaxed text-content-strong sm:text-xl">
-						Share a working project, seek a thesis grant, or discover student
-						talent.
+						Showcase a working project, share a thesis grant proposal, or
+						discover student talent.
 					</p>
 
 					<div className="mt-12 flex flex-wrap items-center gap-4">

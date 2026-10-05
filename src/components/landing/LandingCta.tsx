@@ -9,7 +9,8 @@ export function LandingCta() {
 					Find your next opportunity on Academy
 				</h2>
 				<p className="mx-auto mt-4 max-w-md text-lg text-content-soft">
-					Share a project, seek a thesis grant, or discover student talent.
+					Showcase a project, share a thesis grant proposal, or discover student
+					talent.
 				</p>
 				<div className="mt-9 flex justify-center">
 					<SignInPopover>

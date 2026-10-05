@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_public/")({
 			{
 				name: "description",
 				content:
-					"Share working student projects, seek thesis grants, and discover student talent. A subsidiary of iSkolar.",
+					"Showcase working student projects, share thesis grant proposals, and discover student talent. A subsidiary of iSkolar.",
 			},
 		],
 	}),

@@ -13,7 +13,7 @@ import { toProjectCardData } from "#/lib/discover/model";
  * fill in when the query resolves.
  */
 export function RecentProjectsPreview() {
-	const { data } = useQuery({
+	const { data, isPending, isError } = useQuery({
 		...publicTeaserQuery(),
 		enabled: typeof window !== "undefined",
 	});
@@ -26,7 +26,15 @@ export function RecentProjectsPreview() {
 				title="Recently published"
 			/>
 
-			{cards.length > 0 ? (
+			{isPending ? (
+				<output className="mt-10 block text-center text-content-soft">
+					Loading recent projects…
+				</output>
+			) : isError ? (
+				<output className="mt-10 block text-center text-content-soft">
+					Recent projects could not be loaded. Please try again later.
+				</output>
+			) : cards.length > 0 ? (
 				<div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{cards.map((project, i) => (
 						<Reveal key={project.id} delay={i * 0.08}>
@@ -56,7 +64,7 @@ export function RecentProjectsPreview() {
 												type="button"
 												className="inline-flex shrink-0 items-center gap-1 text-sm text-action hover:underline"
 											>
-												Sign in to view{" "}
+												Sign in to explore{" "}
 												<ArrowRight className="size-4" aria-hidden />
 											</button>
 										</SignInPopover>
@@ -66,18 +74,22 @@ export function RecentProjectsPreview() {
 						</Reveal>
 					))}
 				</div>
-			) : null}
+			) : (
+				<p className="mt-10 text-center text-content-soft">
+					No projects have been published yet. Check back for new student work.
+				</p>
+			)}
 
 			<div className="mt-10 flex flex-col items-center gap-4 text-center">
 				<p className="text-base text-content-soft">
-					Sign in to explore every published project.
+					Sign in to search and filter the project showcase.
 				</p>
 				<SignInPopover>
 					<button
 						type="button"
 						className="btn btn-secondary inline-flex items-center gap-2"
 					>
-						Sign in to browse all <ArrowRight className="size-4" aria-hidden />
+						Explore the showcase <ArrowRight className="size-4" aria-hidden />
 					</button>
 				</SignInPopover>
 			</div>

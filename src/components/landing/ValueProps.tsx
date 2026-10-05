@@ -13,17 +13,17 @@ const PROPS: ValueProp[] = [
 	{
 		Icon: Rocket,
 		title: "Showcase your MVP",
-		body: "Share a working demo, code, and video. Academy reviews each project before publication.",
+		body: "Submit your live demo and public repository for review. A video walkthrough is optional.",
 	},
 	{
 		Icon: HandCoins,
-		title: "Fund your thesis",
-		body: "Apply for a grant from the proposal stage. Students do not pay to apply.",
+		title: "Share a thesis proposal",
+		body: "Post a proposal PDF and funding target with no application fee. Grant payments are not live yet.",
 	},
 	{
 		Icon: Telescope,
 		title: "Get discovered",
-		body: "Help sponsors and recruiters find your work. You choose when to connect.",
+		body: "Receive sponsor-interest notifications and view sponsor profiles. You choose whether to follow up.",
 	},
 ];
 

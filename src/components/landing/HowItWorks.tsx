@@ -17,17 +17,17 @@ const STEPS: Step[] = [
 	{
 		n: "01",
 		title: "Submit your work",
-		body: "Add a live demo, code, and a short video. Teammates approve their credits.",
+		body: "Add a live demo, public repository, and project details. Declare ownership and attach any required supporting document.",
 	},
 	{
 		n: "02",
 		title: "Get reviewed",
-		body: "Academy checks that your MVP works and its purpose is clear.",
+		body: "Academy reviews your demo, repository, and project details. If changes are requested, update and resubmit.",
 	},
 	{
 		n: "03",
 		title: "Reach supporters",
-		body: "Publish your project or apply for a thesis grant. Sponsors can discover your work.",
+		body: "Approved projects appear in Discover, where signed-in sponsors can explore your work and express interest.",
 	},
 ];
 
@@ -122,7 +122,7 @@ export function HowItWorks() {
 		<section ref={ref} className="relative h-auto lg:h-[180vh]">
 			<div className="flex items-center py-16 lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden lg:py-0">
 				<div className="container-page w-full">
-					<SectionHeading label="How it works" />
+					<SectionHeading label="How projects get published" />
 					<div className="relative mt-20">
 						{/* Terminal rails — run from each edge into the outer nodes, fading at the ends. */}
 						<div

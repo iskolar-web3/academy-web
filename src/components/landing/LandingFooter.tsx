@@ -6,7 +6,7 @@ export function LandingFooter() {
 					<img src="/logo-academy.png" alt="" className="h-12 w-auto" />
 				</div>
 				<p className="font-mono text-sm text-content-faint">
-					© 2026 iSkolar Academy. Showcase · Discover · Fund.
+					© 2026 iSkolar Academy. Showcase · Discover · Connect.
 				</p>
 			</div>
 		</footer>

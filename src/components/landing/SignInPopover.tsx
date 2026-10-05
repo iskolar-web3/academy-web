@@ -9,7 +9,7 @@ import { isGoogleAuthEnabled, ssoLoginUrl } from "#/lib/auth/api";
 
 const FEATURES = [
 	"Share your project",
-	"Apply for a thesis grant",
+	"Share a thesis grant proposal",
 	"Discover student talent",
 ];
 
