@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_onboarding/role-select")({
 });
 
 interface RoleCard {
-	role: AcademyRole;
+	role: AcademyRole.Student | AcademyRole.Sponsor;
 	initial: string;
 	bg: string;
 	label: string;
@@ -38,13 +38,6 @@ const ROLE_CARDS: RoleCard[] = [
 		label: "Sponsor",
 		desc: "Back theses, fund published work, and scout the people behind real MVPs.",
 	},
-	{
-		role: AcademyRole.Admin,
-		initial: "Ad",
-		bg: "#1f2a52",
-		label: "Admin",
-		desc: "Review submissions, run the quality gate, and moderate the showcase.",
-	},
 ];
 
 function RoleSelect() {
@@ -57,7 +50,7 @@ function RoleSelect() {
 		if (user?.roleConfirmed) navigate({ to: "/basic-info" });
 	}, [user?.roleConfirmed, navigate]);
 
-	const onRole = (role: AcademyRole) => {
+	const onRole = (role: RoleCard["role"]) => {
 		confirm.mutate(
 			{ role, kind: null },
 			{ onSuccess: () => navigate({ to: "/basic-info" }) },
