@@ -19,6 +19,58 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+@keyframes partner-carousel-scroll {
+	to { transform: translateX(-50%); }
+}
+
+.partner-carousel-viewport {
+	overflow: hidden;
+	mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+.partner-carousel-track {
+	display: flex;
+	width: max-content;
+	animation: partner-carousel-scroll 32s linear infinite;
+}
+
+.partner-carousel-viewport:hover .partner-carousel-track {
+	animation-play-state: paused;
+}
+
+.partner-carousel-group {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 2rem;
+	padding-right: 2rem;
+}
+
+.partner-carousel-logo {
+	display: flex;
+	width: 10rem;
+	height: 5.5rem;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+}
+
+.partner-carousel-logo img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.partner-carousel-viewport {
+		overflow-x: auto;
+		mask-image: none;
+	}
+
+	.partner-carousel-track { animation: none; }
+	.partner-carousel-group[aria-hidden='true'] { display: none; }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* ── Brand palette, named by usage → utility classes ────────────────────── */

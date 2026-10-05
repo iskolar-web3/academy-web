@@ -50,7 +50,7 @@ export function SignInPopover({ children }: { children: ReactNode }) {
 			<PopoverContent align="end" className="w-96 px-6 py-6">
 				<div className="flex items-center gap-2.5">
 					<img
-						src="/logo-academy.png"
+						src="/logo-academy.svg"
 						alt=""
 						aria-hidden
 						className="h-8 w-auto"

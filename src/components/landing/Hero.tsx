@@ -12,6 +12,7 @@ import {
 	Lightbulb,
 	type LucideIcon,
 } from "lucide-react";
+import { PartnerCarousel } from "#/components/landing/PartnerCarousel";
 import { SignInPopover } from "#/components/landing/SignInPopover";
 
 interface Glyph {
@@ -101,7 +102,7 @@ export function Hero() {
 				))}
 			</div>
 
-			<div className="container-page relative z-10 grid items-center gap-16 pt-8 pb-24 sm:pt-10 sm:pb-32 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
+			<div className="container-page relative z-10 grid items-center gap-16 pt-8 pb-6 sm:pt-6 sm:pb-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
 				<div className="order-2 animate-fade-up lg:order-1">
 					<div className="mb-8 flex items-center gap-4">
 						<span className="font-mono text-sm font-semibold uppercase tracking-[0.22em] text-content-faint sm:text-base">
@@ -170,12 +171,13 @@ export function Hero() {
 				<div className="order-1 relative flex animate-fade-up flex-col items-center justify-center lg:order-2">
 					<div className="absolute top-0 size-64 rounded-full bg-[radial-gradient(circle,rgba(96,121,232,0.18),transparent_68%)] sm:size-[26rem]" />
 					<img
-						src="/logo-academy.png"
+						src="/logo-academy.svg"
 						alt="iSkolar Academy"
 						className="relative max-h-64 w-auto animate-float sm:max-h-[28rem]"
 					/>
 				</div>
 			</div>
+			<PartnerCarousel />
 		</section>
 	);
 }

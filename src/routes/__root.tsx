@@ -59,8 +59,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				rel: "icon",
-				type: "image/png",
-				href: "/logo-academy.png",
+				type: "image/svg+xml",
+				href: "/logo-academy.svg",
 			},
 		],
 	}),

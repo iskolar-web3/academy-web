@@ -89,7 +89,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 		<header className="sticky top-0 z-40 border-line border-b bg-[rgba(248,250,255,0.86)] backdrop-blur-md">
 			<div className="container-page relative flex h-[66px] items-center justify-between">
 				<Link to="/" className="flex items-center gap-[11px]">
-					<img src="/logo-academy.png" alt="" className="h-[38px] w-auto" />
+					<img src="/logo-academy.svg" alt="" className="h-[38px] w-auto" />
 					<span className="text-base uppercase tracking-[0.16em] text-action">
 						Academy
 					</span>
