@@ -16,18 +16,18 @@ interface Step {
 const STEPS: Step[] = [
 	{
 		n: "01",
-		title: "Build & submit",
-		body: "Publish with a live demo, repo, and video. Credit your teammates — they confirm before they're shown.",
+		title: "Submit your work",
+		body: "Add a live demo, code, and a short video. Teammates approve their credits.",
 	},
 	{
 		n: "02",
-		title: "Pass review",
-		body: "The Academy team confirms the MVP runs and the purpose is clear. Pass or fail, no scores.",
+		title: "Get reviewed",
+		body: "Academy checks that your MVP works and its purpose is clear.",
 	},
 	{
 		n: "03",
-		title: "Get seen & funded",
-		body: "Published work reaches sponsors to back; starting theses raise grants from the title-proposal stage.",
+		title: "Reach supporters",
+		body: "Publish your project or apply for a thesis grant. Sponsors can discover your work.",
 	},
 ];
 

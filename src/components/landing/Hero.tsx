@@ -101,21 +101,21 @@ export function Hero() {
 				))}
 			</div>
 
-			<div className="container-page relative z-10 grid items-center gap-12 pt-16 pb-14 sm:pt-24 lg:grid-cols-[1.05fr_.95fr]">
+			<div className="container-page relative z-10 grid items-center gap-16 pt-8 pb-24 sm:pt-10 sm:pb-32 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
 				<div className="order-2 animate-fade-up lg:order-1">
-					<div className="mb-5 flex items-center gap-4">
-						<span className="font-mono text-lg font-semibold uppercase tracking-[0.22em] text-content-faint">
+					<div className="mb-8 flex items-center gap-4">
+						<span className="font-mono text-sm font-semibold uppercase tracking-[0.22em] text-content-faint sm:text-base">
 							A subsidiary of iSkolar
 						</span>
 					</div>
 
-					<h1 className="text-balance text-4xl leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-[5.25rem]">
+					<h1 className="text-balance text-4xl leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-[4rem]">
 						<motion.span
 							className="block origin-left will-change-transform"
 							style={{ skewX: skewTop, x: shiftTopX, y: shiftTopY }}
 						>
 							<span className="block overflow-hidden pb-[0.08em]">
-								<span className="mask-reveal block">Student work, built</span>
+								<span className="mask-reveal block">Student projects</span>
 							</span>
 						</motion.span>
 						<motion.span
@@ -124,7 +124,7 @@ export function Hero() {
 						>
 							<span className="block overflow-hidden pb-[0.08em]">
 								<span className="mask-reveal mask-reveal-2 block">
-									to be{" "}
+									built to be{" "}
 									<span className="relative inline-block whitespace-nowrap px-3 text-on-action">
 										<motion.span
 											className="absolute inset-0 origin-left rounded-lg bg-action"
@@ -138,33 +138,32 @@ export function Hero() {
 										/>
 										<span className="relative">seen</span>
 									</span>{" "}
-									&amp; funded.
+									and funded.
 								</span>
 							</span>
 						</motion.span>
 					</h1>
 
-					<p className="mt-8 max-w-2xl text-lg leading-relaxed text-content-strong sm:text-2xl">
-						Showcase your built MVPs, fund starting theses with grants, and
-						connect with investors who scout real student projects — on the
-						platform that runs with academic integrity.
+					<p className="mt-10 max-w-xl text-base leading-relaxed text-content-strong sm:text-xl">
+						Share a working project, seek a thesis grant, or discover student
+						talent.
 					</p>
 
-					<div className="mt-10 flex flex-wrap items-center gap-4">
+					<div className="mt-12 flex flex-wrap items-center gap-4">
 						<SignInPopover>
 							<button
 								type="button"
-								className="btn btn-primary h-14 px-9 text-lg"
+								className="btn btn-primary h-12 px-7 text-base"
 							>
-								Continue with Google
+								Get started
 							</button>
 						</SignInPopover>
-						<button
-							type="button"
-							className="btn btn-secondary h-14 px-9 text-lg"
+						<a
+							href="#recent-projects"
+							className="btn btn-secondary h-12 px-7 text-base"
 						>
-							Browse the showcase
-						</button>
+							See recent projects
+						</a>
 					</div>
 				</div>
 

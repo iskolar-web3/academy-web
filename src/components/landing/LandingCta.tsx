@@ -3,19 +3,18 @@ import { SignInPopover } from "#/components/landing/SignInPopover";
 
 export function LandingCta() {
 	return (
-		<section className="container-page pb-16">
-			<Reveal className="card-surface ruled-paper relative overflow-hidden px-8 py-14 text-center">
+		<section className="container-page pb-20">
+			<Reveal className="card-surface ruled-paper relative overflow-hidden px-8 py-16 text-center sm:py-20">
 				<h2 className="mx-auto max-w-xl text-balance text-4xl leading-tight text-foreground">
-					Ready to put your work in front of the people who can fund it?
+					Find your next opportunity on Academy
 				</h2>
 				<p className="mx-auto mt-4 max-w-md text-lg text-content-soft">
-					Use your Google account to showcase a project, request a grant, or start
-					scouting talent.
+					Share a project, seek a thesis grant, or discover student talent.
 				</p>
-				<div className="mt-7 flex justify-center">
+				<div className="mt-9 flex justify-center">
 					<SignInPopover>
 						<button type="button" className="btn btn-primary">
-							Continue with Google
+							Get started
 						</button>
 					</SignInPopover>
 				</div>
