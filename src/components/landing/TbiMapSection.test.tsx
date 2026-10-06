@@ -38,9 +38,7 @@ describe("TBI discovery", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Find TBI Near Me" }));
 		expect(locate).toHaveBeenCalledTimes(1);
 		expect(screen.getByText("Nearest listed TBI")).toBeTruthy();
-		expect(
-			screen.getByText(/Less than 1 km · straight-line distance/),
-		).toBeTruthy();
+		expect(screen.getByText("Less than 1 km", { selector: "p" })).toBeTruthy();
 		fireEvent.click(screen.getByRole("button", { name: "View Nearest TBI" }));
 		expect(screen.getByRole("link", { name: "View details" })).toBeTruthy();
 	});
@@ -91,10 +89,9 @@ describe("TBI discovery", () => {
 			},
 		]);
 		render(<TbiMapSection />);
-		fireEvent.change(
-			screen.getByLabelText("Or search a city, municipality, or province"),
-			{ target: { value: "Palo" } },
-		);
+		fireEvent.change(screen.getByLabelText("Search a place"), {
+			target: { value: "Palo" },
+		});
 		fireEvent.click(
 			screen.getByRole("button", { name: "Search Philippine places" }),
 		);
@@ -106,10 +103,9 @@ describe("TBI discovery", () => {
 	it("keeps offline city selection available if place search fails", async () => {
 		vi.mocked(searchPlaces).mockRejectedValue(new Error("offline"));
 		render(<TbiMapSection />);
-		fireEvent.change(
-			screen.getByLabelText("Or search a city, municipality, or province"),
-			{ target: { value: "Laguna" } },
-		);
+		fireEvent.change(screen.getByLabelText("Search a place"), {
+			target: { value: "Laguna" },
+		});
 		fireEvent.click(
 			screen.getByRole("button", { name: "Search Philippine places" }),
 		);

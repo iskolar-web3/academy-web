@@ -1,16 +1,11 @@
-import {
-	ExternalLink,
-	LocateFixed,
-	MapPin,
-	Navigation,
-	Search,
-} from "lucide-react";
+import { ExternalLink, LocateFixed, Navigation, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	type MapOrigin,
 	TbiMapCanvas,
 } from "#/components/landing/TbiMapCanvas";
 import { Button } from "#/components/ui/button";
+import { InfoTooltip } from "#/components/ui/InfoTooltip";
 import { formatDistance, rankTbis, TBIS, type Tbi } from "#/lib/tbi/directory";
 import { DIRECTORY_PLACES, type Place, searchPlaces } from "#/lib/tbi/places";
 
@@ -94,7 +89,7 @@ export function TbiMapSection() {
 				setLocationMessage(
 					position.coords.accuracy > 1000
 						? "Your location is approximate. Results may change with a more accurate position."
-						: "Location found. Your nearest listed TBI is highlighted on the map.",
+						: "",
 				);
 			},
 			(error) => {
@@ -121,9 +116,7 @@ export function TbiMapSection() {
 		setFocus(null);
 		setOrigin({ ...place, kind: "place" });
 		setPlaces([]);
-		setLocationMessage(
-			"Showing nearby TBIs from your selected place. Distances use an approximate reference point.",
-		);
+		setLocationMessage("");
 	}
 
 	async function submitSearch(event: React.FormEvent) {
@@ -171,24 +164,23 @@ export function TbiMapSection() {
 			className="container-page py-16 sm:py-20"
 			aria-labelledby="tbi-heading"
 		>
-			<div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+			<div className="flex items-start justify-between gap-4 lg:items-end">
 				<div className="max-w-2xl">
 					<h2
 						id="tbi-heading"
 						className="text-3xl leading-tight text-foreground sm:text-4xl"
 					>
-						Find the right place for your next big idea.
+						Find a Technology Business Incubator
 					</h2>
-					<p className="mt-4 text-base leading-relaxed text-content-soft sm:text-lg">
-						Discover Technology Business Incubators across the Philippines.
-						Connect with a host institution that can help turn your project into
-						a venture.
+					<p className="mt-2 text-base text-content-soft">
+						Explore {TBIS.length} TBIs across the Philippines.
 					</p>
 				</div>
-				<span className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-line bg-surface-tint px-4 py-2 text-sm text-action">
-					<MapPin className="size-4" aria-hidden />
-					{TBIS.length} TBIs in the directory
-				</span>
+				<InfoTooltip
+					portal
+					label="About this directory"
+					text="Directory compiled from DOST-PCIEERD and DOST-PCAARRD publications. Listings may change. Check the linked source before visiting. Pins show approximate host-campus locations; distances are estimates, not travel distances."
+				/>
 			</div>
 
 			<div className="mt-8 grid overflow-hidden rounded-2xl border border-line bg-card shadow-card lg:grid-cols-[360px_minmax(0,1fr)]">
@@ -213,14 +205,14 @@ export function TbiMapSection() {
 								htmlFor="tbi-place"
 								className="block text-sm text-content-strong"
 							>
-								Or search a city, municipality, or province
+								Search a place
 							</label>
 							<div className="flex gap-2">
 								<input
 									id="tbi-place"
 									value={query}
 									onChange={(event) => setQuery(event.target.value)}
-									placeholder="e.g. Cebu City or Laguna"
+									placeholder="City, municipality, or province"
 									className="tbi-input min-w-0 flex-1"
 									maxLength={120}
 								/>
@@ -261,10 +253,7 @@ export function TbiMapSection() {
 							</ul>
 						)}
 						<div>
-							<label
-								htmlFor="tbi-city"
-								className="mb-2 block text-sm text-content-strong"
-							>
+							<label htmlFor="tbi-city" className="sr-only">
 								Choose a directory city
 							</label>
 							<select
@@ -279,7 +268,7 @@ export function TbiMapSection() {
 									if (place) choosePlace(place);
 								}}
 							>
-								<option value="">Select a city or municipality</option>
+								<option value="">Or choose a city</option>
 								{DIRECTORY_PLACES.map((place) => (
 									<option key={place.id} value={place.id}>
 										{place.label}
@@ -303,7 +292,7 @@ export function TbiMapSection() {
 									{nearest.tbi.city}, {nearest.tbi.province}
 								</p>
 								<p className="mt-2 text-sm text-success">
-									{formatDistance(nearest.distance)} · straight-line distance
+									{formatDistance(nearest.distance)}
 								</p>
 								<p className="mt-1 break-words text-xs text-content-soft">
 									From {origin?.label}
@@ -319,24 +308,21 @@ export function TbiMapSection() {
 						)}
 					</div>
 					<div className="border-t border-line p-5 sm:p-6">
-						<label
-							htmlFor="tbi-filter"
-							className="mb-2 block text-sm text-content-strong"
-						>
+						<label htmlFor="tbi-filter" className="sr-only">
 							Explore the directory
 						</label>
 						<input
 							id="tbi-filter"
 							className="tbi-input w-full"
-							placeholder="Filter by TBI, host, or location"
+							placeholder="Search incubators"
 							value={filter}
 							onChange={(event) => setFilter(event.target.value)}
 						/>
-						<p className="mt-3 text-xs text-content-soft" aria-live="polite">
-							{visible.length}{" "}
-							{visible.length === 1 ? "incubator" : "incubators"}
-							{origin ? " · nearest first" : " · across the Philippines"}
-						</p>
+						{filter && (
+							<p className="mt-3 text-xs text-content-soft" aria-live="polite">
+								{visible.length} results
+							</p>
+						)}
 						<div
 							className="mt-3 max-h-64 overflow-y-auto overscroll-contain"
 							data-lenis-prevent
@@ -408,7 +394,6 @@ export function TbiMapSection() {
 							<span className="size-2.5 rounded-full bg-highlight" />
 							Search location
 						</span>
-						<span>Tap a cluster to explore. Drag or pinch to navigate.</span>
 					</div>
 					{selected && (
 						<article
@@ -440,25 +425,6 @@ export function TbiMapSection() {
 						</article>
 					)}
 				</div>
-				<aside
-					aria-label="Directory information"
-					className="border-t border-line bg-surface-tint/50 p-5 sm:p-6 lg:col-span-2"
-				>
-					<div className="grid gap-3 text-xs leading-relaxed text-content-soft sm:grid-cols-2 sm:gap-8">
-						<p>
-							Directory compiled from DOST-PCIEERD and DOST-PCAARRD
-							publications. Listings may change. Check the linked source before
-							visiting.
-						</p>
-						<p>
-							Pins show approximate host-campus locations; distances are
-							estimates, not travel distances.
-						</p>
-					</div>
-					<p className="mt-4 border-t border-line pt-3 text-xs text-content-soft">
-						Place search © OpenStreetMap contributors.
-					</p>
-				</aside>
 			</div>
 		</section>
 	);
