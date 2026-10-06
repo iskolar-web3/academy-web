@@ -118,7 +118,7 @@ export function ReviewDecisionModal({
 						<button
 							type="button"
 							aria-label="Close"
-							className="absolute top-3.5 right-3.5 flex size-8 items-center justify-center rounded-full border-none bg-white/25 text-white backdrop-blur-[6px] transition-colors hover:bg-white/40"
+							className="absolute top-3.5 right-3.5 flex size-8 items-center justify-center rounded-full border-none text-white transition-opacity hover:opacity-70"
 						>
 							<X className="size-[15px]" aria-hidden />
 						</button>

@@ -315,7 +315,7 @@ export function SubmitProjectModal({
 						<button
 							type="button"
 							aria-label="Close"
-							className="flex size-[34px] items-center justify-center rounded-[9px] border border-info-bd bg-surface-card text-content-muted transition-colors hover:bg-surface-sunken"
+							className="flex size-[34px] items-center justify-center rounded-[9px] border border-info-bd text-content-muted transition-colors hover:border-action hover:text-action"
 						>
 							<X className="size-4" aria-hidden />
 						</button>

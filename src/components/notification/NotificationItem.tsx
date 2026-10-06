@@ -1,4 +1,14 @@
 import { Link } from "@tanstack/react-router";
+import {
+	AlertCircle,
+	CheckCircle2,
+	CircleDollarSign,
+	Heart,
+	LockKeyhole,
+	type LucideIcon,
+	UserPlus,
+	Users,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import type {
 	AcademyNotification,
@@ -14,24 +24,24 @@ import { cn } from "#/lib/utils";
  * the STU-13 reveal; invites land on the dashboard invites card).
  */
 
-const ICONS: Record<AcademyNotification["type"], string> = {
-	sponsor_interest: "»",
-	review_decision: "✓", // danger-tone decisions (returned/rejected) render "!" below
-	member_invite: "＋",
-	upvote_milestone: "♥",
-	grant_funded: "₱",
-	vault_request: "🔒",
+const ICONS: Record<AcademyNotification["type"], LucideIcon> = {
+	sponsor_interest: Users,
+	review_decision: CheckCircle2,
+	member_invite: UserPlus,
+	upvote_milestone: Heart,
+	grant_funded: CircleDollarSign,
+	vault_request: LockKeyhole,
 };
 
 const TONE_CLS: Record<NotificationTone, string> = {
-	action: "text-action bg-[#eaf0ff]",
-	highlight: "text-highlight bg-[#eef3ff]",
-	success: "text-success bg-success-bg",
-	danger: "text-danger bg-danger-bg",
+	action: "text-action",
+	highlight: "text-action",
+	success: "text-success",
+	danger: "text-danger",
 };
 
-function glyphOf(n: AcademyNotification): string {
-	if (n.type === "review_decision" && n.tone === "danger") return "!";
+function iconOf(n: AcademyNotification): LucideIcon {
+	if (n.type === "review_decision" && n.tone === "danger") return AlertCircle;
 	return ICONS[n.type];
 }
 
@@ -74,6 +84,7 @@ export function NotificationItem({
 	onActivate?: () => void;
 }) {
 	const link = linkOf(n);
+	const Icon = iconOf(n);
 
 	if (compact) {
 		return (
@@ -86,10 +97,10 @@ export function NotificationItem({
 				<span
 					className={cn(
 						"flex w-[26px] flex-none justify-center text-[17px] leading-snug",
-						TONE_CLS[n.tone].split(" ")[0],
+						TONE_CLS[n.tone],
 					)}
 				>
-					{glyphOf(n)}
+					<Icon className="size-5" aria-hidden />
 				</span>
 				<div className="min-w-0">
 					<div className="text-[13.5px] text-content-strong leading-snug">
@@ -115,11 +126,11 @@ export function NotificationItem({
 		>
 			<span
 				className={cn(
-					"flex size-[42px] flex-none items-center justify-center rounded-[12px] text-[20px]",
+					"flex size-[42px] flex-none items-center justify-center",
 					TONE_CLS[n.tone],
 				)}
 			>
-				{glyphOf(n)}
+				<Icon className="size-6" aria-hidden />
 			</span>
 			<div className="min-w-0 flex-1">
 				<div className="flex items-center gap-[9px]">

@@ -61,7 +61,7 @@ const partners: {
 
 export function PartnerCarousel() {
 	return (
-		<div className="container-page relative z-10 pb-16 sm:pb-20">
+		<div className="container-page relative z-10 mt-12 pb-16 sm:pb-20 lg:mt-0">
 			<section
 				className="partner-carousel-viewport"
 				aria-label="iSkolar partners"

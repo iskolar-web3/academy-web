@@ -133,7 +133,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 								type="button"
 								title="Notifications"
 								className={cn(
-									"relative flex size-[42px] items-center justify-center rounded-[12px] border bg-surface-card text-action transition duration-150 hover:bg-surface-sunken active:scale-90",
+									"relative flex size-[42px] items-center justify-center rounded-[12px] border text-action transition duration-150 hover:border-action active:scale-90",
 									open === "notifications" ? "border-action" : "border-line",
 								)}
 							>

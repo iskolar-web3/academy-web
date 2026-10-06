@@ -37,7 +37,7 @@ export function ValueProps() {
 					return (
 						<Reveal key={title} delay={i * 0.08}>
 							<article className="flex w-full flex-col items-center text-center">
-								<span className="mb-6 inline-flex size-24 items-center justify-center rounded-full bg-surface-tint text-action">
+								<span className="mb-6 inline-flex size-24 items-center justify-center text-action">
 									<Icon className="size-12" strokeWidth={1.5} aria-hidden />
 								</span>
 								<h3 className="mb-3 text-2xl text-foreground">{title}</h3>

@@ -401,7 +401,6 @@ type GovernmentSponsorFormValues = z.infer<typeof governmentSponsorFormSchema>;
 interface SponsorTypeCard {
 	type: SponsorType;
 	initial: string;
-	bg: string;
 	label: string;
 	desc: string;
 }
@@ -410,21 +409,18 @@ const SPONSOR_TYPE_CARDS: SponsorTypeCard[] = [
 	{
 		type: "individual",
 		initial: "In",
-		bg: "#3a52a6",
 		label: "Individual",
 		desc: "Investing or scouting on your own behalf.",
 	},
 	{
 		type: "organization",
 		initial: "Or",
-		bg: "#607ef2",
 		label: "Organization",
 		desc: "A private company, NGO, or educational institution.",
 	},
 	{
 		type: "government",
 		initial: "Gv",
-		bg: "#1f2a52",
 		label: "Government",
 		desc: "A national agency, LGU, or GOCC.",
 	},
@@ -461,8 +457,7 @@ function SponsorTypeSelect({
 						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-[border-color,background-color] hover:border-action hover:bg-surface-tint/60"
 					>
 						<span
-							className="flex size-[52px] flex-none items-center justify-center rounded-[15px] text-[20px] text-white"
-							style={{ background: c.bg }}
+							className="flex size-[52px] flex-none items-center justify-center text-[20px] text-action"
 						>
 							{c.initial}
 						</span>

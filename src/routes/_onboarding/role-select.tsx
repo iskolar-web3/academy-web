@@ -18,7 +18,6 @@ export const Route = createFileRoute("/_onboarding/role-select")({
 interface RoleCard {
 	role: AcademyRole.Student | AcademyRole.Sponsor;
 	initial: string;
-	bg: string;
 	label: string;
 	desc: string;
 }
@@ -27,14 +26,12 @@ const ROLE_CARDS: RoleCard[] = [
 	{
 		role: AcademyRole.Student,
 		initial: "St",
-		bg: "#3a52a6",
 		label: "Student",
 		desc: "Showcase your projects, request grants for a starting thesis, and get scouted.",
 	},
 	{
 		role: AcademyRole.Sponsor,
 		initial: "Sp",
-		bg: "#607ef2",
 		label: "Sponsor",
 		desc: "Back theses, fund published work, and scout the people behind real MVPs.",
 	},
@@ -88,8 +85,7 @@ function RoleSelect() {
 						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-[border-color,background-color] hover:border-action hover:bg-surface-tint/60 disabled:cursor-not-allowed disabled:opacity-60"
 					>
 						<span
-							className="flex size-[52px] flex-none items-center justify-center rounded-[15px] text-[20px] text-white"
-							style={{ background: r.bg }}
+							className="flex size-[52px] flex-none items-center justify-center text-[20px] text-action"
 						>
 							{r.initial}
 						</span>

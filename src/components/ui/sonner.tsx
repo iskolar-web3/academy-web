@@ -3,10 +3,10 @@ import { Check, Info, TriangleAlert, X } from "lucide-react";
 import { useToastStore } from "#/lib/toast";
 
 const tones = {
-	success: { border: "bg-[#31d0aa]", icon: "bg-[#31d0aa]" },
-	error: { border: "bg-[#ef4444]", icon: "bg-[#ef4444]" },
-	warning: { border: "bg-warning", icon: "bg-warning" },
-	info: { border: "bg-info", icon: "bg-info" },
+	success: { border: "bg-[#31d0aa]", icon: "text-[#31d0aa]" },
+	error: { border: "bg-[#ef4444]", icon: "text-[#ef4444]" },
+	warning: { border: "bg-warning", icon: "text-warning" },
+	info: { border: "bg-info", icon: "text-info" },
 } as const;
 
 export function Toaster() {
@@ -26,7 +26,7 @@ export function Toaster() {
 				>
 					<div className="m-px flex min-h-[48px] w-full items-center gap-3 rounded-lg bg-background/80 px-3 py-2 text-left md:min-h-[58px]">
 						<span
-							className={`flex size-9 flex-none items-center justify-center rounded-full text-white ${tones[state.type].icon}`}
+							className={`flex size-9 flex-none items-center justify-center ${tones[state.type].icon}`}
 							aria-hidden="true"
 						>
 							{state.type === "success" ? (

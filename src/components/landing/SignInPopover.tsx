@@ -9,7 +9,7 @@ import { isGoogleAuthEnabled, ssoLoginUrl } from "#/lib/auth/api";
 
 function GoogleLogo() {
 	return (
-		<span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white">
+		<span className="inline-flex size-7 shrink-0 items-center justify-center">
 			<svg viewBox="0 0 48 48" className="size-5" aria-hidden="true">
 				<path
 					fill="#EA4335"

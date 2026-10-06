@@ -185,7 +185,7 @@ function StudentHome() {
 					<div className="rounded-[14px] border border-dashed border-line bg-surface-card p-6 shadow-card">
 						<div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 							<div className="flex items-start gap-4">
-								<span className="flex size-11 flex-none items-center justify-center rounded-[12px] bg-surface-tint text-action">
+								<span className="flex size-11 flex-none items-center justify-center text-action">
 									<Rocket className="size-5" aria-hidden />
 								</span>
 								<div>
