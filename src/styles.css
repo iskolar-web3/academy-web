@@ -15,7 +15,7 @@
        text-content-soft, text-content-heading, bg-success-bg, text-action …
    ───────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Source+Code+Pro:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -83,7 +83,7 @@
 	/* Type */
 	--font-sans: 'Bree Serif', serif;          /* the single brand typeface — body, UI, headings */
 	--font-display: 'Bree Serif', serif;
-	--font-mono: 'Source Code Pro', Menlo, Monaco, Consolas, monospace;
+	--font-mono: 'Bree Serif', serif;         /* existing UI labels using font-mono stay on-brand */
 
 	/* Surface — page & component backgrounds */
 	--color-surface: #f3f6fd;                    /* app canvas */
@@ -265,6 +265,9 @@
 	}
 	body {
 		@apply bg-background text-foreground font-sans antialiased;
+	}
+	code, pre, kbd, samp {
+		font-family: Menlo, Monaco, Consolas, monospace;
 	}
 }
 
