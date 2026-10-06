@@ -12,8 +12,8 @@ Give shared Academy links a clean, recognizable branded preview.
 
 ## What Was Built
 
-- `public/og-academy.png`: 1733 × 907 PNG with Academy branding, navy and blue typography, and a paper plane rising above an open book. All text is typeset with the actual Bree Serif Regular font, with no synthetic bold. The "by iSkolar" byline is removed.
-- `documentation/assets/social-preview/`: text-free generated background, official Google Fonts Bree Serif font and OFL license, and a Windows `render.ps1` script for repeatable typography updates. Run `pwsh -File documentation/assets/social-preview/render.ps1` from the web folder to regenerate the public PNG.
+- `public/og-academy.png`: 1733 × 907 PNG with the Academy combination mark, navy and blue typography, and a paper plane rising above an open book. All headline text is typeset with the actual Bree Serif Regular font, with no synthetic bold. The "by iSkolar" byline is removed.
+- `documentation/assets/social-preview/`: text-free generated background, a rasterized copy of `public/combination-mark.svg`, official Google Fonts Bree Serif font and OFL license, and a Windows `render.ps1` script for repeatable preview updates. Run `pwsh -File documentation/assets/social-preview/render.ps1` from the web folder to regenerate the public PNG.
 - `src/routes/__root.tsx`: default Open Graph and Twitter large-image metadata, including title, description, image dimensions, and alternative text.
 
 ## Decisions & Trade-offs
@@ -24,7 +24,7 @@ Give shared Academy links a clean, recognizable branded preview.
 
 ## Verification
 
-- Visually reviewed the final Bree Serif artwork and checked PNG dimensions and size (1,615,405 bytes); image metadata matches the dimensions. The render script verifies the loaded font family and checks every text line fits its column.
+- Visually reviewed the final artwork and checked PNG dimensions and size (1,667,850 bytes); image metadata matches the dimensions. The render script verifies the loaded font family and checks every text line fits its column.
 - TypeScript, the root route's Biome check, and the production Vite build passed.
 - Invoked the built SSR handler for `/`: HTTP 200 with all 14 Open Graph/Twitter tags in the initial HTML.
 - Confirmed the image is copied into `dist/client` by the build.

@@ -3,7 +3,12 @@ const BLUE_TINT =
 const BLUE_DUOTONE =
 	"grayscale(1) sepia(1) hue-rotate(190deg) saturate(2.2) brightness(0.95)";
 
-const partners = [
+const partners: {
+	name: string;
+	logo: string;
+	filter: string;
+	round?: boolean;
+}[] = [
 	{
 		name: "BYC Ventures",
 		logo: "/partnerships/byc-ventures.png",
@@ -20,6 +25,11 @@ const partners = [
 		filter: BLUE_TINT,
 	},
 	{
+		name: "Fundr Studios",
+		logo: "/partnerships/fundr-studio.png",
+		filter: BLUE_DUOTONE,
+	},
+	{
 		name: "CTIED",
 		logo: "/partnerships/ctied.png",
 		filter: BLUE_DUOTONE,
@@ -33,16 +43,19 @@ const partners = [
 		name: "Cryptita Plays",
 		logo: "/partnerships/cryptita-plays.png",
 		filter: BLUE_TINT,
+		round: true,
 	},
 	{
 		name: "AWS Learning Club Heron",
 		logo: "/partnerships/aws-learning-club-heron.png",
 		filter: BLUE_DUOTONE,
+		round: true,
 	},
 	{
 		name: "Tech Kubo",
 		logo: "/partnerships/tech-kubo.png",
 		filter: BLUE_DUOTONE,
+		round: true,
 	},
 ];
 
@@ -66,6 +79,9 @@ export function PartnerCarousel() {
 										src={partner.logo}
 										alt={partner.name}
 										loading="lazy"
+										className={
+											partner.round ? "partner-carousel-logo-round" : undefined
+										}
 										style={{ filter: partner.filter }}
 									/>
 								</div>

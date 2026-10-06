@@ -7,12 +7,6 @@ import {
 import { useSignInAction } from "#/hooks/auth/useSignInAction";
 import { isGoogleAuthEnabled, ssoLoginUrl } from "#/lib/auth/api";
 
-const FEATURES = [
-	"Share your project",
-	"Share a thesis grant proposal",
-	"Discover student talent",
-];
-
 function GoogleLogo() {
 	return (
 		<span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white">
@@ -48,86 +42,54 @@ export function SignInPopover({ children }: { children: ReactNode }) {
 		<Popover>
 			<PopoverTrigger asChild>{children}</PopoverTrigger>
 			<PopoverContent align="end" className="w-96 px-6 py-6">
-				<div className="flex items-center gap-2.5">
+				<div className="flex h-16 items-center">
 					<img
-						src="/logo-academy.svg"
-						alt=""
-						aria-hidden
-						className="h-8 w-auto"
+						src="/combination-mark.svg"
+						alt="Academy"
+						className="h-10 w-auto"
 					/>
-					<span className="text-[13px] uppercase tracking-[0.16em] text-action">
-						Academy
-					</span>
 				</div>
 
-				<h2 className="mt-4 text-[19px] text-content-heading">
+				<h2 className="mt-2 text-[19px] text-content-heading">
 					Sign in to continue
 				</h2>
-				<p className="mt-1.5 text-[13.5px] leading-[1.5] text-content-soft">
-					{googleAuthEnabled
-						? "Use your Google account to access Academy."
-						: ssoEnabled
-							? "Use your iSkolar account to access Academy."
-							: "Check your local development session."}
-				</p>
-
-				<ul className="mt-4 flex flex-col gap-2">
-					{FEATURES.map((feature) => (
-						<li
-							key={feature}
-							className="flex items-start gap-2 text-[13px] text-content-muted"
+				<div className="mt-5">
+					{isSignedIn ? (
+						<button
+							type="button"
+							onClick={onContinue}
+							className="btn btn-primary h-12 w-full"
 						>
-							<span className="mt-[3px] size-1.5 flex-none rounded-full bg-action" />
-							{feature}
-						</li>
-					))}
-				</ul>
-
-				<div className="my-4 h-px bg-[#eef1fa]" />
-
-				{isSignedIn ? (
-					<button
-						type="button"
-						onClick={onContinue}
-						className="btn btn-primary h-12 w-full"
-					>
-						Continue to Academy
-					</button>
-				) : (
-					<button
-						type="button"
-						onClick={onSignIn}
-						disabled={checking}
-						className="btn btn-primary flex h-12 w-full items-center justify-center gap-2"
-					>
-						{checking ? (
-							"Checking..."
-						) : googleAuthEnabled ? (
-							<>
-								<GoogleLogo /> Continue with Google
-							</>
-						) : ssoEnabled ? (
-							"Continue with iSkolar"
-						) : (
-							"Check local session"
-						)}
-					</button>
-				)}
+							Continue to Academy
+						</button>
+					) : (
+						<button
+							type="button"
+							onClick={onSignIn}
+							disabled={checking}
+							className="btn btn-primary flex h-12 w-full items-center justify-center gap-2"
+						>
+							{checking ? (
+								"Checking..."
+							) : googleAuthEnabled ? (
+								<>
+									<GoogleLogo /> Continue with Google
+								</>
+							) : ssoEnabled ? (
+								"Continue with iSkolar"
+							) : (
+								"Check local session"
+							)}
+						</button>
+					)}
+				</div>
 
 				{checked && !isSignedIn ? (
 					<p className="mt-3 text-xs text-danger">
 						No local session found. Mint a dev token and set the{" "}
 						<code>auth_token</code> cookie, then try again.
 					</p>
-				) : (
-					<p className="mt-3 text-center font-mono text-[11px] text-content-faint">
-						{googleAuthEnabled
-							? "You'll be redirected to Google to sign in."
-							: ssoEnabled
-								? "You'll be redirected to iSkolar to sign in."
-								: "Use a local dev token to test sign-in."}
-					</p>
-				)}
+				) : null}
 			</PopoverContent>
 		</Popover>
 	);

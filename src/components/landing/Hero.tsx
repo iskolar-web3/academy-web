@@ -104,12 +104,6 @@ export function Hero() {
 
 			<div className="container-page relative z-10 grid items-center gap-16 pt-8 pb-6 sm:pt-6 sm:pb-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
 				<div className="order-2 animate-fade-up lg:order-1">
-					<div className="mb-8 flex items-center gap-4">
-						<span className="font-mono text-sm font-semibold uppercase tracking-[0.22em] text-content-faint sm:text-base">
-							A subsidiary of iSkolar
-						</span>
-					</div>
-
 					<h1 className="text-balance text-4xl leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-[4rem]">
 						<motion.span
 							className="block origin-left will-change-transform"
@@ -151,6 +145,12 @@ export function Hero() {
 					</p>
 
 					<div className="mt-12 flex flex-wrap items-center gap-4">
+						<a
+							href="#recent-projects"
+							className="btn btn-secondary h-12 px-7 text-base"
+						>
+							See recent projects
+						</a>
 						<SignInPopover>
 							<button
 								type="button"
@@ -159,12 +159,6 @@ export function Hero() {
 								Get started
 							</button>
 						</SignInPopover>
-						<a
-							href="#recent-projects"
-							className="btn btn-secondary h-12 px-7 text-base"
-						>
-							See recent projects
-						</a>
 					</div>
 				</div>
 

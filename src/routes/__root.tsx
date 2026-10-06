@@ -19,10 +19,10 @@ interface MyRouterContext {
 const socialTitle =
 	"Academy | Student projects. Real potential. Greater impact.";
 const socialDescription =
-	"Showcase working student projects, share thesis grant proposals, and discover student talent. A subsidiary of iSkolar.";
+	"Showcase working student projects, share thesis grant proposals, and discover student talent.";
 const socialImage = "https://academy.iskolar.io/og-academy.png";
 const socialImageAlt =
-	"Academy — Student projects. Real potential. Greater impact. A blue paper plane rises above an open book.";
+	"Academy combination mark above Student projects. Real potential. Greater impact. A blue paper plane rises above an open book.";
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({

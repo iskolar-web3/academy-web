@@ -54,6 +54,12 @@ const ROLE_LABEL: Record<AcademyRole, string> = {
 	[AcademyRole.Admin]: "Admin",
 };
 
+const HOME_PATH: Record<AcademyRole, string> = {
+	[AcademyRole.Student]: "/student/home",
+	[AcademyRole.Sponsor]: "/sponsor/home",
+	[AcademyRole.Admin]: "/admin/dashboard",
+};
+
 /** First letters of the first two words — "Jasmine Reyes" → "JR". */
 function initialsOf(name: string): string {
 	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
@@ -88,11 +94,12 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 	return (
 		<header className="sticky top-0 z-40 border-line border-b bg-[rgba(248,250,255,0.86)] backdrop-blur-md">
 			<div className="container-page relative flex h-[66px] items-center justify-between">
-				<Link to="/" className="flex items-center gap-[11px]">
-					<img src="/logo-academy.svg" alt="" className="h-[38px] w-auto" />
-					<span className="text-base uppercase tracking-[0.16em] text-action">
-						Academy
-					</span>
+				<Link to={HOME_PATH[activeRole]} aria-label="Go to home">
+					<img
+						src="/combination-mark.svg"
+						alt="Academy"
+						className="h-9 w-auto"
+					/>
 				</Link>
 
 				{/* Centered on the header itself, not just "between" the logo and the
