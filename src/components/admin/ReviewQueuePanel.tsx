@@ -38,8 +38,8 @@ export function ReviewQueuePanel({
 	return (
 		<div>
 			<p className="mb-6 text-[15px] text-content-soft">
-				Confirm the MVP runs and the purpose is clear. Pass / fail, no scoring,
-				no ranking.
+				Confirm the MVP runs and the purpose is clear. Accept or return each
+				project without scoring or ranking.
 			</p>
 
 			{isLoading ? (

@@ -93,7 +93,7 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 		},
 		{
 			id: "repo-meta",
-			label: "README / license",
+			label: "Repository documentation and license",
 			status:
 				project.status === "published"
 					? "pass"

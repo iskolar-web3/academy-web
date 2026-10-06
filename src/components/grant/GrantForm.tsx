@@ -171,10 +171,10 @@ export function GrantForm() {
 							</div>
 						</div>
 						<div className="flex-1">
-							<div className={fieldLabelCls}>Individual or team</div>
+							<div className={fieldLabelCls}>Applicant details</div>
 							<input
 								className={inputCls}
-								placeholder="Team"
+								placeholder="e.g. Solo researcher, team of three"
 								{...register("teamNote")}
 							/>
 						</div>
@@ -236,7 +236,7 @@ export function GrantForm() {
 				<div className="mt-3 grid gap-2 sm:grid-cols-2">
 					{[
 						"Title proposal stored",
-						"Citation / DOI review",
+						"Citation review",
 						"School endorsement review",
 						"Similarity and ethics routing",
 					].map((item) => (

@@ -21,8 +21,8 @@ export type ProjectType = (typeof PROJECT_TYPES)[number];
 
 /** Human label for a project type — the single source the picker, cards, and review queue share. */
 export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
-	idea: "Idea / MVP",
-	thesis_capstone: "Thesis / Capstone",
+	idea: "Prototype project",
+	thesis_capstone: "Academic project",
 	startup: "Startup",
 };
 

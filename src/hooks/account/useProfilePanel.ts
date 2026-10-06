@@ -23,9 +23,9 @@ export function useProfilePanel(): StudentProfileCardModel | null {
 		userId: profile.academyUserId,
 		name: profile.displayName,
 		initials: initialsOf(profile.displayName),
+		avatarUrl: profile.avatarUrl,
 		role: roleLabel(profile.role, profile.sponsorKind),
 		school: profile.org,
-		since: "iSkolar Academy member",
 		skills: profile.skills,
 	};
 }

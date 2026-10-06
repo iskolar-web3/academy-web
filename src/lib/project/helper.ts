@@ -215,7 +215,7 @@ export function requiresDocumentUpload(type: ProjectType): boolean {
 
 /** What the upload gate calls the document, per type — same `documents.ts` storage either way. */
 export function documentLabel(type: ProjectType): string {
-	return type === "startup" ? "pitch deck" : "thesis / capstone paper";
+	return type === "startup" ? "pitch deck" : "academic paper";
 }
 
 /** Map form values → the fields a create/update accepts. */

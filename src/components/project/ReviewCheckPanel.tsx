@@ -101,7 +101,7 @@ export function ReviewCheckPanel({
 						{title}
 					</div>
 					<div className="mt-1 text-[13px] text-content-soft">
-						{summary.pass} accepted / {summary.pending} awaiting review /{" "}
+						{summary.pass} accepted · {summary.pending} awaiting review ·{" "}
 						{summary.attention} needs action
 					</div>
 				</div>

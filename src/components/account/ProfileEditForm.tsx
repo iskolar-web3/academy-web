@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useMyProfile } from "#/hooks/account/useProfile";
 import { useUpdateProfile } from "#/hooks/account/useUpdateProfile";
 import { type ProfileEdit, profileEditSchema } from "#/lib/account/model";
+import { AcademyRole } from "#/lib/auth/model";
 
 /**
  * Own-profile edit form (STU-01 / SPN-01) — a 1:1 port of the design-template EDIT
@@ -138,7 +139,7 @@ export function ProfileEditForm() {
 
 						<div>
 							<label htmlFor="org" className={labelCls}>
-								School / organization
+								{profile?.role === AcademyRole.Student ? "School" : "Organization"}
 							</label>
 							<input id="org" className={fieldCls} {...register("org")} />
 							{errors.org ? (

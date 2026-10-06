@@ -10,9 +10,9 @@ export interface StudentProfileCardModel {
 	userId: string;
 	name: string;
 	initials: string;
+	avatarUrl: string | null;
 	role: string;
 	school: string;
-	since: string;
 	skills: string[];
 }
 
@@ -25,8 +25,16 @@ export function StudentProfileCard({
 		<aside className="flex flex-col gap-4 lg:sticky lg:top-[84px]">
 			<div className="rounded-[14px] border border-line bg-surface-card p-[18px] shadow-card">
 				<div className="flex items-start gap-3.5">
-					<span className="inline-flex size-[54px] flex-none items-center justify-center rounded-[14px] border border-info-bd bg-surface-tint text-[18px] text-action">
-						{profile.initials}
+					<span className="inline-flex size-[54px] flex-none items-center justify-center overflow-hidden rounded-[14px] border border-info-bd bg-surface-tint text-[18px] text-action">
+						{profile.avatarUrl ? (
+							<img
+								src={profile.avatarUrl}
+								alt=""
+								className="size-full object-cover"
+							/>
+						) : (
+							profile.initials
+						)}
 					</span>
 					<div className="min-w-0 flex-1">
 						<div className="truncate text-[17px] text-content-heading">
@@ -40,12 +48,6 @@ export function StudentProfileCard({
 								{profile.school}
 							</div>
 						) : null}
-					</div>
-				</div>
-
-				<div className="mt-4 rounded-[10px] border border-line bg-surface-sunken/55 px-3 py-2.5">
-					<div className="font-mono text-[10.5px] text-content-faint">
-						{profile.since}
 					</div>
 				</div>
 
@@ -64,7 +66,7 @@ export function StudentProfileCard({
 					params={{ userId: profile.userId }}
 					className="btn btn-secondary mt-5 h-10 w-full text-[13.5px]"
 				>
-					View public profile
+					View profile
 				</Link>
 			</div>
 		</aside>

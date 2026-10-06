@@ -21,8 +21,7 @@ import { cn } from "#/lib/utils";
  * Signed-in top header — a 1:1 port of the design-template HEADER: logo, role-aware
  * center nav, a notification popover, and a user pill that opens the account dropdown.
  * Both popovers are Radix DropdownMenus (outside-click, Escape, keyboard nav, focus
- * return) kept under one controlled `open` state so the account menu's "Notifications"
- * entry can hand off to the notifications menu. `role` defaults to the live session
+ * return) kept under one controlled `open` state. `role` defaults to the live session
  * role (used by the shared `_app` shell); role shells pass their own role.
  */
 
@@ -33,9 +32,9 @@ interface NavItem {
 
 const NAV: Record<AcademyRole, NavItem[]> = {
 	[AcademyRole.Student]: [
+		{ label: "My Projects", to: "/student/home" },
 		{ label: "Discover", to: "/discover" },
 		{ label: "Grants", to: "/grants" },
-		{ label: "My Projects", to: "/student/home" },
 	],
 	[AcademyRole.Sponsor]: [
 		{ label: "Discover", to: "/discover" },
@@ -83,6 +82,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 
 	const activeRole = role ?? user?.academyRole ?? AcademyRole.Student;
 	const name = user?.displayName || user?.iskolarUserId || "Guest";
+	const avatarUrl = user?.avatarUrl;
 	const subtitle = ROLE_LABEL[activeRole];
 
 	const onLogout = async () => {
@@ -199,16 +199,24 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 									open === "profile" ? "border-action" : "border-line",
 								)}
 							>
-								<span className="flex size-[30px] items-center justify-center rounded-[9px] bg-action text-[12.5px] text-white">
-									{initialsOf(name)}
+								<span className="flex size-[30px] items-center justify-center overflow-hidden rounded-[9px] bg-action text-[12.5px] text-white">
+									{avatarUrl ? (
+										<img src={avatarUrl} alt="" className="size-full object-cover" />
+									) : (
+										initialsOf(name)
+									)}
 								</span>
 							</button>
 						</DropdownMenuTrigger>
 
 						<DropdownMenuContent className="w-[272px]">
 							<div className="flex items-center gap-3 px-3 pt-2 pb-3.5">
-								<span className="flex size-[46px] flex-none items-center justify-center rounded-[13px] bg-action text-[17px] text-white">
-									{initialsOf(name)}
+								<span className="flex size-[46px] flex-none items-center justify-center overflow-hidden rounded-[13px] bg-action text-[17px] text-white">
+									{avatarUrl ? (
+										<img src={avatarUrl} alt="" className="size-full object-cover" />
+									) : (
+										initialsOf(name)
+									)}
 								</span>
 								<div className="min-w-0">
 									<div className="truncate text-[15.5px] text-content-heading">
@@ -250,20 +258,6 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 									<Settings className="size-[18px] text-action" aria-hidden />
 									Settings
 								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onSelect={(e) => {
-									e.preventDefault();
-									setOpen("notifications");
-								}}
-							>
-								<Bell className="size-[18px] text-action" aria-hidden />
-								Notifications
-								{unread > 0 ? (
-									<span className="ml-auto rounded-full bg-action px-2 py-0.5 font-mono text-[11px] text-white">
-										{unread}
-									</span>
-								) : null}
 							</DropdownMenuItem>
 							{activeRole === AcademyRole.Student ? (
 								<DropdownMenuItem asChild>

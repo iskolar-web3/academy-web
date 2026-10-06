@@ -40,7 +40,7 @@ function Grants() {
 		>
 			<div className="mb-[26px] rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
 				<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
-					Research / thesis track
+					Research grants
 				</div>
 				<h1 className="mt-1 text-[26px] leading-tight text-content-heading">
 					Fund research before an MVP exists

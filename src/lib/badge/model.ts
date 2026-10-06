@@ -16,6 +16,6 @@ export type BadgeKind = (typeof BADGE_KINDS)[number];
 export const BADGE_KIND_LABELS: Record<BadgeKind, string> = {
 	verified_deploy: "Verified live deploy",
 	hackathon: "Hackathon win",
-	capstone: "Capstone / thesis defense",
+	capstone: "Academic project defense",
 	repo_signal: "Repo signal",
 };

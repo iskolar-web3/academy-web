@@ -276,6 +276,13 @@
 	button, input, select, textarea, code, pre, kbd, samp {
 		font-family: var(--font-sans);
 	}
+	button:not(:disabled),
+	input[type='button']:not(:disabled),
+	input[type='submit']:not(:disabled),
+	input[type='reset']:not(:disabled),
+	[role='button']:not([aria-disabled='true']) {
+		cursor: pointer;
+	}
 }
 
 /* ── Fixed-geometry components + academic motifs ────────────────────────── */

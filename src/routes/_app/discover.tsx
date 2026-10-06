@@ -145,7 +145,7 @@ function Discover() {
 							<button
 								type="button"
 								aria-label="Close filters"
-								className="fixed inset-0 z-40 cursor-default"
+								className="fixed inset-0 z-40 cursor-pointer"
 								onClick={() => setFilterOpen(false)}
 							/>
 							<div className="absolute top-[54px] right-0 z-50 w-[320px] origin-top-right animate-pop-in rounded-[18px] border border-[#e3ebfb] bg-[rgba(255,255,255,0.96)] p-[18px] shadow-pop backdrop-blur-md">

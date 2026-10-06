@@ -214,7 +214,7 @@ function StudentHome() {
 						<div className="flex items-end justify-between gap-4">
 							<div>
 								<div className="font-mono text-[11px] uppercase text-action/65">
-									Startup / project track
+									My projects
 								</div>
 								<p className="mt-1 text-[13.5px] text-content-soft">
 									MVP evidence, ownership, and team consent.
@@ -231,7 +231,7 @@ function StudentHome() {
 					<section className="mt-8">
 						<div className="mb-3.5">
 							<div className="font-mono text-[11px] uppercase text-action/65">
-								Research / thesis grant track
+								Research grants
 							</div>
 							<p className="mt-1 text-[13.5px] text-content-soft">
 								Document evidence, endorsements, citations, and ethics routing.

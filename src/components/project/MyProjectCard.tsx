@@ -1,7 +1,13 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { ProjectPipeline } from "#/components/project/ProjectPipeline";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
+import { Button } from "#/components/ui/button";
+import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useProjectVerification } from "#/hooks/project/useProjectVerification";
+import { deleteDraft } from "#/lib/project/api";
 import {
 	dashboardAction,
 	projectCover,
@@ -13,9 +19,15 @@ import type { Project } from "#/lib/project/model";
 /**
  * Owned-project card for the student dashboard — a 1:1 port of the design-template's
  * STUDENT DASHBOARD project row: a hue color bar, title + status badge, a lifecycle
- * pipeline tracker, an inline returned note, and a single contextual action.
+ * pipeline tracker, an inline returned note, and contextual actions.
  */
 export function MyProjectCard({ project }: { project: Project }) {
+	const [deleteOpen, setDeleteOpen] = useState(false);
+	const queryClient = useQueryClient();
+	const remove = useMutation({
+		mutationFn: (id: string) => deleteDraft(id),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: ["project"] }),
+	});
 	const verification = useProjectVerification(
 		project.id,
 		project.status !== "draft",
@@ -63,11 +75,20 @@ export function MyProjectCard({ project }: { project: Project }) {
 					/>
 				</div>
 
-				<div className="mt-4 flex items-center justify-between border-[#eef1fa] border-t pt-3.5">
+				<div className="mt-4 flex flex-wrap items-center justify-end gap-2.5 border-[#eef1fa] border-t pt-3.5">
 					{project.status === "published" ? (
-						<span className="text-[13.5px] text-action">
+						<span className="mr-auto text-[13.5px] text-action">
 							♥ {project.upvotes} upvotes
 						</span>
+					) : null}
+					{project.status === "draft" ? (
+						<Button
+							variant="destructive"
+							onClick={() => setDeleteOpen(true)}
+							className="h-[38px] px-[18px] text-[13.5px]"
+						>
+							Delete draft
+						</Button>
 					) : null}
 					<Link
 						to={
@@ -76,12 +97,31 @@ export function MyProjectCard({ project }: { project: Project }) {
 								: "/student/projects/$projectId"
 						}
 						params={{ projectId: project.id }}
-						className="btn btn-secondary ml-auto h-[38px] px-[18px] text-[13.5px]"
+						className="btn btn-secondary h-[38px] px-[18px] text-[13.5px]"
 					>
 						{action.label}
 					</Link>
 				</div>
 			</div>
+			{project.status === "draft" ? (
+				<ConfirmActionDialog
+					open={deleteOpen}
+					onClose={() => setDeleteOpen(false)}
+					title="Delete draft"
+					description={`Delete “${project.title}”? This cannot be undone.`}
+					confirmLabel="Delete draft"
+					busy={remove.isPending}
+					onConfirm={() =>
+						remove.mutate(project.id, {
+							onSuccess: () => {
+								setDeleteOpen(false);
+								toast.success("Draft deleted");
+							},
+							onError: (error) => toast.error(error.message),
+						})
+					}
+				/>
+			) : null}
 		</div>
 	);
 }

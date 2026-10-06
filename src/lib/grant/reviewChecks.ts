@@ -60,7 +60,7 @@ export function buildGrantChecks(grant: GrantRequest): GrantCheck[] {
 		},
 		{
 			id: "citations",
-			label: "Citation / DOI check",
+			label: "Citation review",
 			status: hasProposal ? "pending" : "attention",
 			evidence: hasProposal
 				? "Ready for backend citation and DOI resolution."

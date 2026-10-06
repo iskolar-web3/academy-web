@@ -34,6 +34,7 @@ import {
 	CATEGORIES,
 	type Project,
 	type ProjectFormValues,
+	PROJECT_TYPE_LABELS,
 	projectFormSchema,
 } from "#/lib/project/model";
 import { cn } from "#/lib/utils";
@@ -406,9 +407,11 @@ export function SubmitProjectModal({
 								<div className="flex-1">
 									<div className={fieldLabelCls}>Type</div>
 									<select className={inputCls} {...register("type")}>
-										<option value="idea">Idea / prototype</option>
-										<option value="thesis_capstone">Thesis / capstone</option>
-										<option value="startup">Startup</option>
+										<option value="idea">{PROJECT_TYPE_LABELS.idea}</option>
+										<option value="thesis_capstone">
+											{PROJECT_TYPE_LABELS.thesis_capstone}
+										</option>
+										<option value="startup">{PROJECT_TYPE_LABELS.startup}</option>
 									</select>
 								</div>
 							</div>
@@ -507,7 +510,7 @@ export function SubmitProjectModal({
 									>
 										<input
 											className={`${inputCls} sm:flex-1`}
-											placeholder="Name / iSkolar ID"
+											placeholder="Team member's name"
 											{...register(`members.${i}.name`)}
 										/>
 										<input
