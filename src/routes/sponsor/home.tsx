@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DealFlowCard } from "#/components/discover/DealFlowCard";
 import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
+import { InfoTooltip } from "#/components/ui/InfoTooltip";
 import { publishedProjectsQuery } from "#/lib/discover/api";
 import { CATEGORIES } from "#/lib/project/model";
 import { projectMatchScore } from "#/lib/project/reviewChecks";
@@ -43,15 +44,11 @@ function SponsorHome() {
 	return (
 		<AppPageLayout left={<SponsorEvidenceRail />}>
 			<div className="mb-5 rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
-				<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
-					Sponsor deal-flow
-				</div>
-				<h1 className="mt-1 text-[26px] leading-tight text-content-heading">
+				<h1 className="text-[26px] leading-tight text-content-heading">
 					Matched first, open discovery after
 				</h1>
 				<p className="mt-1.5 text-[14.5px] leading-relaxed text-content-soft">
-					The first stack favors verification evidence, freshness, and traction.
-					The second keeps every approved project browsable.
+					See your best matches first, then browse approved projects.
 				</p>
 				<div className="mt-4 flex flex-wrap gap-2">
 					{["All", ...CATEGORIES].map((category) => (
@@ -86,13 +83,10 @@ function SponsorHome() {
 				<div className="flex flex-col gap-8">
 					<section>
 						<div className="mb-3.5">
-							<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
+							<div className="flex items-center gap-1 font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
 								Matched to your focus
+								<InfoTooltip text="Prioritized by selected focus, readiness, verification, recency, and traction. School is not used as a match signal." />
 							</div>
-							<p className="mt-1 text-[13.5px] text-content-soft">
-								Prioritized by selected focus, readiness, verification, recency,
-								and traction. School is not used as a match signal.
-							</p>
 						</div>
 						<div className="flex flex-col gap-4">
 							{matchedProjects.map((project) => (
@@ -103,13 +97,10 @@ function SponsorHome() {
 
 					<section>
 						<div className="mb-3.5 border-line border-t pt-6">
-							<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
+							<div className="flex items-center gap-1 font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
 								All approved projects
+								<InfoTooltip text="Open gallery remains available so good work is never hidden by the match layer." />
 							</div>
-							<p className="mt-1 text-[13.5px] text-content-soft">
-								Open gallery remains available so good work is never hidden by
-								the match layer.
-							</p>
 						</div>
 						<div className="flex flex-col gap-4">
 							{(allProjects.length ? allProjects : matchedProjects).map(

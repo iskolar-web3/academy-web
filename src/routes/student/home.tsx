@@ -80,10 +80,7 @@ function StudentHome() {
 				<header className="mb-6 border-line border-b pb-6">
 					<div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
 						<div className="max-w-[680px]">
-							<div className="font-mono text-[11px] uppercase text-action/65">
-								Student workspace
-							</div>
-							<h1 className="mt-2 text-[30px] leading-tight text-content-heading">
+							<h1 className="text-[30px] leading-tight text-content-heading">
 								Your Academy workbench
 							</h1>
 							<p className="mt-2 text-[15px] leading-relaxed text-content-soft">
@@ -231,10 +228,11 @@ function StudentHome() {
 					<section className="mt-8">
 						<div className="mb-3.5">
 							<div className="font-mono text-[11px] uppercase text-action/65">
-								Research grants
+								My grants
 							</div>
 							<p className="mt-1 text-[13.5px] text-content-soft">
-								Document evidence, endorsements, citations, and ethics routing.
+								Grant reviews check proposals, citations, endorsements,
+								similarity, and ethics. MVP reviews are separate.
 							</p>
 						</div>
 						<div className="flex flex-col gap-4">

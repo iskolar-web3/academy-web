@@ -8,10 +8,10 @@ const eyebrowCls =
 	"mb-3.5 font-mono text-[11.5px] uppercase tracking-[0.16em] text-action/60";
 
 const REVIEW_SIGNALS = [
-	"Live demo opens and explains the product",
-	"Public repository has clear project context",
-	"Ownership and team credits are declared",
-	"Recent work has a clear next step",
+	"Working demo",
+	"Clear public repository",
+	"Declared ownership and team credits",
+	"Recent progress and next steps",
 ];
 
 /** Sponsor sidebar with real account data and evidence-based review guidance. */
@@ -32,7 +32,7 @@ export function SponsorEvidenceRail() {
 			<div className={cardCls}>
 				<div className={eyebrowCls}>Review signals</div>
 				<p className="mb-3 text-[13px] leading-relaxed text-content-soft">
-					Start with evidence, then decide whether the project is a fit.
+					Check the evidence before deciding on fit.
 				</p>
 				<div className="flex flex-col gap-2">
 					{REVIEW_SIGNALS.map((signal) => (

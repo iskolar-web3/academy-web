@@ -37,8 +37,8 @@ const NAV: Record<AcademyRole, NavItem[]> = {
 		{ label: "Grants", to: "/grants" },
 	],
 	[AcademyRole.Sponsor]: [
-		{ label: "Discover", to: "/discover" },
 		{ label: "Deal-flow", to: "/sponsor/home" },
+		{ label: "Discover", to: "/discover" },
 		{ label: "Grants", to: "/grants" },
 	],
 	[AcademyRole.Admin]: [
@@ -201,7 +201,11 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 							>
 								<span className="flex size-[30px] items-center justify-center overflow-hidden rounded-[9px] bg-action text-[12.5px] text-white">
 									{avatarUrl ? (
-										<img src={avatarUrl} alt="" className="size-full object-cover" />
+										<img
+											src={avatarUrl}
+											alt=""
+											className="size-full object-cover"
+										/>
 									) : (
 										initialsOf(name)
 									)}
@@ -213,7 +217,11 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 							<div className="flex items-center gap-3 px-3 pt-2 pb-3.5">
 								<span className="flex size-[46px] flex-none items-center justify-center overflow-hidden rounded-[13px] bg-action text-[17px] text-white">
 									{avatarUrl ? (
-										<img src={avatarUrl} alt="" className="size-full object-cover" />
+										<img
+											src={avatarUrl}
+											alt=""
+											className="size-full object-cover"
+										/>
 									) : (
 										initialsOf(name)
 									)}

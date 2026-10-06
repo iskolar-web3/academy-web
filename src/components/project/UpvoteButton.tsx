@@ -41,12 +41,14 @@ export function UpvoteButton({
 	upvoted = false,
 	onToggle,
 	size = "sm",
+	showCount = true,
 	title,
 }: {
 	count: number;
 	upvoted?: boolean;
 	onToggle?: () => void;
 	size?: "sm" | "lg";
+	showCount?: boolean;
 	title?: string;
 }) {
 	const [burst, setBurst] = useState(false);
@@ -86,7 +88,9 @@ export function UpvoteButton({
 					aria-hidden
 				/>
 			</motion.span>
-			{size === "sm" && upvoted ? (
+			{!showCount ? (
+				<span>{upvoted ? "Upvoted" : "Upvote"}</span>
+			) : size === "sm" && upvoted ? (
 				<span className="tabular-nums">{count}</span>
 			) : (
 				<>

@@ -38,11 +38,11 @@ export function DiscoverCard({
 	const params = { projectId: project.id };
 
 	return (
-		<div className="card-surface flex h-[488px] flex-col overflow-hidden rounded-[15px] transition-colors hover:border-action">
+		<div className="card-surface flex h-[400px] min-w-0 flex-col overflow-hidden rounded-[15px] transition-colors hover:border-action">
 			<Link
 				to={to}
 				params={params}
-				className="relative flex h-32 flex-none items-start justify-end p-3.5"
+				className="relative flex h-24 flex-none items-start justify-end p-3"
 				style={{ background: projectCover(project.hue) }}
 			>
 				{project.trending ? (
@@ -50,10 +50,12 @@ export function DiscoverCard({
 				) : null}
 			</Link>
 
-			<div className="flex min-h-0 flex-1 flex-col px-[17px] pt-4 pb-[17px]">
+			<div className="flex min-h-0 flex-1 flex-col px-4 pt-3 pb-3">
 				<Link to={to} params={params} className="flex min-h-0 flex-1 flex-col">
-					<span className="mb-3.5 flex items-center gap-1.5 truncate text-[18.5px] leading-tight text-content-heading">
-						{project.title}
+					<span className="mb-2 flex min-w-0 items-center gap-1.5 text-[18px] leading-tight text-content-heading">
+						<span className="min-w-0 truncate" title={project.title}>
+							{project.title}
+						</span>
 						{project.verified ? (
 							<span
 								title="Verified Builder"
@@ -63,21 +65,21 @@ export function DiscoverCard({
 							</span>
 						) : null}
 					</span>
-					<div className="mb-[7px] flex items-center gap-[7px] overflow-hidden">
-						<span className="chip chip--category flex-none">
+					<div className="mb-1.5 flex min-w-0 items-center gap-[7px] overflow-hidden">
+						<span className="chip chip--category min-w-0 truncate">
 							{project.category || "Uncategorized"}
 						</span>
-						<span className="chip chip--type flex-none">
+						<span className="chip chip--type min-w-0 truncate">
 							{TYPE_LABEL[project.type]}
 						</span>
 					</div>
-					<div className="mb-[11px] truncate font-mono text-[12px] text-content-faint">
+					<div className="mb-2 truncate font-mono text-[12px] text-content-faint">
 						{project.school || "iSkolar Academy"}
 					</div>
-					<p className="mb-[13px] line-clamp-3 h-[63px] text-[14px] leading-normal text-content-soft">
+					<p className="mb-2 line-clamp-2 h-[42px] text-[14px] leading-normal text-content-soft">
 						{project.pitch}
 					</p>
-					<div className="mb-[14px] flex gap-1.5 overflow-hidden">
+					<div className="mb-2 flex min-h-6 gap-1.5 overflow-hidden">
 						{tech.map((t) => (
 							<span key={t} className="chip chip--category flex-none">
 								{t}
@@ -87,13 +89,13 @@ export function DiscoverCard({
 							<span className="chip chip--tech flex-none">+{more} more</span>
 						) : null}
 					</div>
-					<div className="mb-[12px]">
+					<div className="mb-2 h-7 overflow-hidden">
 						<ReviewEvidenceChips project={project} max={2} />
 					</div>
 				</Link>
 
-				<div className="mt-auto flex items-center justify-between border-[#eef1fa] border-t pt-[13px]">
-					<div className="flex items-center">
+				<div className="mt-auto flex min-w-0 items-center justify-between border-[#eef1fa] border-t pt-2">
+					<div className="flex min-w-0 items-center overflow-hidden">
 						{project.members.map((m) => (
 							<span
 								key={m.id}
@@ -107,6 +109,7 @@ export function DiscoverCard({
 					{canUpvote ? (
 						<UpvoteButton
 							count={project.upvotes}
+							showCount={false}
 							upvoted={project.upvotedByMe}
 							onToggle={() => toggle.mutate(project.id)}
 						/>

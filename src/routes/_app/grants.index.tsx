@@ -39,16 +39,12 @@ function Grants() {
 			}
 		>
 			<div className="mb-[26px] rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
-				<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
-					Research grants
-				</div>
-				<h1 className="mt-1 text-[26px] leading-tight text-content-heading">
+				<h1 className="text-[26px] leading-tight text-content-heading">
 					Fund research before an MVP exists
 				</h1>
 				<p className="mt-1.5 max-w-[680px] text-[14.5px] leading-relaxed text-content-soft">
-					Grant requests use document-first evidence: title proposal, structure,
-					citation readiness, endorsement, similarity, and ethics routing.
-					Project MVP checks stay separate.
+					Grant reviews check proposals, citations, endorsements, similarity,
+					and ethics. MVP reviews are separate.
 				</p>
 			</div>
 
