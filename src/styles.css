@@ -18,6 +18,24 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* TBI explorer: Leaflet is isolated below the landing header's stacking layer. */
+.tbi-map { font-family: var(--font-sans); background: var(--color-surface-sunken); }
+.tbi-map .leaflet-tile-pane { filter: grayscale(1) sepia(0.65) hue-rotate(175deg) saturate(1.35) contrast(0.92); }
+.tbi-input { border: 1px solid var(--color-line); background: var(--color-surface-card); border-radius: 11px; padding: 10px 12px; font-size: 14px; color: var(--color-content-strong); }
+.tbi-input:focus-visible { outline: 2px solid var(--color-action); outline-offset: 2px; }
+.tbi-pin, .tbi-cluster, .tbi-origin { background: transparent; border: none; }
+.tbi-pin span { display: block; width: 25px; height: 25px; border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--color-action); box-shadow: 0 2px 8px #1f2a5240; }
+.tbi-pin span::after { content: ''; display: block; width: 7px; height: 7px; margin: 6px; border-radius: 50%; background: white; }
+.tbi-pin-highlight span { background: var(--color-success); }
+.tbi-cluster span { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; border: 5px solid #d3dcf6; background: var(--color-action); color: white; font-size: 15px; box-shadow: 0 2px 8px #1f2a5220; }
+.tbi-origin span { display: block; width: 20px; height: 20px; border: 3px solid white; border-radius: 50%; background: var(--color-highlight); box-shadow: 0 0 0 6px #607ef230; }
+.tbi-map .leaflet-popup-content-wrapper, .tbi-map .leaflet-popup-tip { background: var(--color-surface-card); color: var(--color-content-strong); }
+.tbi-map .leaflet-popup-content { line-height: 1.55; margin: 18px; }
+.tbi-popup strong { display: block; font-size: 16px; color: var(--color-content-heading); }
+.tbi-popup p { margin: 8px 0; }
+.tbi-popup a { display: inline-block; margin-top: 8px; color: var(--color-action); text-decoration: underline; }
+.tbi-map .leaflet-control-attribution { font-family: var(--font-sans); font-size: 10px; }
+
 @font-face {
 	font-family: 'Bree Serif';
 	src: url('/fonts/BreeSerif-Regular.ttf') format('truetype');

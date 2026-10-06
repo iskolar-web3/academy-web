@@ -8,6 +8,7 @@ import { LandingCta } from "#/components/landing/LandingCta";
 import { LandingFooter } from "#/components/landing/LandingFooter";
 import { LandingHeader } from "#/components/landing/LandingHeader";
 import { RecentProjectsPreview } from "#/components/landing/RecentProjectsPreview";
+import { TbiMapSection } from "#/components/landing/TbiMapSection";
 import { ValueProps } from "#/components/landing/ValueProps";
 
 export const Route = createFileRoute("/_public/")({
@@ -46,6 +47,7 @@ function Landing() {
 					<Hero />
 					<ValueProps />
 					<HowItWorks />
+					<TbiMapSection />
 					<RecentProjectsPreview />
 					<LandingCta />
 				</main>

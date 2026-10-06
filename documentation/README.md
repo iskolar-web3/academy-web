@@ -43,6 +43,7 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 | 10 | `10-monetization-deal-flow.md` | ✅ Client done · ✅ server live | 2026-07-15 | Plan §4/§6–7 · STU-17/18 · SPN-12…16 · ADM-07 |
 | 11 | `11-social-preview.md` | ✅ Done | 2026-10-06 | Owner-requested social preview refresh |
 | 12 | `12-landing-content-audit.md` | ✅ Done | 2026-10-06 | Owner-requested landing content audit |
+| 13 | `13-tbi-map.md` | ✅ Implemented | 2026-10-06 | Owner-requested TBI map and nearest-incubator discovery |
 
 > **Numbering note (2026-07-24 documentation pass):** phase numbers `05`–`10` follow product-phase
 > order (Foundation → Submission → Review → Discovery & Contact → Grants & Funding →
