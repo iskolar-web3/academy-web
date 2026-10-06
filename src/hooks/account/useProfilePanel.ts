@@ -10,8 +10,7 @@ function initialsOf(name: string): string {
 }
 
 /**
- * Builds the non-sponsor left-panel model (student and admin — sponsors get
- * the sponsor evidence rail instead) from the real profile (P0's `GET /accounts/me/profile`), so
+ * Builds the shared profile panel for every role from `GET /accounts/me/profile`, so
  * every page that shows the panel — not just `/student/home` — reflects the same
  * onboarded name/school/skills. Returns `null` while the profile is still loading.
  */

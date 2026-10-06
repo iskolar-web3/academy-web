@@ -94,7 +94,7 @@ export function DiscoverCard({
 					</div>
 				</Link>
 
-				<div className="mt-auto flex min-w-0 items-center justify-between border-[#eef1fa] border-t pt-2">
+				<div className="mt-auto flex h-[43px] min-w-0 shrink-0 items-center justify-between border-[#eef1fa] border-t pt-2">
 					<div className="flex min-w-0 items-center overflow-hidden">
 						{project.members.map((m) => (
 							<span

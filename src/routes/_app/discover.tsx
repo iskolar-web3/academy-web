@@ -3,7 +3,6 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
-import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
 import { useSession } from "#/hooks/auth/useSession";
@@ -15,9 +14,8 @@ import { GALLERY_SORTS, type GallerySort } from "#/lib/discover/model";
  * Discover / showcase gallery (SPN-03/04/05) — a 1:1 port of the design-template GALLERY:
  * search + Filters (sort + category) toolbar, a result count, and the project card grid.
  * Search/filter/sort state lives in the **URL search params** (shareable, back-button
- * correct) and runs **server-side** against the published projection. Left column is
- * `SponsorRail` for sponsors or the profile panel for student/admin; right column is the
- * ad slot.
+ * correct) and runs **server-side** against the published projection. Every role uses
+ * the same profile sidebar, toolbar, result states, and project grid.
  */
 
 type GallerySearchParams = {
@@ -59,7 +57,6 @@ const CATEGORIES = [
 
 function Discover() {
 	const { role } = useSession();
-	const isSponsor = role === AcademyRole.Sponsor;
 	const panel = useProfilePanel();
 	const search = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
@@ -101,11 +98,8 @@ function Discover() {
 
 	return (
 		<AppPageLayout
-			hideLeftOnMobile={isSponsor}
 			left={
-				isSponsor ? (
-					<SponsorEvidenceRail />
-				) : panel ? (
+				panel ? (
 					<StudentProfileCard profile={panel} />
 				) : (
 					<div className="h-64 animate-pulse rounded-[18px] bg-surface-card" />
