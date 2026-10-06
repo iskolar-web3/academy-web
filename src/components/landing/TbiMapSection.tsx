@@ -70,7 +70,7 @@ export function TbiMapSection() {
 		setSearching(false);
 		const version = ++requests.current.version;
 		setLocating(true);
-		setLocationMessage("Waiting for your location permission…");
+		setLocationMessage("");
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				if (!mounted.current || version !== requests.current.version) return;
