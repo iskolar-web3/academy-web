@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PartnerCarousel } from "#/components/landing/PartnerCarousel";
 import { SignInPopover } from "#/components/landing/SignInPopover";
+import { ACADEMY_SUMMARY } from "#/lib/landing/content";
 
 interface Glyph {
 	Icon: LucideIcon;
@@ -140,8 +141,7 @@ export function Hero() {
 					</h1>
 
 					<p className="mt-10 max-w-xl text-base leading-relaxed text-content-strong sm:text-xl">
-						Showcase a working project, share a thesis grant proposal, or
-						discover student talent.
+						{ACADEMY_SUMMARY}
 					</p>
 
 					<div className="mt-8 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">

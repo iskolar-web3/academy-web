@@ -8,13 +8,14 @@ export function SectionHeading({
 	title?: string;
 	center?: boolean;
 }) {
+	const Label = title ? "p" : "h2";
 	return (
 		<div
 			className={center ? "flex flex-col items-center text-center" : undefined}
 		>
-			<span className="inline-flex items-center gap-4 font-mono text-lg font-semibold uppercase tracking-[0.22em] text-action">
+			<Label className="inline-flex items-center gap-4 font-mono text-lg font-semibold uppercase tracking-[0.22em] text-action">
 				{label}
-			</span>
+			</Label>
 			{title ? (
 				<h2 className="mt-3 text-3xl text-foreground md:text-4xl">{title}</h2>
 			) : null}

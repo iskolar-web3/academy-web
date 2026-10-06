@@ -37,6 +37,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{
 				title: "Academy",
 			},
+			// Public content routes explicitly opt in to indexing in their own head.
+			{ name: "robots", content: "noindex, follow" },
 			{ property: "og:type", content: "website" },
 			{ property: "og:site_name", content: "Academy" },
 			{ property: "og:title", content: socialTitle },

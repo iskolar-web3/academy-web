@@ -119,7 +119,11 @@ export function HowItWorks() {
 	);
 
 	return (
-		<section ref={ref} className="relative h-auto lg:h-[180vh]">
+		<section
+			id="how-it-works"
+			ref={ref}
+			className="relative h-auto scroll-mt-24 lg:h-[180vh]"
+		>
 			<div className="flex items-center py-16 lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden lg:py-0">
 				<div className="container-page w-full">
 					<SectionHeading label="How projects get published" />

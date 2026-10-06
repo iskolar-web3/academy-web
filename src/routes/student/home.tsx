@@ -5,7 +5,6 @@ import {
 	Clock3,
 	FileText,
 	Plus,
-	Rocket,
 } from "lucide-react";
 import { useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
@@ -178,35 +177,7 @@ function StudentHome() {
 					<div className="rounded-[14px] border border-line bg-surface-card p-5 text-[14px] text-content-soft">
 						Loading projects...
 					</div>
-				) : projects.length === 0 ? (
-					<div className="rounded-[14px] border border-dashed border-line bg-surface-card p-6 shadow-card">
-						<div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-							<div className="flex items-start gap-4">
-								<span className="flex size-11 flex-none items-center justify-center text-action">
-									<Rocket className="size-5" aria-hidden />
-								</span>
-								<div>
-									<div className="text-[18px] text-content-heading">
-										Start with one shipped thing
-									</div>
-									<p className="mt-1 max-w-[520px] text-[14px] leading-relaxed text-content-soft">
-										Submit an MVP when it has a demo, repo, and ownership
-										declaration. Grants are for research work that needs funding
-										before an MVP exists.
-									</p>
-								</div>
-							</div>
-							<button
-								type="button"
-								onClick={() => setSubmitOpen(true)}
-								className="btn btn-primary h-11 flex-none px-4 text-[14px]"
-							>
-								<Plus className="size-4" aria-hidden />
-								Submit project
-							</button>
-						</div>
-					</div>
-				) : (
+				) : projects.length > 0 ? (
 					<section className="flex flex-col gap-4">
 						<div className="flex items-end justify-between gap-4">
 							<div>
@@ -222,7 +193,7 @@ function StudentHome() {
 							<MyProjectCard key={project.id} project={project} />
 						))}
 					</section>
-				)}
+				) : null}
 
 				{myGrants.length > 0 ? (
 					<section className="mt-8">

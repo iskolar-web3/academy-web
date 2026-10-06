@@ -5,23 +5,16 @@ import { useEffect } from "react";
 import { Hero } from "#/components/landing/Hero";
 import { HowItWorks } from "#/components/landing/HowItWorks";
 import { LandingCta } from "#/components/landing/LandingCta";
+import { LandingFaq } from "#/components/landing/LandingFaq";
 import { LandingFooter } from "#/components/landing/LandingFooter";
 import { LandingHeader } from "#/components/landing/LandingHeader";
 import { RecentProjectsPreview } from "#/components/landing/RecentProjectsPreview";
 import { TbiMapSection } from "#/components/landing/TbiMapSection";
 import { ValueProps } from "#/components/landing/ValueProps";
+import { landingHead } from "#/lib/landing/seo";
 
 export const Route = createFileRoute("/_public/")({
-	head: () => ({
-		meta: [
-			{ title: "Academy | Student projects worth seeing" },
-			{
-				name: "description",
-				content:
-					"Showcase working student projects, share thesis grant proposals, and discover student talent.",
-			},
-		],
-	}),
+	head: () => landingHead,
 	component: Landing,
 });
 
@@ -50,6 +43,7 @@ function Landing() {
 					<TbiMapSection />
 					<RecentProjectsPreview />
 					<LandingCta />
+					<LandingFaq />
 				</main>
 				<LandingFooter />
 			</div>
