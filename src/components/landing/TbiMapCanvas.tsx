@@ -1,6 +1,6 @@
 import type * as Leaflet from "leaflet";
 import { useEffect, useRef, useState } from "react";
-import { type Coordinates, TBIS, type Tbi } from "#/lib/tbi/directory";
+import type { Coordinates, Tbi } from "#/lib/tbi/directory";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 
@@ -11,6 +11,7 @@ export interface MapOrigin extends Coordinates {
 }
 
 interface Props {
+	tbis: readonly Tbi[];
 	onSelect: (tbi: Tbi) => void;
 	selectedId?: string;
 	nearestId?: string;
@@ -25,6 +26,7 @@ const COUNTRY_BOUNDS: Leaflet.LatLngBoundsLiteral = [
 ];
 
 export function TbiMapCanvas({
+	tbis,
 	onSelect,
 	selectedId,
 	nearestId,
@@ -98,7 +100,7 @@ export function TbiMapCanvas({
 						}),
 				});
 				const markers = new Map<string, Leaflet.Marker>();
-				for (const tbi of TBIS) {
+				for (const tbi of tbis) {
 					const marker = L.marker([tbi.lat, tbi.lng], {
 						icon: markerIcon(L, false),
 						title: tbi.name,
@@ -155,7 +157,7 @@ export function TbiMapCanvas({
 			map?.remove();
 			engine.current = null;
 		};
-	}, [onSelect, attempt]);
+	}, [onSelect, attempt, tbis]);
 
 	useEffect(() => {
 		if (!ready || !engine.current) return;
@@ -186,7 +188,7 @@ export function TbiMapCanvas({
 				weight: 1,
 				fillOpacity: 0.08,
 			}).addTo(layers);
-		const nearest = TBIS.find((tbi) => tbi.id === nearestId);
+		const nearest = tbis.find((tbi) => tbi.id === nearestId);
 		if (nearest) {
 			// A separate halo keeps the nearest visible even inside a dense cluster.
 			L.circleMarker([nearest.lat, nearest.lng], {
@@ -208,7 +210,7 @@ export function TbiMapCanvas({
 		return () => {
 			layers.remove();
 		};
-	}, [ready, origin, nearestId]);
+	}, [ready, origin, nearestId, tbis]);
 
 	useEffect(() => {
 		if (!ready || !focus || !engine.current) return;
@@ -237,14 +239,14 @@ export function TbiMapCanvas({
 			<section
 				ref={container}
 				className="tbi-map absolute inset-0 z-0"
-				aria-label="Interactive map of Philippine Technology Business Incubators"
+				aria-label="Interactive map showing UMak CTIED in Makati"
 				data-lenis-prevent
 			/>
 			{!ready && (
 				<output className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-surface-sunken px-6 text-center">
 					<span className="text-content-soft">
 						{error
-							? "The map couldn't load. You can still explore the directory."
+							? "The map couldn't load. The UMak partner listing is still available."
 							: "Loading the Philippines map…"}
 					</span>
 					{error && (
@@ -260,8 +262,8 @@ export function TbiMapCanvas({
 			)}
 			{tileError && (
 				<output className="absolute inset-x-3 bottom-10 z-10 rounded-lg bg-card p-3 text-sm text-content-strong">
-					Map tiles are unavailable. Markers and the directory still work. Check
-					your connection.
+					Map tiles are unavailable. The UMak partner marker may not appear.
+					Check your connection.
 				</output>
 			)}
 		</div>

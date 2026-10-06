@@ -16,7 +16,7 @@ export function LandingFooter() {
 						Recent projects
 					</a>
 					<a className="underline-offset-4 hover:underline" href="#tbi-map">
-						Find a TBI
+						TBI partnerships
 					</a>
 					<a className="underline-offset-4 hover:underline" href="#faq">
 						FAQ
