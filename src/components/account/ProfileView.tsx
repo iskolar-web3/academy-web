@@ -123,7 +123,14 @@ export function ProfileView({
 			label: "projects",
 			value: profile.stats.projects.toLocaleString("en-US"),
 		},
-		{ label: "upvotes", value: profile.stats.upvotes.toLocaleString("en-US") },
+		...(profile.role === "admin"
+			? []
+			: [
+					{
+						label: "upvotes",
+						value: profile.stats.upvotes.toLocaleString("en-US"),
+					},
+				]),
 		{ label: "raised", value: formatRaised(profile.stats.raised) },
 	];
 
@@ -213,7 +220,7 @@ export function ProfileView({
 												</span>
 											</div>
 											<div className="font-mono text-[11.5px] text-content-faint">
-												{p.category || "Uncategorized"}, {" "}
+												{p.category || "Uncategorized"},{" "}
 												{p.updatedDays === 0
 													? "today"
 													: `${p.updatedDays}d ago`}

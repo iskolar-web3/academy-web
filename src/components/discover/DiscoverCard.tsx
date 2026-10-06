@@ -24,7 +24,13 @@ function initialsOf(name: string): string {
 	);
 }
 
-export function DiscoverCard({ project }: { project: ShowcaseProject }) {
+export function DiscoverCard({
+	project,
+	canUpvote = true,
+}: {
+	project: ShowcaseProject;
+	canUpvote?: boolean;
+}) {
 	const toggle = useToggleUpvote();
 	const tech = project.tech.slice(0, 3);
 	const more = project.tech.length - tech.length;
@@ -98,11 +104,13 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 							</span>
 						))}
 					</div>
-					<UpvoteButton
-						count={project.upvotes}
-						upvoted={project.upvotedByMe}
-						onToggle={() => toggle.mutate(project.id)}
-					/>
+					{canUpvote ? (
+						<UpvoteButton
+							count={project.upvotes}
+							upvoted={project.upvotedByMe}
+							onToggle={() => toggle.mutate(project.id)}
+						/>
+					) : null}
 				</div>
 			</div>
 		</div>

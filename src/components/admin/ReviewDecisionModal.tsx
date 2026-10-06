@@ -152,7 +152,7 @@ export function ReviewDecisionModal({
 						{eyebrowTick}
 						<span className={eyebrowText}>Purpose</span>
 					</div>
-					<div className="border-line border-l-2 pl-3.5 text-[14.5px] text-content-strong leading-[1.6]">
+					<div className="text-[14.5px] text-content-strong leading-[1.6]">
 						{project.purpose || "No purpose provided"}
 					</div>
 
@@ -196,11 +196,11 @@ export function ReviewDecisionModal({
 					</div>
 
 					<div className="mt-[18px]">
-					<ReviewCheckPanel
-						project={project}
-						title="Automated evidence"
-						checks={verification.data}
-					/>
+						<ReviewCheckPanel
+							project={project}
+							title="Automated evidence"
+							checks={verification.data}
+						/>
 					</div>
 
 					{project.isTeam && project.members.length > 0 ? (
@@ -220,7 +220,7 @@ export function ReviewDecisionModal({
 											{m.contribution ? (
 												<span className="text-[12.5px] text-content-faint">
 													{" "}
-											, {m.contribution}
+													, {m.contribution}
 												</span>
 											) : null}
 										</div>
@@ -255,7 +255,7 @@ export function ReviewDecisionModal({
 									rel="noreferrer"
 									className="text-[13px] text-action underline"
 								>
-									View {documentLabel(project.type)}: {" "}
+									View {documentLabel(project.type)}:{" "}
 									{project.ownership.thesisPaperName}
 								</a>
 							) : null}
@@ -266,7 +266,10 @@ export function ReviewDecisionModal({
 					{returning ? (
 						<div className="mt-5 rounded-[12px] border border-line bg-surface-sunken p-3.5">
 							<div className="mb-2 font-mono text-[11px] text-content-muted uppercase tracking-[0.16em]">
-								Return note <span className="text-danger" aria-hidden="true">*</span>
+								Return note{" "}
+								<span className="text-danger" aria-hidden="true">
+									*
+								</span>
 							</div>
 							<textarea
 								value={note}

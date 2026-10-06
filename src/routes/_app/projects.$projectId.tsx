@@ -48,7 +48,12 @@ function PublicProjectDetail() {
 		);
 	}
 
-	const viewer = role === AcademyRole.Sponsor ? "sponsor" : "public";
+	const viewer =
+		role === AcademyRole.Admin
+			? "admin"
+			: role === AcademyRole.Sponsor
+				? "sponsor"
+				: "public";
 
 	return (
 		<div>
@@ -62,29 +67,31 @@ function PublicProjectDetail() {
 				project={project}
 				viewer={viewer}
 				interact={
-					<>
-						<UpvoteButton
-							size="lg"
-							count={project.upvotes}
-							upvoted={project.upvotedByMe}
-							onToggle={() => toggle.mutate(project.id)}
-							title={`Upvote ${project.title}`}
-						/>
-						{viewer === "sponsor" ? (
-							<>
-								<InterestButton projectId={project.id} />
-								<VaultAccessButton
-									projectId={project.id}
-									status={project.vaultAccessStatus}
-								/>
-							</>
-						) : null}
-						<p className="mt-2.5 text-center font-mono text-[12px] leading-[1.5] text-content-faint">
-							Interest reveals only you
-							<br />
-							to the student, never their contact.
-						</p>
-					</>
+					viewer === "admin" ? undefined : (
+						<>
+							<UpvoteButton
+								size="lg"
+								count={project.upvotes}
+								upvoted={project.upvotedByMe}
+								onToggle={() => toggle.mutate(project.id)}
+								title={`Upvote ${project.title}`}
+							/>
+							{viewer === "sponsor" ? (
+								<>
+									<InterestButton projectId={project.id} />
+									<VaultAccessButton
+										projectId={project.id}
+										status={project.vaultAccessStatus}
+									/>
+								</>
+							) : null}
+							<p className="mt-2.5 text-center font-mono text-[12px] leading-[1.5] text-content-faint">
+								Interest reveals only you
+								<br />
+								to the student, never their contact.
+							</p>
+						</>
+					)
 				}
 			/>
 		</div>

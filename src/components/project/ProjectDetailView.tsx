@@ -49,7 +49,7 @@ export function ProjectDetailView({
 	interact,
 }: {
 	project: Project;
-	viewer: "owner" | "sponsor" | "public";
+	viewer: "owner" | "sponsor" | "public" | "admin";
 	manage?: ReactNode;
 	/** The non-owner rail card content (wired upvote + interest), composed by the route. */
 	interact?: ReactNode;
@@ -101,7 +101,7 @@ export function ProjectDetailView({
 							{eyebrowTick}
 							<span className={eyebrowText}>Purpose</span>
 						</div>
-						<p className="mb-6 border-line border-l-2 pl-4 text-[15.5px] leading-[1.6] text-content-strong">
+						<p className="mb-6 text-[15.5px] leading-[1.6] text-content-strong">
 							{project.purpose || "No purpose provided"}
 						</p>
 
@@ -140,7 +140,7 @@ export function ProjectDetailView({
 												{m.contribution ? (
 													<span className="text-[13px] text-content-faint">
 														{" "}
-											, {m.contribution}
+														, {m.contribution}
 													</span>
 												) : null}
 											</div>
@@ -155,7 +155,7 @@ export function ProjectDetailView({
 								{project.ownership.thesisPaperName ? (
 									<>
 										{" "}
-										, {" "}
+										,{" "}
 										<a
 											href={thesisPaperUrl(project.id)}
 											target="_blank"
@@ -172,9 +172,11 @@ export function ProjectDetailView({
 
 					{/* Side rail */}
 					<aside className="flex w-full flex-col gap-3.5 lg:w-[300px] lg:flex-none">
-						<div className={railCardCls}>
-							{viewer === "owner" ? manage : interact}
-						</div>
+						{viewer !== "admin" ? (
+							<div className={railCardCls}>
+								{viewer === "owner" ? manage : interact}
+							</div>
+						) : null}
 
 						<div className={railCardCls}>
 							<div className="mb-3 font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">

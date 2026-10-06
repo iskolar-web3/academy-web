@@ -232,7 +232,11 @@ function Discover() {
 			) : (
 				<div className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
 					{projects.map((project) => (
-						<DiscoverCard key={project.id} project={project} />
+						<DiscoverCard
+							key={project.id}
+							project={project}
+							canUpvote={role !== AcademyRole.Admin}
+						/>
 					))}
 				</div>
 			)}
