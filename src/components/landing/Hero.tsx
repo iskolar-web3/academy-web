@@ -103,7 +103,7 @@ export function Hero() {
 			</div>
 
 			<div className="container-page relative z-10 grid items-center gap-14 pt-4 pb-0 sm:pt-3 sm:pb-2 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
-				<div className="order-2 animate-fade-up lg:order-1 lg:self-end">
+				<div className="order-2 animate-fade-up lg:order-1 lg:self-center">
 					<h1 className="text-balance text-4xl leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-[4rem]">
 						<motion.span
 							className="block origin-left will-change-transform"
