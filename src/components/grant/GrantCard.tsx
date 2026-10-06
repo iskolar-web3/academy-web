@@ -63,7 +63,7 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 					</span>
 				</span>
 				<span className="font-mono text-[12.5px] text-content-faint">
-					{grant.backers} backers · posted {grant.createdDays}d ago
+							{grant.backers} backers, posted {grant.createdDays}d ago
 				</span>
 			</div>
 

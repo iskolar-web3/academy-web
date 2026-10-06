@@ -1,5 +1,5 @@
 import { Check, X } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { useNotificationMutations } from "#/hooks/notification/useNotificationMutations";
 import { useNotifications } from "#/hooks/notification/useNotifications";
 import { hueFromString, projectCover } from "#/lib/project/helper";

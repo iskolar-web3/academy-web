@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { GrantEvidenceChips } from "#/components/grant/GrantReviewPanel";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useGrantMutations } from "#/hooks/grant/useGrantMutations";
@@ -98,7 +98,7 @@ export function ModerationPanel({
 									{p.title}
 								</div>
 								<div className="font-mono text-[12px] text-content-faint">
-									{p.school || "iSkolar Academy"} ·{" "}
+									{p.school || "iSkolar Academy"}, {" "}
 									{p.category || "Uncategorized"}
 								</div>
 							</div>

@@ -1,6 +1,6 @@
 import { Check, Github, MonitorPlay, Play, X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
 import {
@@ -134,7 +134,7 @@ export function ReviewDecisionModal({
 				<div className="px-[26px] pt-[22px] pb-[26px]">
 					<DialogTitle className="text-[24px]">{project.title}</DialogTitle>
 					<div className="mt-1 font-mono text-[12.5px] text-content-faint">
-						{project.school || "iSkolar Academy"} · submitted{" "}
+						{project.school || "iSkolar Academy"}, submitted{" "}
 						{project.updatedDays === 0
 							? "today"
 							: `${project.updatedDays}d ago`}
@@ -145,7 +145,7 @@ export function ReviewDecisionModal({
 						<span className={eyebrowText}>Pitch</span>
 					</div>
 					<div className="text-[15px] text-content-strong leading-[1.55]">
-						{project.pitch || "—"}
+						{project.pitch || "No pitch provided"}
 					</div>
 
 					<div className={eyebrowRow}>
@@ -153,7 +153,7 @@ export function ReviewDecisionModal({
 						<span className={eyebrowText}>Purpose</span>
 					</div>
 					<div className="border-line border-l-2 pl-3.5 text-[14.5px] text-content-strong leading-[1.6]">
-						{project.purpose || "—"}
+						{project.purpose || "No purpose provided"}
 					</div>
 
 					{project.tech.length > 0 ? (
@@ -220,7 +220,7 @@ export function ReviewDecisionModal({
 											{m.contribution ? (
 												<span className="text-[12.5px] text-content-faint">
 													{" "}
-													· {m.contribution}
+											, {m.contribution}
 												</span>
 											) : null}
 										</div>
@@ -255,7 +255,7 @@ export function ReviewDecisionModal({
 									rel="noreferrer"
 									className="text-[13px] text-action underline"
 								>
-									View {documentLabel(project.type)} —{" "}
+									View {documentLabel(project.type)}: {" "}
 									{project.ownership.thesisPaperName}
 								</a>
 							) : null}
@@ -266,7 +266,7 @@ export function ReviewDecisionModal({
 					{returning ? (
 						<div className="mt-5 rounded-[12px] border border-line bg-surface-sunken p-3.5">
 							<div className="mb-2 font-mono text-[11px] text-content-muted uppercase tracking-[0.16em]">
-								Return note
+								Return note <span className="text-danger" aria-hidden="true">*</span>
 							</div>
 							<textarea
 								value={note}

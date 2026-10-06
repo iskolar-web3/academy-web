@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { ProjectDetailView } from "#/components/project/ProjectDetailView";
 import { ProjectStatusBadge } from "#/components/project/ProjectStatusBadge";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";

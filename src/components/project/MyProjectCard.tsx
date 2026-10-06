@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { ProjectPipeline } from "#/components/project/ProjectPipeline";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
@@ -56,7 +56,7 @@ export function MyProjectCard({ project }: { project: Project }) {
 					</span>
 				</div>
 				<div className="font-mono text-[12.5px] text-content-faint">
-					{project.category || "Uncategorized"} · updated {when}
+					{project.category || "Uncategorized"}, updated {when}
 				</div>
 
 				<ProjectPipeline status={project.status} />

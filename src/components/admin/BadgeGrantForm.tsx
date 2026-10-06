@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { useGrantBadge } from "#/hooks/badge/useGrantBadge";
 import { useModerationProjects } from "#/hooks/review/useReviewQueue";
 import {
@@ -64,12 +64,17 @@ export function BadgeGrantForm() {
 		<div>
 			<p className="mb-6 text-[15px] text-content-soft">
 				Grant an additive Verified Builder signal to a published project. Never
-				a gate — ownership stays self-declared. Every grant is recorded with
+				a gate. Ownership stays self-declared. Every grant is recorded with
 				evidence.
 			</p>
 			<div className="card-surface flex max-w-[480px] flex-col gap-3.5 rounded-2xl p-[22px]">
 				<div>
-					<div className="mb-[7px] text-[13px] text-content-muted">Project</div>
+					<div className="mb-[7px] text-[13px] text-content-muted">
+						Project{" "}
+						<span className="text-danger" aria-hidden="true">
+							*
+						</span>
+					</div>
 					<select
 						value={projectId}
 						onChange={(e) => setProjectId(e.target.value)}
@@ -85,7 +90,10 @@ export function BadgeGrantForm() {
 				</div>
 				<div>
 					<div className="mb-[7px] text-[13px] text-content-muted">
-						Badge kind
+						Badge kind{" "}
+						<span className="text-danger" aria-hidden="true">
+							*
+						</span>
 					</div>
 					<select
 						value={kind}
@@ -102,7 +110,10 @@ export function BadgeGrantForm() {
 				<div className="flex items-center gap-3 rounded-[11px] border border-[#c3d0f2] border-dashed bg-surface-sunken p-3.5">
 					<div className="flex-1">
 						<div className="text-[14px] text-content-heading">
-							{file?.name ?? "Evidence (PDF)"}
+							{file?.name ?? "Evidence (PDF)"}{" "}
+							<span className="text-danger" aria-hidden="true">
+								*
+							</span>
 						</div>
 						{fileError ? (
 							<div className="mt-1 text-[11.5px] text-danger">{fileError}</div>

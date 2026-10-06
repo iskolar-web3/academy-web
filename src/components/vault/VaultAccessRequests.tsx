@@ -10,7 +10,7 @@ const STATUS_META: Record<
 		className: "text-action bg-surface-tint border-info-bd",
 	},
 	approved: {
-		label: "Approved · expires in 14d",
+		label: "Approved, expires in 14 days",
 		className: "text-success bg-success-bg border-success-bd",
 	},
 	denied: {
@@ -69,7 +69,7 @@ export function VaultAccessRequests({
 									{r.sponsorName}
 								</div>
 								<div className="font-mono text-[11.5px] text-content-faint">
-									{r.sponsorKind} · wants {r.projectTitle} ·{" "}
+									{r.sponsorKind} wants {r.projectTitle}, {" "}
 									{r.requestedDaysAgo}d ago
 								</div>
 							</div>

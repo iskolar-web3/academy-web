@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import { useMyProfile } from "#/hooks/account/useProfile";
@@ -16,6 +16,7 @@ import { validateThesisFile } from "#/utils/fileHandling";
 const inputCls =
 	"h-[46px] w-full rounded-[10px] border border-line bg-surface-card px-[14px] text-[15px] text-content-heading outline-none transition-colors focus:border-action";
 const fieldLabelCls = "mb-[7px] text-[13px] text-content-muted";
+const requiredLabelCls = `${fieldLabelCls} after:ml-1 after:text-danger after:content-['*']`;
 
 /**
  * "Request a grant" — a 1:1 port of the design-template CREATE GRANT REQUEST: one page
@@ -112,7 +113,7 @@ export function GrantForm() {
 				</div>
 				<div className="flex flex-col gap-3.5">
 					<div>
-						<div className={fieldLabelCls}>Thesis title</div>
+						<div className={requiredLabelCls}>Thesis title</div>
 						<input
 							className={inputCls}
 							placeholder="e.g. Solar-powered water purifier for coastal towns"
@@ -121,7 +122,7 @@ export function GrantForm() {
 					</div>
 					<div className="flex gap-3.5">
 						<div className="flex-1">
-							<div className={fieldLabelCls}>Category</div>
+							<div className={requiredLabelCls}>Category</div>
 							<select className={inputCls} {...register("category")}>
 								<option value="">Select…</option>
 								{CATEGORIES.map((c) => (
@@ -149,7 +150,7 @@ export function GrantForm() {
 						/>
 					</div>
 					<div>
-						<div className={fieldLabelCls}>What the funds are for</div>
+						<div className={requiredLabelCls}>What the funds are for</div>
 						<textarea
 							className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
 							placeholder="Research, equipment, fieldwork..."
@@ -158,7 +159,7 @@ export function GrantForm() {
 					</div>
 					<div className="flex gap-3.5">
 						<div className="flex-1">
-							<div className={fieldLabelCls}>Target amount</div>
+							<div className={requiredLabelCls}>Target amount</div>
 							<div className="relative">
 								<span className="-translate-y-1/2 absolute top-1/2 left-[14px] text-[15px] text-content-ghost">
 									₱
@@ -193,6 +194,9 @@ export function GrantForm() {
 					<div className="flex-1">
 						<div className="text-[14.5px] text-content-heading">
 							{proposalName || "Scanned accepted title proposal (PDF)"}
+							<span className="ml-1 text-danger" aria-hidden="true">
+								*
+							</span>
 						</div>
 						<div className="mt-0.5 font-mono text-[11.5px] text-content-faint">
 							Signed by your professors, stored in the Lumen document vault
@@ -224,7 +228,10 @@ export function GrantForm() {
 					/>
 					<span className="text-[14px] leading-normal text-content-strong">
 						I declare I hold the copyright to this work; external assets are
-						credited and licensed.
+						credited and licensed.{" "}
+						<span className="text-danger" aria-hidden="true">
+							*
+						</span>
 					</span>
 				</label>
 			</div>

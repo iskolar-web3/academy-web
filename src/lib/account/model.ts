@@ -221,7 +221,7 @@ export type RoleConfirmInput = z.infer<typeof roleConfirmSchema>;
 /** Human label for a profile's role line, e.g. "Sponsor · Investor". */
 export function roleLabel(role: AcademyRole, kind: SponsorKind | null): string {
 	if (role === "sponsor" && kind) {
-		return `Sponsor · ${kind[0].toUpperCase()}${kind.slice(1)}`;
+		return `Sponsor, ${kind[0].toUpperCase()}${kind.slice(1)}`;
 	}
 	return `${role[0].toUpperCase()}${role.slice(1)}`;
 }

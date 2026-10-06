@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import {
@@ -53,6 +53,7 @@ const STEPS = ["Details", "MVP", "Team", "Ownership", "Review"] as const;
 const inputCls =
 	"h-[46px] w-full rounded-[10px] border border-line bg-surface-card px-[14px] text-[15px] text-content-heading outline-none transition-colors focus:border-action";
 const fieldLabelCls = "mb-[7px] text-[13px] text-content-muted";
+const requiredLabelCls = `${fieldLabelCls} after:ml-1 after:text-danger after:content-['*']`;
 const helperCls = "mb-4 text-[14px] leading-[1.5] text-content-soft";
 const LOCAL_DRAFT_PREFIX = "academy.project-draft";
 
@@ -254,7 +255,7 @@ export function SubmitProjectModal({
 				}
 				if (localDraftKey) window.localStorage.removeItem(localDraftKey);
 				toast.success(
-					willReReview ? "Saved — sent back to review" : "Changes saved",
+					willReReview ? "Saved and sent back to review" : "Changes saved",
 				);
 				onClose();
 				return;
@@ -368,8 +369,12 @@ export function SubmitProjectModal({
 				<div className="isk-scroll min-h-0 flex-1 overflow-y-auto px-7 pt-[18px] pb-5">
 					{step === 0 ? (
 						<div className="flex flex-col gap-4">
+							<p className="text-[12px] text-content-muted">
+								Fields marked * are required to submit. You can save a draft
+								after entering a title.
+							</p>
 							<div>
-								<div className={fieldLabelCls}>Project title</div>
+								<div className={requiredLabelCls}>Project title</div>
 								<input
 									className={inputCls}
 									placeholder="e.g. AralBot"
@@ -377,7 +382,7 @@ export function SubmitProjectModal({
 								/>
 							</div>
 							<div>
-								<div className={fieldLabelCls}>One-line pitch</div>
+								<div className={requiredLabelCls}>One-line pitch</div>
 								<input
 									className={inputCls}
 									placeholder="What does it do, in a sentence?"
@@ -388,13 +393,13 @@ export function SubmitProjectModal({
 								<div className={fieldLabelCls}>Purpose</div>
 								<textarea
 									className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
-									placeholder="The problem this solves and who it's for — shown on the project page under Purpose."
+									placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
 									{...register("purpose")}
 								/>
 							</div>
 							<div className="flex gap-3.5">
 								<div className="flex-1">
-									<div className={fieldLabelCls}>Category</div>
+									<div className={requiredLabelCls}>Category</div>
 									<select className={inputCls} {...register("category")}>
 										<option value="">Select…</option>
 										{CATEGORIES.map((c) => (
@@ -405,13 +410,15 @@ export function SubmitProjectModal({
 									</select>
 								</div>
 								<div className="flex-1">
-									<div className={fieldLabelCls}>Type</div>
+									<div className={requiredLabelCls}>Type</div>
 									<select className={inputCls} {...register("type")}>
 										<option value="idea">{PROJECT_TYPE_LABELS.idea}</option>
 										<option value="thesis_capstone">
 											{PROJECT_TYPE_LABELS.thesis_capstone}
 										</option>
-										<option value="startup">{PROJECT_TYPE_LABELS.startup}</option>
+										<option value="startup">
+											{PROJECT_TYPE_LABELS.startup}
+										</option>
 									</select>
 								</div>
 							</div>
@@ -431,13 +438,13 @@ export function SubmitProjectModal({
 										{
 											key: "demo",
 											Icon: MonitorPlay,
-											ph: "Live demo URL (required)",
+											ph: "Live demo URL",
 											hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
 										},
 										{
 											key: "repo",
 											Icon: Github,
-											ph: "Public repository URL (required)",
+											ph: "Public repository URL",
 											hint: null,
 										},
 										{
@@ -449,8 +456,20 @@ export function SubmitProjectModal({
 									] as const
 								).map(({ key, Icon, ph, hint }) => {
 									const value = links?.[key] ?? "";
+									const required = key !== "video";
 									return (
 										<div key={key} className="flex flex-col gap-1">
+											<label
+												htmlFor={`project-${key}`}
+												className="pl-11 text-[13px] text-content-muted"
+											>
+												{ph}
+												{required ? (
+													<span className="ml-1 text-danger" aria-hidden="true">
+														*
+													</span>
+												) : null}
+											</label>
 											<div className="flex items-center gap-3">
 												<span className="flex w-8 flex-none justify-center text-action">
 													<Icon
@@ -460,6 +479,7 @@ export function SubmitProjectModal({
 													/>
 												</span>
 												<input
+													id={`project-${key}`}
 													className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
 														value && !isValidUrl(value)
 															? "border-danger"
@@ -508,16 +528,32 @@ export function SubmitProjectModal({
 										key={field.id}
 										className="flex flex-col gap-2.5 rounded-[11px] border border-[#eef1fa] p-3.5 sm:flex-row sm:items-center"
 									>
-										<input
-											className={`${inputCls} sm:flex-1`}
-											placeholder="Team member's name"
-											{...register(`members.${i}.name`)}
-										/>
-										<input
-											className={`${inputCls} sm:flex-1`}
-											placeholder="Contribution"
-											{...register(`members.${i}.contribution`)}
-										/>
+										<div className="sm:flex-1">
+											<label
+												htmlFor={`member-name-${i}`}
+												className={requiredLabelCls}
+											>
+												Team member's name
+											</label>
+											<input
+												id={`member-name-${i}`}
+												className={inputCls}
+												{...register(`members.${i}.name`)}
+											/>
+										</div>
+										<div className="sm:flex-1">
+											<label
+												htmlFor={`member-contribution-${i}`}
+												className={fieldLabelCls}
+											>
+												Contribution
+											</label>
+											<input
+												id={`member-contribution-${i}`}
+												className={inputCls}
+												{...register(`members.${i}.contribution`)}
+											/>
+										</div>
 										<button
 											type="button"
 											onClick={() => {
@@ -567,7 +603,10 @@ export function SubmitProjectModal({
 									/>
 									<span className="text-[14px] leading-[1.5] text-content-strong">
 										This is original student work; external code/assets are
-										credited and licensed.
+										credited and licensed.{" "}
+										<span className="text-danger" aria-hidden="true">
+											*
+										</span>
 									</span>
 								</label>
 								<label
@@ -582,7 +621,10 @@ export function SubmitProjectModal({
 									/>
 									<span className="text-[14px] leading-[1.5] text-content-strong">
 										I consent to Academy review and to my name being shown on
-										the public showcase.
+										the public showcase.{" "}
+										<span className="text-danger" aria-hidden="true">
+											*
+										</span>
 									</span>
 								</label>
 
@@ -596,6 +638,9 @@ export function SubmitProjectModal({
 											<div className="text-[14px] text-content-heading">
 												{thesisPaperName ??
 													`${documentLabel(type).charAt(0).toUpperCase()}${documentLabel(type).slice(1)} (PDF)`}
+												<span className="ml-1 text-danger" aria-hidden="true">
+													*
+												</span>
 												{editing &&
 												project.ownership.thesisPaperName &&
 												!thesisFile ? (
@@ -659,7 +704,7 @@ export function SubmitProjectModal({
 									<p className="mx-auto max-w-[440px] text-[14px] leading-[1.55] text-content-soft">
 										{editing
 											? willReReview
-												? "You changed the title, category, or an MVP link — saving sends this published project back to the review queue."
+												? "Changing the title, category, or an MVP link sends this published project back to the review queue."
 												: "Your changes are saved without a new review."
 											: "Your project goes to the Academy review queue. Evidence checks prepare cited pass/return reasons, while reviewers keep final judgment on exceptions."}
 									</p>

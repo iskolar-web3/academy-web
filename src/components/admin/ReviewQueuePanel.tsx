@@ -19,7 +19,7 @@ function linkSummary(p: Project): { label: string; danger: boolean } {
 	if (p.links.video) present.push("Demo video");
 	const missing = !p.links.demo || !p.links.repo;
 	return {
-		label: present.length ? present.join(" · ") : "No MVP links",
+		label: present.length ? present.join(", ") : "No MVP links",
 		danger: missing,
 	};
 }
@@ -76,7 +76,7 @@ export function ReviewQueuePanel({
 											</span>
 										</div>
 										<div className="mb-2.5 font-mono text-[12.5px] text-content-faint">
-											{p.school || "iSkolar Academy"} · submitted{" "}
+											{p.school || "iSkolar Academy"}, submitted{" "}
 											{p.updatedDays === 0 ? "today" : `${p.updatedDays}d ago`}
 										</div>
 										<div

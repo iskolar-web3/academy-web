@@ -1,5 +1,5 @@
 import { Upload } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { useUploadVaultDoc } from "#/hooks/vault/useVault";
 import { projectCover } from "#/lib/project/helper";
 import { vaultDocumentUrl } from "#/lib/vault/api";
@@ -64,7 +64,7 @@ export function VaultManager({ vaults }: { vaults: MyVault[] }) {
 								{v.projectTitle}
 							</div>
 							<div className="font-mono text-[11.5px] text-content-faint">
-								🔒 Locked · vault
+								🔒 Locked vault
 							</div>
 						</div>
 						<label className="flex h-9 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { useMyProfile } from "#/hooks/account/useProfile";
 import { useUpdateProfile } from "#/hooks/account/useUpdateProfile";
 import { type ProfileEdit, profileEditSchema } from "#/lib/account/model";
@@ -100,7 +100,7 @@ export function ProfileEditForm() {
 
 					{isError ? (
 						<p className="mb-4 status-pill status-pill--danger">
-							Couldn't load your profile — check the connection and try again.
+							Couldn't load your profile. Check the connection and try again.
 						</p>
 					) : null}
 
@@ -110,7 +110,10 @@ export function ProfileEditForm() {
 					>
 						<div>
 							<label htmlFor="displayName" className={labelCls}>
-								Display name
+								Display name{" "}
+								<span className="text-danger" aria-hidden="true">
+									*
+								</span>
 							</label>
 							<input
 								id="displayName"
@@ -139,7 +142,9 @@ export function ProfileEditForm() {
 
 						<div>
 							<label htmlFor="org" className={labelCls}>
-								{profile?.role === AcademyRole.Student ? "School" : "Organization"}
+								{profile?.role === AcademyRole.Student
+									? "School"
+									: "Organization"}
 							</label>
 							<input id="org" className={fieldCls} {...register("org")} />
 							{errors.org ? (
@@ -181,7 +186,7 @@ export function ProfileEditForm() {
 
 					{update.isError ? (
 						<p className="mt-3 text-xs text-danger">
-							Couldn't save — {(update.error as Error).message}
+							Couldn't save: {(update.error as Error).message}
 						</p>
 					) : null}
 					{saved && !update.isPending ? (

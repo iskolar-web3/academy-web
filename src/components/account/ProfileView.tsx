@@ -165,7 +165,7 @@ export function ProfileView({
 						) : null}
 						<p className="mt-1 font-mono text-[13px] text-content-faint">
 							{roleLabel(profile.role, profile.sponsorKind)}
-							{profile.org ? ` · ${profile.org}` : ""}
+							{profile.org ? `, ${profile.org}` : ""}
 						</p>
 					</div>
 					{canEdit && editTo ? (
@@ -213,7 +213,7 @@ export function ProfileView({
 												</span>
 											</div>
 											<div className="font-mono text-[11.5px] text-content-faint">
-												{p.category || "Uncategorized"} ·{" "}
+												{p.category || "Uncategorized"}, {" "}
 												{p.updatedDays === 0
 													? "today"
 													: `${p.updatedDays}d ago`}

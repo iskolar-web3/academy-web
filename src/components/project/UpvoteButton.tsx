@@ -91,7 +91,7 @@ export function UpvoteButton({
 			) : (
 				<>
 					<span>Upvote!</span>
-					<span className="tabular-nums">· {count}</span>
+					<span className="tabular-nums">({count})</span>
 				</>
 			)}
 

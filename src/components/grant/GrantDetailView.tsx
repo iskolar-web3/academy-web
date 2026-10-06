@@ -95,7 +95,7 @@ export function GrantDetailView({ grant }: { grant: GrantRequest }) {
 					<span className="text-[13px] text-content-faint">{pct}%</span>
 				</div>
 				<div className="mb-[22px] font-mono text-[13px] text-content-faint">
-					of {formatPeso(grant.target)} · {grant.backers} backers · posted{" "}
+					of {formatPeso(grant.target)}, {grant.backers} backers, posted{" "}
 					{grant.createdDays}d ago
 				</div>
 			</aside>

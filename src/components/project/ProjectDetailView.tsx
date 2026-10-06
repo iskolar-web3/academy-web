@@ -94,7 +94,7 @@ export function ProjectDetailView({
 							{project.school || "iSkolar Academy"}
 						</div>
 						<p className="mb-[22px] text-[17px] leading-[1.6] text-content-strong">
-							{project.pitch || "—"}
+							{project.pitch || "No pitch provided"}
 						</p>
 
 						<div className="mb-2.5 flex items-center gap-2.5">
@@ -102,7 +102,7 @@ export function ProjectDetailView({
 							<span className={eyebrowText}>Purpose</span>
 						</div>
 						<p className="mb-6 border-line border-l-2 pl-4 text-[15.5px] leading-[1.6] text-content-strong">
-							{project.purpose || "—"}
+							{project.purpose || "No purpose provided"}
 						</p>
 
 						{project.tech.length > 0 ? (
@@ -140,7 +140,7 @@ export function ProjectDetailView({
 												{m.contribution ? (
 													<span className="text-[13px] text-content-faint">
 														{" "}
-														· {m.contribution}
+											, {m.contribution}
 													</span>
 												) : null}
 											</div>
@@ -151,11 +151,11 @@ export function ProjectDetailView({
 						) : (
 							<p className="text-[15px] text-content-strong">
 								Individual project
-								{project.ownership.declared ? " · ownership declared" : ""}
+								{project.ownership.declared ? ", ownership declared" : ""}
 								{project.ownership.thesisPaperName ? (
 									<>
 										{" "}
-										·{" "}
+										, {" "}
 										<a
 											href={thesisPaperUrl(project.id)}
 											target="_blank"

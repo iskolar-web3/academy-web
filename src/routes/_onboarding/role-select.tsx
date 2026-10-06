@@ -105,7 +105,7 @@ function RoleSelect() {
 
 			{confirm.isError ? (
 				<p className="mt-4 text-center text-sm text-danger">
-					Couldn't confirm your role — {(confirm.error as Error).message}
+					Couldn't confirm your role: {(confirm.error as Error).message}
 				</p>
 			) : null}
 		</main>

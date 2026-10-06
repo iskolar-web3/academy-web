@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "#/lib/toast";
 import { useMyProfile } from "#/hooks/account/useProfile";
 import {
 	useExpressInterest,

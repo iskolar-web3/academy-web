@@ -84,16 +84,23 @@ function Field({
 	label,
 	error,
 	children,
+	required = true,
 }: {
 	id: string;
 	label: string;
 	error?: string;
 	children: ReactNode;
+	required?: boolean;
 }) {
 	return (
 		<div>
 			<label htmlFor={id} className={labelCls}>
 				{label}
+				{required ? (
+					<span className="ml-1 text-danger" aria-hidden="true">
+						*
+					</span>
+				) : null}
 			</label>
 			{children}
 			{error ? <p className={errCls}>{error}</p> : null}
@@ -164,7 +171,7 @@ function OnboardingShell({
 
 				{error ? (
 					<p className="text-center text-sm text-danger">
-						Couldn't save — {error}
+						Couldn't save: {error}
 					</p>
 				) : null}
 			</form>
@@ -276,6 +283,7 @@ function StudentForm({ onDone }: { onDone: () => void }) {
 					<Field
 						id="middleName"
 						label="Middle name (optional)"
+						required={false}
 						error={errors.middleName?.message}
 					>
 						<input
@@ -535,6 +543,7 @@ function IndividualSponsorForm({
 					<Field
 						id="middleName"
 						label="Middle name (optional)"
+						required={false}
 						error={errors.middleName?.message}
 					>
 						<input
