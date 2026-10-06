@@ -9,6 +9,7 @@ $family = $fonts.Families[0]
 if ($family.Name -ne 'Bree Serif') { throw 'Expected Bree Serif font.' }
 $bitmap = [System.Drawing.Bitmap]::new((Join-Path $PSScriptRoot 'background.png'))
 $logo = [System.Drawing.Image]::FromFile((Join-Path $PSScriptRoot 'combination-mark.png'))
+$icon = [System.Drawing.Image]::FromFile((Join-Path $PSScriptRoot 'academy-icon.png'))
 $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
 $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
 $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
@@ -32,6 +33,11 @@ function Draw-Text([string]$Text, [single]$Size, [single]$X, [single]$Y, [string
 }
 
 try {
+    # Academy's original icon, rasterized from public/logo-academy.svg and trimmed.
+    $iconWidth = 550
+    $iconHeight = [int][Math]::Round($iconWidth * $icon.Height / $icon.Width)
+    $iconY = [int][Math]::Round(($bitmap.Height - $iconHeight) / 2)
+    $graphics.DrawImage($icon, [System.Drawing.Rectangle]::new(1100, $iconY, $iconWidth, $iconHeight))
     $logoWidth = 560
     $logoHeight = [int][Math]::Round($logoWidth * $logo.Height / $logo.Width)
     $graphics.DrawImage($logo, [System.Drawing.Rectangle]::new(82, 100, $logoWidth, $logoHeight))
@@ -47,6 +53,7 @@ try {
     $graphics.Dispose()
     $bitmap.Dispose()
     $logo.Dispose()
+    $icon.Dispose()
     $family.Dispose()
     $fonts.Dispose()
 }

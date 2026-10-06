@@ -22,7 +22,7 @@ const socialDescription =
 	"Showcase working student projects, share thesis grant proposals, and discover student talent.";
 const socialImage = "https://academy.iskolar.io/og-academy.png";
 const socialImageAlt =
-	"Academy combination mark above Student projects. Real potential. Greater impact. A blue paper plane rises above an open book.";
+	"Academy combination mark above Student projects. Real potential. Greater impact. The blue Academy logo icon appears on the right.";
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
