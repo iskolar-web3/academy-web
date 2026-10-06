@@ -101,6 +101,7 @@ function Discover() {
 
 	return (
 		<AppPageLayout
+			hideLeftOnMobile={isSponsor}
 			left={
 				isSponsor ? (
 					<SponsorEvidenceRail />
@@ -111,14 +112,15 @@ function Discover() {
 				)
 			}
 		>
-			<div className="mb-[18px] flex items-center gap-3">
-				<div className="relative flex-1">
+			<div className="mb-[18px] flex flex-col gap-3 sm:flex-row sm:items-center">
+				<div className="relative min-w-0 flex-1">
 					<Search
 						className="-translate-y-1/2 absolute top-1/2 left-4 size-[17px] text-content-ghost"
 						aria-hidden
 					/>
 					<input
 						value={query}
+						aria-label="Search projects"
 						onChange={(e) => setQuery(e.target.value)}
 						placeholder="Search projects, tech, or category..."
 						className="h-[46px] w-full rounded-[13px] border border-line bg-surface-card pr-4 pl-11 text-[15px] text-content outline-none focus:border-action"
@@ -130,7 +132,7 @@ function Discover() {
 						type="button"
 						aria-expanded={filterOpen}
 						onClick={() => setFilterOpen((o) => !o)}
-						className="btn btn-secondary h-[46px] rounded-[13px] transition active:scale-95"
+						className="btn btn-secondary h-[46px] w-full rounded-[13px] transition active:scale-95 sm:w-auto"
 					>
 						<SlidersHorizontal className="size-4" aria-hidden /> Filters
 						{category !== "All" ? (
@@ -148,7 +150,7 @@ function Discover() {
 								className="fixed inset-0 z-40 cursor-pointer"
 								onClick={() => setFilterOpen(false)}
 							/>
-							<div className="absolute top-[54px] right-0 z-50 w-[320px] origin-top-right animate-pop-in rounded-[18px] border border-[#e3ebfb] bg-[rgba(255,255,255,0.96)] p-[18px] shadow-pop backdrop-blur-md">
+							<div className="absolute top-[54px] right-0 z-50 w-full min-w-0 origin-top-right animate-pop-in rounded-[18px] border border-line bg-surface-overlay p-[18px] shadow-pop sm:w-[320px]">
 								<div className="mb-2.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-content-ghost">
 									Sort by
 								</div>
@@ -230,7 +232,7 @@ function Discover() {
 					</p>
 				</div>
 			) : (
-				<div className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-[22px]">
+				<div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(258px,1fr))] sm:gap-[22px]">
 					{projects.map((project) => (
 						<DiscoverCard
 							key={project.id}

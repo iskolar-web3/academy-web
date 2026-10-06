@@ -42,7 +42,7 @@ function SponsorHome() {
 		.slice(0, 6);
 
 	return (
-		<AppPageLayout left={<SponsorEvidenceRail />}>
+		<AppPageLayout left={<SponsorEvidenceRail />} hideLeftOnMobile>
 			<div className="mb-5 rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
 				<h1 className="text-[26px] leading-tight text-content-heading">
 					Matched first, open discovery after
@@ -50,13 +50,31 @@ function SponsorHome() {
 				<p className="mt-1.5 text-[14.5px] leading-relaxed text-content-soft">
 					See your best matches first, then browse approved projects.
 				</p>
-				<div className="mt-4 flex flex-wrap gap-2">
+				<label
+					htmlFor="sponsor-focus"
+					className="mt-4 block text-[13px] text-content-strong sm:hidden"
+				>
+					Project focus
+				</label>
+				<select
+					id="sponsor-focus"
+					value={focus}
+					onChange={(event) => setFocus(event.target.value)}
+					className="mt-1 h-11 w-full rounded-[10px] border border-line bg-surface-card px-3 text-content-heading sm:hidden"
+				>
+					{["All", ...CATEGORIES].map((category) => (
+						<option key={category} value={category}>
+							{category === "All" ? "All projects" : category}
+						</option>
+					))}
+				</select>
+				<div className="mt-4 hidden flex-wrap gap-2 sm:flex">
 					{["All", ...CATEGORIES].map((category) => (
 						<button
 							key={category}
 							type="button"
 							onClick={() => setFocus(category)}
-							className={`h-8 rounded-[8px] border px-3 font-mono text-[12px] transition ${
+							className={`min-h-11 rounded-[8px] border px-3 font-mono text-[12px] transition ${
 								focus === category
 									? "border-action bg-action text-white"
 									: "border-line bg-surface-card text-content-muted hover:bg-surface-tint"

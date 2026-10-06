@@ -9,7 +9,11 @@ export function LandingHeader() {
 	return (
 		<header className="sticky top-0 z-40 border-b border-line bg-[rgba(248,250,255,0.86)] backdrop-blur-md">
 			<div className="container-page flex h-18 items-center justify-between">
-				<img src="/combination-mark.svg" alt="Academy" className="h-9 w-auto" />
+				<img
+					src="/combination-mark.svg"
+					alt="Academy"
+					className="h-8 w-auto max-w-[48vw] sm:h-9"
+				/>
 				<SignInPopover>
 					<button type="button" className="btn btn-secondary h-11 px-6 text-sm">
 						Sign in

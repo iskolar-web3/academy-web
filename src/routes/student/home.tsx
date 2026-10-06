@@ -88,31 +88,31 @@ function StudentHome() {
 								in one place.
 							</p>
 						</div>
-						<div className="flex flex-wrap gap-2.5">
-							<Link
-								to="/student/grants/new"
-								className="btn btn-secondary h-11 px-4 text-[14px]"
-							>
-								<FileText className="size-4" aria-hidden />
-								Request grant
-							</Link>
+						<div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:flex-wrap">
 							<button
 								type="button"
 								onClick={() => setSubmitOpen(true)}
-								className="btn btn-primary h-11 px-4 text-[14px]"
+								className="btn btn-primary h-11 w-full px-4 text-[14px] sm:w-auto"
 							>
 								<Plus className="size-4" aria-hidden />
 								Submit project
 							</button>
+							<Link
+								to="/student/grants/new"
+								className="btn btn-secondary h-11 w-full px-4 text-[14px] sm:w-auto"
+							>
+								<FileText className="size-4" aria-hidden />
+								Request grant
+							</Link>
 						</div>
 					</div>
 				</header>
 
-				<div className="mb-5 grid overflow-hidden rounded-[14px] border border-line bg-surface-card shadow-card sm:grid-cols-4">
+				<div className="mb-5 grid grid-cols-2 overflow-hidden rounded-[14px] border border-line bg-surface-card shadow-card sm:grid-cols-4">
 					{stats.map((stat) => (
 						<div
 							key={stat.label}
-							className="border-line border-b px-5 py-4 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0"
+							className="border-line border-b px-4 py-4 odd:border-r nth-[n+3]:border-b-0 sm:border-b-0 sm:px-5 sm:py-4 sm:not-last:border-r"
 						>
 							<div className="text-[25px] leading-none text-content-heading">
 								{stat.value}

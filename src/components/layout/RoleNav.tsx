@@ -93,19 +93,19 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 
 	return (
 		<header className="sticky top-0 z-40 border-line border-b bg-[rgba(248,250,255,0.86)] backdrop-blur-md">
-			<div className="container-page relative flex h-[66px] items-center justify-between">
+			<div className="container-page relative flex h-[66px] items-center justify-between gap-3">
 				<Link to={HOME_PATH[activeRole]} aria-label="Go to home">
 					<img
 						src="/combination-mark.svg"
 						alt="Academy"
-						className="h-9 w-auto"
+						className="h-8 w-auto max-w-[48vw] sm:h-9"
 					/>
 				</Link>
 
 				{/* Centered on the header itself, not just "between" the logo and the
 				    account pill — those two sides are rarely the same width (a long
 				    display name in the pill used to visibly drag this off-center). */}
-				<nav className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 hidden items-center gap-5 md:flex">
+				<nav className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 hidden items-center gap-5 lg:flex">
 					{NAV[activeRole].map((item) => (
 						<Link
 							key={item.to}
@@ -122,7 +122,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 					))}
 				</nav>
 
-				<div className="flex items-center gap-3">
+				<div className="flex shrink-0 items-center gap-2 sm:gap-3">
 					{/* Notifications */}
 					<DropdownMenu
 						open={open === "notifications"}
@@ -153,7 +153,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 							</button>
 						</DropdownMenuTrigger>
 
-						<DropdownMenuContent className="w-[316px]">
+						<DropdownMenuContent className="w-[min(316px,calc(100vw-2rem))]">
 							<div className="flex items-center justify-between px-3 pt-2 pb-2">
 								<span className="text-[15px] text-content-heading">
 									Notifications
@@ -213,7 +213,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 							</button>
 						</DropdownMenuTrigger>
 
-						<DropdownMenuContent className="w-[272px]">
+						<DropdownMenuContent className="w-[min(272px,calc(100vw-2rem))]">
 							<div className="flex items-center gap-3 px-3 pt-2 pb-3.5">
 								<span className="flex size-[46px] flex-none items-center justify-center overflow-hidden rounded-[13px] bg-action text-[17px] text-white">
 									{avatarUrl ? (
@@ -238,7 +238,7 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 							<DropdownMenuSeparator className="mb-1.5 mt-0" />
 
 							{/* Primary nav — shown here only when the header's center nav is hidden. */}
-							<div className="md:hidden">
+							<div className="lg:hidden">
 								{NAV[activeRole].map((item) => (
 									<DropdownMenuItem key={item.to} asChild>
 										<Link

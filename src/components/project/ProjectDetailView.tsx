@@ -30,9 +30,6 @@ function initialsOf(name: string): string {
 
 const railCardCls =
 	"rounded-[14px] border border-line bg-surface-card p-[18px]";
-const eyebrowTick = (
-	<span className="h-0.5 w-[22px] bg-action/50" aria-hidden />
-);
 const eyebrowText =
 	"font-mono text-[11.5px] uppercase tracking-[0.2em] text-action/60";
 
@@ -77,11 +74,11 @@ export function ProjectDetailView({
 					</div>
 				</div>
 
-				<div className="flex flex-wrap gap-6 p-8 lg:flex-nowrap">
+				<div className="flex min-w-0 flex-wrap gap-6 p-4 sm:p-6 lg:flex-nowrap lg:p-8">
 					{/* Left column */}
-					<div className="min-w-[320px] flex-1">
-						<div className="mb-1.5 flex items-center gap-2.5">
-							<h1 className="text-[32px] text-content-heading">
+					<div className="min-w-0 flex-1 basis-full lg:basis-auto">
+						<div className="mb-1.5 flex flex-wrap items-center gap-2.5">
+							<h1 className="break-words text-[26px] text-content-heading sm:text-[32px]">
 								{project.title}
 							</h1>
 							{project.verified ? (
@@ -98,7 +95,6 @@ export function ProjectDetailView({
 						</p>
 
 						<div className="mb-2.5 flex items-center gap-2.5">
-							{eyebrowTick}
 							<span className={eyebrowText}>Purpose</span>
 						</div>
 						<p className="mb-6 text-[15.5px] leading-[1.6] text-content-strong">
@@ -108,7 +104,6 @@ export function ProjectDetailView({
 						{project.tech.length > 0 ? (
 							<>
 								<div className="mb-3 flex items-center gap-2.5">
-									{eyebrowTick}
 									<span className={eyebrowText}>Tech stack</span>
 								</div>
 								<div className="mb-[26px] flex flex-wrap gap-2">
@@ -122,7 +117,6 @@ export function ProjectDetailView({
 						) : null}
 
 						<div className="mb-3.5 flex items-center gap-2.5">
-							{eyebrowTick}
 							<span className={eyebrowText}>
 								{project.isTeam ? "Team & contributions" : "Ownership"}
 							</span>

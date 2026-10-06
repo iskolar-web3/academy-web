@@ -28,6 +28,7 @@ function Grants() {
 
 	return (
 		<AppPageLayout
+			hideLeftOnMobile={isSponsor}
 			left={
 				isSponsor ? (
 					<SponsorEvidenceRail />
@@ -60,7 +61,7 @@ function Grants() {
 					</p>
 				</div>
 			) : (
-				<div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[22px]">
+				<div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] sm:gap-[22px]">
 					{grants.map((grant) => (
 						<GrantCard key={grant.id} grant={grant} />
 					))}

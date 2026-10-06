@@ -43,25 +43,28 @@ function AdminConsole() {
 			<Tabs
 				defaultValue="queue"
 				orientation="vertical"
-				className="mx-auto grid max-w-[1340px] grid-cols-1 items-start gap-[30px] lg:grid-cols-[220px_1fr]"
+				className="mx-auto grid max-w-[1340px] min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-[30px]"
 			>
 				<aside className="lg:sticky lg:top-[84px]">
 					<div className="mb-4 flex items-center gap-2.5">
-						<span className="h-0.5 w-[26px] bg-action/55" aria-hidden />
 						<span className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-action/60">
 							Admin
 						</span>
 					</div>
-					<TabsList className="flex-row lg:flex-col lg:items-stretch">
+					<TabsList className="max-w-full flex-row overflow-x-auto pb-1 lg:flex-col lg:items-stretch lg:overflow-visible lg:pb-0">
 						{TABS.map((t) => (
-							<TabsTrigger key={t.key} value={t.key}>
+							<TabsTrigger
+								key={t.key}
+								value={t.key}
+								className="shrink-0 whitespace-nowrap"
+							>
 								{t.label}
 							</TabsTrigger>
 						))}
 					</TabsList>
 				</aside>
 
-				<div>
+				<div className="min-w-0">
 					<TabsContent value="queue">
 						<ReviewQueuePanel
 							projects={queue.data ?? []}

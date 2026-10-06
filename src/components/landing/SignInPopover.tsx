@@ -41,7 +41,10 @@ export function SignInPopover({ children }: { children: ReactNode }) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>{children}</PopoverTrigger>
-			<PopoverContent align="end" className="w-96 px-6 py-6">
+			<PopoverContent
+				align="end"
+				className="w-[min(24rem,calc(100vw-2rem))] px-5 py-5 sm:px-6 sm:py-6"
+			>
 				<div className="flex h-16 items-center">
 					<img
 						src="/combination-mark.svg"

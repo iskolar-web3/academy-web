@@ -38,7 +38,7 @@ export function RecentProjectsPreview() {
 				<div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{cards.map((project, i) => (
 						<Reveal key={project.id} delay={i * 0.08}>
-							<article className="card-surface flex h-full flex-col overflow-hidden">
+							<article className="card-surface flex h-full min-w-0 flex-col overflow-hidden">
 								<div
 									className="flex h-32 items-start p-4"
 									style={{ background: project.cover }}
@@ -48,21 +48,21 @@ export function RecentProjectsPreview() {
 									</span>
 								</div>
 								<div className="flex flex-1 flex-col p-5">
-									<h3 className="mb-2 text-xl leading-tight text-foreground">
+									<h3 className="mb-2 line-clamp-2 min-h-[3.5rem] break-words text-xl leading-tight text-foreground">
 										{project.title}
 									</h3>
-									<p className="mb-5 flex-1 text-base leading-relaxed text-content-soft">
+									<p className="mb-5 line-clamp-3 min-h-[4.5rem] flex-1 text-base leading-relaxed text-content-soft">
 										{project.pitch}
 									</p>
 									<div className="ruled-line mb-4" />
 									<div className="flex items-center justify-between gap-3">
-										<span className="font-mono text-xs text-content-faint">
+										<span className="min-w-0 truncate font-mono text-xs text-content-faint">
 											{project.school}
 										</span>
 										<SignInPopover>
 											<button
 												type="button"
-												className="inline-flex shrink-0 items-center gap-1 text-sm text-action hover:underline"
+												className="inline-flex min-h-11 shrink-0 items-center gap-1 text-sm text-action hover:underline"
 											>
 												Sign in to explore{" "}
 												<ArrowRight className="size-4" aria-hidden />

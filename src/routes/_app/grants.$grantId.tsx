@@ -34,7 +34,7 @@ function GrantDetail() {
 
 	if (isLoading) {
 		return (
-			<AppPageLayout left={left}>
+			<AppPageLayout left={left} hideLeftOnMobile={isSponsor}>
 				<p className="py-10 text-center text-[14px] text-content-soft">
 					Loading grant…
 				</p>
@@ -44,7 +44,7 @@ function GrantDetail() {
 
 	if (isError || !grant) {
 		return (
-			<AppPageLayout left={left}>
+			<AppPageLayout left={left} hideLeftOnMobile={isSponsor}>
 				<div className="card-surface mx-auto max-w-md p-8 text-center">
 					<p className="text-content-heading">Grant not found</p>
 					<Link to="/grants" className="btn btn-secondary mt-4">
@@ -56,7 +56,7 @@ function GrantDetail() {
 	}
 
 	return (
-		<AppPageLayout left={left}>
+		<AppPageLayout left={left} hideLeftOnMobile={isSponsor}>
 			<Link
 				to="/grants"
 				className="mb-5 inline-block text-[14.5px] text-action"

@@ -144,21 +144,21 @@ export function Hero() {
 						discover student talent.
 					</p>
 
-					<div className="mt-12 flex flex-wrap items-center gap-4">
-						<a
-							href="#recent-projects"
-							className="btn btn-secondary h-12 px-7 text-base"
-						>
-							See recent projects
-						</a>
+					<div className="mt-8 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
 						<SignInPopover>
 							<button
 								type="button"
-								className="btn btn-primary h-12 px-7 text-base"
+								className="btn btn-primary h-12 w-full px-7 text-base sm:w-auto"
 							>
 								Get started
 							</button>
 						</SignInPopover>
+						<a
+							href="#recent-projects"
+							className="btn btn-secondary h-12 w-full px-7 text-base sm:w-auto"
+						>
+							See recent projects
+						</a>
 					</div>
 				</div>
 

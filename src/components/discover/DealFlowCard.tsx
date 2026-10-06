@@ -94,11 +94,11 @@ export function DealFlowCard({ project }: { project: ShowcaseProject }) {
 				</div>
 			</Link>
 
-			<div className="flex items-center justify-between border-[#eef1fa] border-t px-[18px] py-3">
+			<div className="flex flex-wrap items-center justify-between gap-2 border-[#eef1fa] border-t px-[18px] py-3">
 				<span className="text-[13px] text-action">
 					♥ {project.upvotes} upvotes
 				</span>
-				<div className="flex gap-2.5">
+				<div className="flex flex-wrap gap-2.5">
 					{watchEntitled ? (
 						<button
 							type="button"

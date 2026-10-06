@@ -137,11 +137,9 @@ function OnboardingShell({
 			) : null}
 			<div className="mb-8 text-center">
 				<div className="mb-3.5 inline-flex items-center gap-[11px]">
-					<span className="h-0.5 w-[30px] bg-action/50" />
 					<span className="font-mono text-[11.5px] uppercase tracking-[0.24em] text-action/60">
 						Almost there
 					</span>
-					<span className="h-0.5 w-[30px] bg-action/50" />
 				</div>
 				<h1 className="mb-2 text-[34px] text-content-heading">
 					Tell us the basics
@@ -435,11 +433,9 @@ function SponsorTypeSelect({
 		<main className="mx-auto max-w-[560px]">
 			<div className="mb-8 text-center">
 				<div className="mb-3.5 inline-flex items-center gap-[11px]">
-					<span className="h-0.5 w-[30px] bg-action/50" />
 					<span className="font-mono text-[11.5px] uppercase tracking-[0.24em] text-action/60">
 						Almost there
 					</span>
-					<span className="h-0.5 w-[30px] bg-action/50" />
 				</div>
 				<h1 className="mb-2 text-[34px] text-content-heading">
 					What kind of sponsor are you?

@@ -11,13 +11,17 @@ import type { ReactNode } from "react";
 export function AppPageLayout({
 	left,
 	children,
+	hideLeftOnMobile = false,
 }: {
 	left: ReactNode;
 	children: ReactNode;
+	hideLeftOnMobile?: boolean;
 }) {
 	return (
-		<div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
-			<div>{left}</div>
+		<div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+			<div className={hideLeftOnMobile ? "hidden min-w-0 lg:block" : "min-w-0"}>
+				{left}
+			</div>
 			<div className="min-w-0">{children}</div>
 		</div>
 	);

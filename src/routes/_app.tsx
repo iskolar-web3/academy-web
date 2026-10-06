@@ -18,7 +18,7 @@ function AppShell() {
 	return (
 		<div className="min-h-screen bg-background">
 			<RoleNav />
-			<main className="container-page py-10">
+			<main className="container-page py-6 sm:py-8 lg:py-10">
 				<Outlet />
 			</main>
 		</div>

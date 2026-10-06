@@ -35,7 +35,6 @@ const MVP_LINKS = [
 	{ key: "video", Icon: Play, label: "Demo video" },
 ] as const;
 
-const eyebrowTick = <span className="h-0.5 w-5 bg-action/50" aria-hidden />;
 const eyebrowText =
 	"font-mono text-[11px] uppercase tracking-[0.2em] text-action/60";
 const eyebrowRow = "mt-[18px] mb-2.5 flex items-center gap-2.5";
@@ -141,7 +140,6 @@ export function ReviewDecisionModal({
 					</div>
 
 					<div className={eyebrowRow}>
-						{eyebrowTick}
 						<span className={eyebrowText}>Pitch</span>
 					</div>
 					<div className="text-[15px] text-content-strong leading-[1.55]">
@@ -149,7 +147,6 @@ export function ReviewDecisionModal({
 					</div>
 
 					<div className={eyebrowRow}>
-						{eyebrowTick}
 						<span className={eyebrowText}>Purpose</span>
 					</div>
 					<div className="text-[14.5px] text-content-strong leading-[1.6]">
@@ -159,7 +156,6 @@ export function ReviewDecisionModal({
 					{project.tech.length > 0 ? (
 						<>
 							<div className={eyebrowRow}>
-								{eyebrowTick}
 								<span className={eyebrowText}>Tech stack</span>
 							</div>
 							<div className="flex flex-wrap gap-[7px]">
@@ -173,7 +169,6 @@ export function ReviewDecisionModal({
 					) : null}
 
 					<div className={eyebrowRow}>
-						{eyebrowTick}
 						<span className={eyebrowText}>MVP gate</span>
 					</div>
 					<div className="flex flex-col gap-2.5">
@@ -206,7 +201,6 @@ export function ReviewDecisionModal({
 					{project.isTeam && project.members.length > 0 ? (
 						<>
 							<div className={eyebrowRow}>
-								{eyebrowTick}
 								<span className={eyebrowText}>Team</span>
 							</div>
 							<div className="flex flex-col gap-2.5">
@@ -290,7 +284,7 @@ export function ReviewDecisionModal({
 					) : null}
 
 					{/* Decision actions */}
-					<div className="mt-6 flex gap-2.5 border-[#eef1fa] border-t pt-5">
+					<div className="mt-6 flex flex-col-reverse gap-2.5 border-[#eef1fa] border-t pt-5 sm:flex-row">
 						{returning ? (
 							<>
 								<Button

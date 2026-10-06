@@ -17,10 +17,10 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 		<Link
 			to="/grants/$grantId"
 			params={{ grantId: grant.id }}
-			className="card-surface flex flex-col rounded-[15px] p-[22px] transition-colors hover:border-action"
+			className="card-surface flex min-w-0 flex-col rounded-[15px] p-4 transition-colors hover:border-action sm:p-[22px]"
 		>
 			<div className="mb-3 flex items-start justify-between gap-3.5">
-				<span className="text-[20px] leading-tight text-content-heading">
+				<span className="min-w-0 break-words text-[20px] leading-tight text-content-heading">
 					{grant.title}
 				</span>
 				<span
@@ -55,7 +55,7 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 					style={{ width: `${pct}%` }}
 				/>
 			</div>
-			<div className="mb-4 flex items-center justify-between">
+			<div className="mb-4 flex flex-wrap items-center justify-between gap-2">
 				<span className="text-[15px] text-content-heading">
 					<b>{formatPeso(grant.raised)}</b>{" "}
 					<span className="text-[13px] text-content-faint">
@@ -63,7 +63,7 @@ export function GrantCard({ grant }: { grant: GrantRequest }) {
 					</span>
 				</span>
 				<span className="font-mono text-[12.5px] text-content-faint">
-							{grant.backers} backers, posted {grant.createdDays}d ago
+					{grant.backers} backers, posted {grant.createdDays}d ago
 				</span>
 			</div>
 

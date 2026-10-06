@@ -37,7 +37,6 @@ export function GrantDetailView({ grant }: { grant: GrantRequest }) {
 				</div>
 
 				<div className="mb-2.5 flex items-center gap-2.5">
-					<span className="h-0.5 w-[22px] bg-action/50" aria-hidden />
 					<span className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-action/60">
 						What it funds
 					</span>
@@ -47,7 +46,6 @@ export function GrantDetailView({ grant }: { grant: GrantRequest }) {
 				</p>
 
 				<div className="mb-3 flex items-center gap-2.5">
-					<span className="h-0.5 w-[22px] bg-action/50" aria-hidden />
 					<span className="font-mono text-[11.5px] uppercase tracking-[0.2em] text-action/60">
 						Title proposal
 					</span>
