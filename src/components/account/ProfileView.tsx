@@ -75,14 +75,13 @@ function MyDetailsPanel({ own }: { own: MyAccountProfile }) {
 	return (
 		<div className={panelCls}>
 			<div className={asideLabelCls}>Your details</div>
-			<dl className="flex flex-col gap-2.5">
+			<dl className="grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-x-4 gap-y-3">
 				{rows.map((r) => (
-					<div
-						key={r.label}
-						className="flex items-center justify-between gap-3"
-					>
+					<div key={r.label} className="contents">
 						<dt className="text-[12.5px] text-content-faint">{r.label}</dt>
-						<dd className="text-[13.5px] text-content-heading">{r.value}</dd>
+						<dd className="min-w-0 break-words text-right text-[13.5px] text-content-heading">
+							{r.value}
+						</dd>
 					</div>
 				))}
 			</dl>
