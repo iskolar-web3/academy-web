@@ -1,27 +1,38 @@
-import { Check } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import type * as React from "react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 /**
- * Design-template TOAST on sonner — top-right under the 66px header (84/24 offset),
- * white card on the line border, 14px radius, the template's 16/40 shadow, green ✓.
- * Light-only (no next-themes): the app ships a single light theme.
+ * Status card based on iSkolar's icon, title, message and colored-edge treatment.
+ * Sonner keeps multiple messages accessible and handles dismissal.
  */
 const Toaster = ({ ...props }: ToasterProps) => {
 	return (
 		<Sonner
 			theme="light"
-			position="top-right"
-			offset={{ top: 84, right: 24 }}
-			mobileOffset={{ top: 84, right: 16, left: 16 }}
+			position="bottom-right"
+			offset={{ bottom: 24, right: 24 }}
+			mobileOffset={{ bottom: 16, right: 16, left: 16 }}
+			closeButton
+			duration={4500}
 			icons={{
-				success: <Check className="size-[18px] text-success" aria-hidden />,
+				success: <CheckCircle2 className="size-7 text-success" aria-hidden />,
+				error: <XCircle className="size-7 text-danger" aria-hidden />,
+				warning: <AlertTriangle className="size-7 text-warning" aria-hidden />,
+				info: <Info className="size-7 text-info" aria-hidden />,
 			}}
 			toastOptions={{
 				classNames: {
 					toast:
-						"!rounded-[14px] !border-line !bg-surface-overlay !px-[18px] !py-3.5 !shadow-[0_16px_40px_rgba(31,42,82,0.16)]",
-					title: "!font-normal !text-[14.5px] !text-content",
+						"!w-full !rounded-lg !border !border-line !border-l-4 !bg-surface-overlay !px-4 !py-3 !shadow-lg !font-sans",
+					success: "!border-l-success",
+					error: "!border-l-danger",
+					warning: "!border-l-warning",
+					info: "!border-l-info",
+					title:
+						"!font-normal !text-[15px] !leading-tight !text-content-heading",
+					description: "!text-[13px] !leading-snug !text-content-muted",
+					icon: "!mr-1 !self-center",
 				},
 			}}
 			style={

@@ -1,4 +1,4 @@
-import { Github, Lock, MonitorPlay, Play } from "lucide-react";
+import { Github, MonitorPlay, Play } from "lucide-react";
 import type { ReactNode } from "react";
 import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
@@ -200,29 +200,6 @@ export function ProjectDetailView({
 									No links added yet.
 								</p>
 							)}
-						</div>
-
-						<div className="rounded-[14px] border border-[#c3d0f2] bg-[linear-gradient(180deg,#eef3ff,#e3ebfb)] p-[18px]">
-							<div className="mb-2.5 flex items-center gap-2">
-								<Lock
-									className="size-[15px] text-content-heading"
-									aria-hidden
-								/>
-								<span className="text-[14.5px] text-content-heading">
-									Venture Pitch Vault
-								</span>
-							</div>
-							<p className="mb-3.5 text-[13px] leading-[1.5] text-content-muted">
-								Deck, financials &amp; cap table in the Lumen document vault —
-								consent-gated, time-bound, signed-link access.
-							</p>
-							<button
-								type="button"
-								disabled
-								className="h-[42px] w-full cursor-not-allowed rounded-[9px] bg-action/60 text-[14px] text-on-action"
-							>
-								{viewer === "owner" ? "Manage vault" : "Request access"} (P5)
-							</button>
 						</div>
 					</aside>
 				</div>

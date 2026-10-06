@@ -6,8 +6,7 @@ import type { GrantRequest } from "#/lib/grant/model";
 /**
  * Grants gallery card — a 1:1 port of the design-template GRANTS GALLERY card: title +
  * status badge, category/tech chips, purpose, funding progress bar, raised/target +
- * backers/age line, and a "View grant" button. The whole card opens the grant detail
- * (funding itself happens there, not from the gallery).
+ * backers/age line, and a "View grant" button. The whole card opens the grant detail.
  */
 export function GrantCard({ grant }: { grant: GrantRequest }) {
 	const status = grantStatusMeta(grant.status);

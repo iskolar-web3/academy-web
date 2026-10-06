@@ -265,7 +265,9 @@ export function SubmitProjectModal({
 			}
 			await submit.mutateAsync(created.id);
 			if (localDraftKey) window.localStorage.removeItem(localDraftKey);
-			toast.success("Project submitted for review");
+			toast.success("Project submitted", {
+				description: "Your project is in the Academy review queue.",
+			});
 			onClose();
 		} catch (err) {
 			toast.error(err instanceof Error ? err.message : "Something went wrong.");
@@ -287,7 +289,9 @@ export function SubmitProjectModal({
 				}
 			}
 			if (localDraftKey) window.localStorage.removeItem(localDraftKey);
-			toast.success("Draft saved");
+			toast.success("Draft saved", {
+				description: "You can return to it from My Projects.",
+			});
 			onClose();
 		} catch (err) {
 			toast.error(err instanceof Error ? err.message : "Could not save draft.");
@@ -298,10 +302,10 @@ export function SubmitProjectModal({
 		<Dialog open onOpenChange={(open) => !open && onClose()}>
 			<DialogContent
 				aria-describedby={undefined}
-				className="isk-scroll flex max-h-[90vh] w-[760px] max-w-[calc(100vw-3rem)] flex-col overflow-auto"
+				className="flex max-h-[min(90dvh,850px)] w-[760px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden"
 			>
 				{/* Header */}
-				<div className="sticky top-0 z-[2] flex items-center justify-between rounded-t-[18px] border-[#eef1fa] border-b bg-surface-overlay px-7 py-[22px]">
+				<div className="flex shrink-0 items-center justify-between rounded-t-[18px] border-[#eef1fa] border-b bg-surface-overlay px-7 py-[22px]">
 					<DialogTitle>
 						{editing ? "Edit project" : "Submit a project"}
 					</DialogTitle>
@@ -317,7 +321,7 @@ export function SubmitProjectModal({
 				</div>
 
 				{/* Stepper */}
-				<div className="flex items-center px-7 pt-5 pb-1.5">
+				<div className="flex shrink-0 items-center px-7 pt-5 pb-1.5">
 					{STEPS.map((label, i) => {
 						const done = i < step;
 						const active = i === step;
@@ -360,7 +364,7 @@ export function SubmitProjectModal({
 				</div>
 
 				{/* Body */}
-				<div className="min-h-[236px] px-7 pt-[18px] pb-2">
+				<div className="isk-scroll min-h-0 flex-1 overflow-y-auto px-7 pt-[18px] pb-5">
 					{step === 0 ? (
 						<div className="flex flex-col gap-4">
 							<div>
@@ -673,54 +677,58 @@ export function SubmitProjectModal({
 					) : null}
 				</div>
 
-				{/* Footer */}
-				{!isLast && currentStepIssues.length > 0 ? (
-					<p className="px-7 pb-2 text-[12.5px] text-danger">
-						{currentStepIssues[0]}
-						{currentStepIssues.length > 1
-							? ` (+${currentStepIssues.length - 1} more)`
-							: ""}
-					</p>
-				) : null}
-				<div className="flex items-center justify-between gap-3 px-7 pt-[18px] pb-6">
-					<div className="flex items-center gap-2">
-						<Button
-							variant="secondary"
-							size="lg"
-							onClick={() => setStep((s) => Math.max(0, s - 1))}
-							className={cn("rounded-[10px] px-5", step === 0 && "invisible")}
-						>
-							Back
-						</Button>
-						<Button
-							variant="secondary"
-							size="lg"
-							disabled={busy}
-							onClick={onSaveDraft}
-							className="rounded-[10px] px-4"
-						>
-							Save draft
-						</Button>
+				{/* Footer stays below the scrolling fields, including on short screens. */}
+				<div className="shrink-0 border-line border-t bg-surface-overlay">
+					{!isLast && currentStepIssues.length > 0 ? (
+						<output className="block px-7 pt-3 text-[12.5px] text-danger">
+							{currentStepIssues[0]}
+							{currentStepIssues.length > 1
+								? ` (+${currentStepIssues.length - 1} more)`
+								: ""}
+						</output>
+					) : null}
+					<div className="flex items-center justify-between gap-3 px-7 py-4 max-[420px]:flex-wrap">
+						<div className="flex items-center gap-2">
+							<Button
+								variant="secondary"
+								size="lg"
+								onClick={() => setStep((s) => Math.max(0, s - 1))}
+								className={cn("rounded-[10px] px-5", step === 0 && "invisible")}
+							>
+								Back
+							</Button>
+							<Button
+								variant="secondary"
+								size="lg"
+								disabled={busy}
+								onClick={onSaveDraft}
+								className="rounded-[10px] px-4"
+							>
+								Save draft
+							</Button>
+						</div>
+						{isLast ? (
+							<Button
+								size="lg"
+								disabled={busy}
+								onClick={onSubmitProject}
+								className="rounded-[10px] px-[26px] text-[15px] shadow-none"
+							>
+								{busy ? "Saving…" : editing ? "Save changes" : "Submit project"}
+							</Button>
+						) : (
+							<Button
+								size="lg"
+								disabled={currentStepIssues.length > 0}
+								onClick={() =>
+									setStep((s) => Math.min(STEPS.length - 1, s + 1))
+								}
+								className="rounded-[10px] px-[26px] text-[15px] shadow-none"
+							>
+								Continue
+							</Button>
+						)}
 					</div>
-					{isLast ? (
-						<Button
-							size="lg"
-							disabled={busy}
-							onClick={onSubmitProject}
-							className="rounded-[10px] px-[26px] text-[15px] shadow-none"
-						>
-							{busy ? "Saving…" : editing ? "Save changes" : "Submit project"}
-						</Button>
-					) : (
-						<Button
-							size="lg"
-							disabled={currentStepIssues.length > 0}
-							onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-							className="rounded-[10px] px-[26px] text-[15px] shadow-none"
-						>
-							Continue
-						</Button>
-					)}
 				</div>
 			</DialogContent>
 		</Dialog>

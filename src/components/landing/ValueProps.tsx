@@ -18,7 +18,7 @@ const PROPS: ValueProp[] = [
 	{
 		Icon: HandCoins,
 		title: "Share a thesis proposal",
-		body: "Post a proposal PDF and funding target with no application fee. Grant payments are not live yet.",
+		body: "Post a proposal PDF and funding target with no application fee.",
 	},
 	{
 		Icon: Telescope,

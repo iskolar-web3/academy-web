@@ -81,7 +81,7 @@ function ClientDevtools() {
 	return (
 		<TanStackDevtools
 			config={{
-				position: "bottom-right",
+				position: "bottom-left",
 			}}
 			plugins={[
 				{

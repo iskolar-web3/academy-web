@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { GrantDetailView } from "#/components/grant/GrantDetailView";
-import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
 import { useSession } from "#/hooks/auth/useSession";
@@ -35,7 +34,7 @@ function GrantDetail() {
 
 	if (isLoading) {
 		return (
-			<AppPageLayout left={left} right={<AdsPanel />}>
+			<AppPageLayout left={left}>
 				<p className="py-10 text-center text-[14px] text-content-soft">
 					Loading grant…
 				</p>
@@ -45,7 +44,7 @@ function GrantDetail() {
 
 	if (isError || !grant) {
 		return (
-			<AppPageLayout left={left} right={<AdsPanel />}>
+			<AppPageLayout left={left}>
 				<div className="card-surface mx-auto max-w-md p-8 text-center">
 					<p className="text-content-heading">Grant not found</p>
 					<Link to="/grants" className="btn btn-secondary mt-4">
@@ -57,14 +56,14 @@ function GrantDetail() {
 	}
 
 	return (
-		<AppPageLayout left={left} right={<AdsPanel />}>
+		<AppPageLayout left={left}>
 			<Link
 				to="/grants"
 				className="mb-5 inline-block text-[14.5px] text-action"
 			>
 				All grants
 			</Link>
-			<GrantDetailView grant={grant} isSponsor={isSponsor} />
+			<GrantDetailView grant={grant} />
 		</AppPageLayout>
 	);
 }

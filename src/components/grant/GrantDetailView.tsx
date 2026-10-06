@@ -1,24 +1,12 @@
-import { Link } from "@tanstack/react-router";
-import { GrantFundPanel } from "#/components/grant/GrantFundPanel";
 import { GrantReviewPanel } from "#/components/grant/GrantReviewPanel";
 import { grantProposalUrl } from "#/lib/grant/api";
 import { formatPeso, fundingPct, grantStatusMeta } from "#/lib/grant/helper";
 import type { GrantRequest } from "#/lib/grant/model";
 
 /**
- * Grant detail + fund flow — a 1:1 port of the design-template GRANT DETAIL + FUND FLOW:
- * a two-column layout (grant info · sticky fund rail). `isSponsor` selects the rail's
- * content — the fund flow for sponsors, a read-only note for everyone else (the template's
- * `isReadOnlyGrant` has no distinct owner branch; the owning student sees the same
- * read-only state as any other non-sponsor viewer).
+ * Read-only grant detail with the current funding progress.
  */
-export function GrantDetailView({
-	grant,
-	isSponsor,
-}: {
-	grant: GrantRequest;
-	isSponsor: boolean;
-}) {
+export function GrantDetailView({ grant }: { grant: GrantRequest }) {
 	const status = grantStatusMeta(grant.status);
 	const pct = fundingPct(grant.raised, grant.target);
 	const barColor = grant.status === "funded" ? "bg-success" : "bg-action";
@@ -110,26 +98,6 @@ export function GrantDetailView({
 					of {formatPeso(grant.target)} · {grant.backers} backers · posted{" "}
 					{grant.createdDays}d ago
 				</div>
-
-				{isSponsor ? (
-					<GrantFundPanel grant={grant} />
-				) : (
-					<div>
-						<div className="mb-3.5 flex items-start gap-[11px] rounded-xl border border-info-bd bg-surface-tint p-3.5">
-							<span className="flex-none text-[18px]">👁</span>
-							<p className="text-[13px] leading-normal text-content-body">
-								You're viewing this grant. Funding is handled by sponsors,
-								students follow what it funds and track contributions here.
-							</p>
-						</div>
-						<Link
-							to="/grants"
-							className="btn btn-secondary flex h-[46px] w-full items-center justify-center rounded-xl text-[15px]"
-						>
-							Back to grants
-						</Link>
-					</div>
-				)}
 			</aside>
 		</div>
 	);

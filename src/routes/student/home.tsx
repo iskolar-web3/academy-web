@@ -10,7 +10,6 @@ import {
 import { useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { GrantReviewPanel } from "#/components/grant/GrantReviewPanel";
-import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { IncomingInvites } from "#/components/project/IncomingInvites";
 import { MyProjectCard } from "#/components/project/MyProjectCard";
@@ -76,7 +75,6 @@ function StudentHome() {
 					<div className="h-64 animate-pulse rounded-[14px] bg-surface-card" />
 				)
 			}
-			right={<AdsPanel />}
 		>
 			<div>
 				<header className="mb-6 border-line border-b pb-6">
@@ -262,10 +260,7 @@ function StudentHome() {
 											</span>
 										</div>
 									</div>
-									<GrantReviewPanel
-										grant={grant}
-										title="Grant tracker"
-									/>
+									<GrantReviewPanel grant={grant} title="Grant tracker" />
 								</Link>
 							))}
 						</div>

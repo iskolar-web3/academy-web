@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, CreditCard, Lock, LogOut, Settings, User } from "lucide-react";
+import { BadgeCheck, Bell, Lock, LogOut, Settings, User } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "#/auth";
 import {
@@ -276,11 +276,11 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 							{activeRole === AcademyRole.Sponsor ? (
 								<DropdownMenuItem asChild>
 									<Link to="/sponsor/subscription">
-										<CreditCard
+										<BadgeCheck
 											className="size-[18px] text-action"
 											aria-hidden
 										/>
-										Subscription
+										Sponsor plan
 									</Link>
 								</DropdownMenuItem>
 							) : null}

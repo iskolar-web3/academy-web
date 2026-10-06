@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
 import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
-import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
 import { useSession } from "#/hooks/auth/useSession";
@@ -111,7 +110,6 @@ function Discover() {
 					<div className="h-64 animate-pulse rounded-[18px] bg-surface-card" />
 				)
 			}
-			right={<AdsPanel />}
 		>
 			<div className="mb-[18px] flex items-center gap-3">
 				<div className="relative flex-1">

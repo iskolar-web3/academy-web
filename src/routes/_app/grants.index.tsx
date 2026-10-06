@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { SponsorEvidenceRail } from "#/components/discover/SponsorEvidenceRail";
 import { GrantCard } from "#/components/grant/GrantCard";
-import { AdsPanel } from "#/components/layout/AdsPanel";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
 import { useSession } from "#/hooks/auth/useSession";
@@ -38,7 +37,6 @@ function Grants() {
 					<div className="h-64 animate-pulse rounded-[18px] bg-surface-card" />
 				)
 			}
-			right={<AdsPanel />}
 		>
 			<div className="mb-[26px] rounded-[18px] border border-line bg-surface-card px-5 py-5 shadow-card">
 				<div className="font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">

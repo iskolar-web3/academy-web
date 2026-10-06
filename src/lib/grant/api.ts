@@ -12,9 +12,7 @@ import {
  * `documentation/07-grants-funding-server.md` for the contract). No draft state: a
  * grant is created and the required title-proposal PDF is uploaded in **one** multipart
  * request (matching the template's single "Publish grant request" button — there is no
- * two-step create-then-upload the user ever sees). The fund action is the simulated-
- * checkout pattern (see `next-steps-lumen-p4-p5.md`): a real `POST`, no real PayMongo call
- * yet, backed by the server's `src/payments.ts` in simulated mode.
+ * two-step create-then-upload the user ever sees).
  */
 
 /** All grant requests (any status — the gallery shows open/funded/closed alike, matching
@@ -29,7 +27,7 @@ export function openGrantsQuery() {
 	});
 }
 
-/** One grant (gallery detail + fund flow). `GET /grants/:id`. */
+/** One grant. `GET /grants/:id`. */
 export function grantQuery(id: string) {
 	return queryOptions({
 		queryKey: ["grant", id] as const,
@@ -70,23 +68,6 @@ export async function createGrantRequest(
  * `thesisPaperUrl` (auth-gated server-side, a top-level navigation target). */
 export function grantProposalUrl(grantId: string): string {
 	return `${BACKEND_URL}/grants/${grantId}/proposal`;
-}
-
-/**
- * Fund a grant (SPN-10 — simulated checkout). `POST /grants/:id/fund`. Real DB write on the
- * server (`grant_contribution` + `transaction_ledger`, `provider: 'simulated'`) — no real
- * PayMongo call yet; the ~2s "Redirecting to PayMongo…" pause is client-side (see
- * `GrantFundPanel`).
- */
-export async function fundGrant(
-	grantId: string,
-	input: { amount: number; reason: string },
-): Promise<GrantRequest> {
-	const res = await apiFetch<ApiEnvelope<unknown>>(`/grants/${grantId}/fund`, {
-		method: "POST",
-		body: JSON.stringify(input),
-	});
-	return grantSchema.parse(res.data);
 }
 
 /** Admin cancel-with-reason (ADM-02). `POST /grants/:id/cancel`. */

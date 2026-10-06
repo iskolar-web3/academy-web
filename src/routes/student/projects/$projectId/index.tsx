@@ -1,6 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { ProjectDetailView } from "#/components/project/ProjectDetailView";
 import { ProjectStatusBadge } from "#/components/project/ProjectStatusBadge";
+import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useProject } from "#/hooks/project/useProject";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
 import { nextActions } from "#/lib/project/helper";
@@ -17,6 +20,9 @@ export const Route = createFileRoute("/student/projects/$projectId/")({
 function ProjectDetail() {
 	const { projectId } = Route.useParams();
 	const navigate = useNavigate();
+	const [confirmAction, setConfirmAction] = useState<
+		"withdraw" | "delete" | null
+	>(null);
 	const { data: project, isLoading, isError } = useProject(projectId);
 	const { submit, resubmit, withdraw, remove } = useProjectMutations();
 
@@ -87,11 +93,7 @@ function ProjectDetail() {
 					<button
 						type="button"
 						className="btn btn-destructive h-[42px] w-full"
-						onClick={() => {
-							if (confirm(`Withdraw "${project.title}" from the showcase?`)) {
-								withdraw.mutate(project.id);
-							}
-						}}
+						onClick={() => setConfirmAction("withdraw")}
 					>
 						Withdraw
 					</button>
@@ -100,13 +102,7 @@ function ProjectDetail() {
 					<button
 						type="button"
 						className="btn btn-destructive h-[42px] w-full"
-						onClick={() => {
-							if (confirm(`Delete the draft "${project.title}"?`)) {
-								remove.mutate(project.id, {
-									onSuccess: () => navigate({ to: "/student/home" }),
-								});
-							}
-						}}
+						onClick={() => setConfirmAction("delete")}
 					>
 						Delete draft
 					</button>
@@ -124,6 +120,37 @@ function ProjectDetail() {
 				Dashboard
 			</Link>
 			<ProjectDetailView project={project} viewer="owner" manage={manage} />
+			<ConfirmActionDialog
+				open={confirmAction !== null}
+				onClose={() => setConfirmAction(null)}
+				title={confirmAction === "delete" ? "Delete draft" : "Withdraw project"}
+				description={
+					confirmAction === "delete"
+						? `Delete “${project.title}”? This cannot be undone.`
+						: `Withdraw “${project.title}” from the showcase?`
+				}
+				confirmLabel={confirmAction === "delete" ? "Delete draft" : "Withdraw"}
+				busy={withdraw.isPending || remove.isPending}
+				onConfirm={() => {
+					if (confirmAction === "withdraw") {
+						withdraw.mutate(project.id, {
+							onSuccess: () => {
+								toast.success("Project withdrawn");
+								setConfirmAction(null);
+							},
+							onError: (error) => toast.error(error.message),
+						});
+					} else if (confirmAction === "delete") {
+						remove.mutate(project.id, {
+							onSuccess: () => {
+								toast.success("Draft deleted");
+								navigate({ to: "/student/home" });
+							},
+							onError: (error) => toast.error(error.message),
+						});
+					}
+				}}
+			/>
 		</div>
 	);
 }

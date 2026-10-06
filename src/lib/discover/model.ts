@@ -1,5 +1,4 @@
 import { z } from "zod";
-import type { ProjectCardData } from "#/components/project/ProjectCard";
 import { projectCover } from "#/lib/project/helper";
 import { projectSchema } from "#/lib/project/model";
 import { VAULT_ACCESS_STATUSES } from "#/lib/vault/model";
@@ -36,7 +35,18 @@ export interface GalleryParams {
 	owner?: string;
 }
 
-/** Showcase item → the landing/teaser card view-model (`ProjectCard`). */
+export interface ProjectCardData {
+	id: string;
+	title: string;
+	category: string;
+	pitch: string;
+	school: string;
+	upvotes: number;
+	verified?: boolean;
+	cover: string;
+}
+
+/** Showcase item → the landing preview card view-model. */
 export function toProjectCardData(p: ShowcaseProject): ProjectCardData {
 	return {
 		id: p.id,

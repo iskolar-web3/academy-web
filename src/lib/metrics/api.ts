@@ -7,8 +7,7 @@ import {
 
 /**
  * Metrics API (ADM-06) — a single counts read for the admin Metrics tab. Admin-only on the
- * server. Counts only, no time-series (FR-AD5); the two bar charts in the tab are illustrative
- * until P4 (grants funded) / P5 (sponsor MRR) supply real data.
+ * server. Counts only, no time-series (FR-AD5).
  */
 
 /** Platform count cards. `GET /admin/metrics`. */

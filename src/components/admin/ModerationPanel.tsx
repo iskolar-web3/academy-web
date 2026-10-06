@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { toast } from "sonner";
 import { GrantEvidenceChips } from "#/components/grant/GrantReviewPanel";
+import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useGrantMutations } from "#/hooks/grant/useGrantMutations";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
 import { formatPeso } from "#/lib/grant/helper";
@@ -33,6 +35,7 @@ export function ModerationPanel({
 }) {
 	const { moderate } = useReviewDecision();
 	const { cancel } = useGrantMutations();
+	const [grantToCancel, setGrantToCancel] = useState<GrantRequest | null>(null);
 
 	const act = (id: string, action: "unpublish" | "flag") =>
 		moderate.mutate(
@@ -45,14 +48,17 @@ export function ModerationPanel({
 			},
 		);
 
-	const onCancelGrant = (id: string, title: string) => {
-		const reason = window.prompt(
-			`Reason for cancelling "${title}"? (logged with the action)`,
-		);
-		if (reason === null) return;
+	const onCancelGrant = (reason: string) => {
+		if (!grantToCancel) return;
 		cancel.mutate(
-			{ id, reason },
-			{ onSuccess: () => toast.success("Grant request cancelled") },
+			{ id: grantToCancel.id, reason },
+			{
+				onSuccess: () => {
+					toast.success("Grant request cancelled");
+					setGrantToCancel(null);
+				},
+				onError: (error) => toast.error(error.message),
+			},
 		);
 	};
 
@@ -147,7 +153,7 @@ export function ModerationPanel({
 							<button
 								type="button"
 								disabled={cancel.isPending}
-								onClick={() => onCancelGrant(g.id, g.title)}
+								onClick={() => setGrantToCancel(g)}
 								className="h-9 rounded-[9px] border border-[#f0c9cb] bg-surface-card px-3.5 text-[13px] text-danger transition-colors hover:bg-danger-bg disabled:opacity-60"
 							>
 								Cancel request
@@ -156,6 +162,16 @@ export function ModerationPanel({
 					))}
 				</div>
 			)}
+			<ConfirmActionDialog
+				open={grantToCancel !== null}
+				onClose={() => setGrantToCancel(null)}
+				title="Cancel grant request"
+				description={`Cancel “${grantToCancel?.title ?? ""}”? The reason will be recorded in the audit log.`}
+				reasonLabel="Reason for cancellation"
+				confirmLabel="Cancel request"
+				busy={cancel.isPending}
+				onConfirm={onCancelGrant}
+			/>
 		</div>
 	);
 }

@@ -36,7 +36,6 @@ export type ModerationInput = z.infer<typeof moderationSchema>;
 /**
  * Platform metrics (ADM-06) — deliberately **counts, not analytics** (FR-AD5). The server owns
  * the labels/values; `delta` is a plain 7-day count string ("+3 this week"), never a chart.
- * The funding/MRR bar charts in the Metrics tab are illustrative until P4/P5 supply real data.
  */
 export const metricCardSchema = z.object({
 	label: z.string(),
