@@ -19,6 +19,7 @@ import {
 } from "#/components/ui/dialog";
 import { useSession } from "#/hooks/auth/useSession";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
+import { BACKEND_URL } from "#/lib/api";
 import { thesisPaperUrl } from "#/lib/project/api";
 import {
 	documentLabel,
@@ -38,7 +39,10 @@ import {
 } from "#/lib/project/model";
 import { toast } from "#/lib/toast";
 import { cn } from "#/lib/utils";
-import { validateThesisFile } from "#/utils/fileHandling";
+import {
+	validateProjectImage,
+	validateThesisFile,
+} from "#/utils/fileHandling";
 
 /**
  * Submit-a-project wizard — a 1:1 port of the design-template SUBMIT WIZARD MODAL: a 760px
@@ -77,7 +81,7 @@ export function SubmitProjectModal({
 }) {
 	const editing = !!project;
 	const { user } = useSession();
-	const { create, update, submit, resubmit, uploadThesis } =
+	const { create, update, submit, resubmit, uploadThesis, uploadImage } =
 		useProjectMutations();
 	const [step, setStep] = useState(0);
 	// A returning editor already consented at creation.
@@ -86,6 +90,38 @@ export function SubmitProjectModal({
 	// The raw picked file, held only until it's uploaded on submit — a project may not exist
 	// yet (create path), so the upload can't fire until we have an id.
 	const [thesisFile, setThesisFile] = useState<File | null>(null);
+	const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
+	const [imageError, setImageError] = useState<string | null>(null);
+	const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+	const [storedImageSrc, setStoredImageSrc] = useState<string | null>(null);
+	const imageSrc = imagePreviewUrl ?? storedImageSrc;
+	useEffect(() => {
+		return () => {
+			if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+		};
+	}, [imagePreviewUrl]);
+	useEffect(() => {
+		if (!project?.imageUrl) return;
+
+		const controller = new AbortController();
+		let objectUrl: string | null = null;
+		fetch(`${BACKEND_URL}${project.imageUrl}`, {
+			credentials: "include",
+			signal: controller.signal,
+		})
+			.then((response) => (response.ok ? response.blob() : null))
+			.then((blob) => {
+				if (!blob || controller.signal.aborted) return;
+				objectUrl = URL.createObjectURL(blob);
+				setStoredImageSrc(objectUrl);
+			})
+			.catch(() => {});
+
+		return () => {
+			controller.abort();
+			if (objectUrl) URL.revokeObjectURL(objectUrl);
+		};
+	}, [project?.id, project?.imageUrl]);
 
 	const form = useForm<ProjectFormValues>({
 		resolver: zodResolver(projectFormSchema),
@@ -154,7 +190,8 @@ export function SubmitProjectModal({
 		update.isPending ||
 		submit.isPending ||
 		resubmit.isPending ||
-		uploadThesis.isPending;
+		uploadThesis.isPending ||
+		uploadImage.isPending;
 	const isLast = step === STEPS.length - 1;
 
 	// Editing a published project's title/category/MVP links sends it back to review (STU-11).
@@ -248,6 +285,18 @@ export function SubmitProjectModal({
 		setThesisFile(file);
 	};
 
+	const onPickProjectImage = (file: File | undefined) => {
+		if (!file) return;
+		const error = validateProjectImage(file);
+		if (error) {
+			setImageError(error);
+			return;
+		}
+		setImageError(null);
+		setProjectImageFile(file);
+		setImagePreviewUrl(URL.createObjectURL(file));
+	};
+
 	const onSubmitProject = async () => {
 		if (gateIssues.length > 0) {
 			return;
@@ -263,6 +312,9 @@ export function SubmitProjectModal({
 				// that now has the latest ownership/type; re-review below re-checks it.
 				if (thesisFile) {
 					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
+				}
+				if (projectImageFile) {
+					await uploadImage.mutateAsync({ id: project.id, file: projectImageFile });
 				}
 				// Draft/returned/withdrawn re-enter review explicitly; a published edit
 				// re-reviews itself server-side when MVP-critical fields change.
@@ -288,6 +340,9 @@ export function SubmitProjectModal({
 			if (thesisFile) {
 				await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
 			}
+			if (projectImageFile) {
+				await uploadImage.mutateAsync({ id: created.id, file: projectImageFile });
+			}
 			await submit.mutateAsync(created.id);
 			if (localDraftKey) {
 				window.localStorage.removeItem(localDraftKey);
@@ -309,10 +364,16 @@ export function SubmitProjectModal({
 				if (thesisFile) {
 					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
 				}
+				if (projectImageFile) {
+					await uploadImage.mutateAsync({ id: project.id, file: projectImageFile });
+				}
 			} else {
 				const created = await create.mutateAsync(input);
 				if (thesisFile) {
 					await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
+				}
+				if (projectImageFile) {
+					await uploadImage.mutateAsync({ id: created.id, file: projectImageFile });
 				}
 			}
 			if (localDraftKey) {
@@ -427,6 +488,46 @@ export function SubmitProjectModal({
 								<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
 									{(purpose ?? "").length}/1000
 								</div>
+							</div>
+							<div>
+								<div className={fieldLabelCls}>Project image (optional)</div>
+								<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
+									<div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
+										{imageSrc ? (
+											<img
+												src={imageSrc}
+												alt="Project image preview"
+												className="absolute inset-0 size-full object-cover"
+											/>
+										) : (
+											<Upload className="size-7 text-action/60" aria-hidden />
+										)}
+									</div>
+									<div className="flex items-center justify-between gap-3 p-3">
+										<p className="min-w-0 truncate text-[12px] text-content-faint">
+											{projectImageFile?.name ??
+												"JPEG, PNG, or WebP · up to 5 MB"}
+										</p>
+										<label className="flex h-9 shrink-0 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
+											{projectImageFile || project?.imageUrl
+												? "Change image"
+												: "Choose image"}
+											<input
+												type="file"
+												accept="image/jpeg,image/png,image/webp"
+												className="hidden"
+												disabled={uploadImage.isPending}
+												onChange={(event) => {
+													onPickProjectImage(event.target.files?.[0]);
+													event.target.value = "";
+												}}
+											/>
+										</label>
+									</div>
+								</div>
+								{imageError ? (
+									<p className="mt-1 text-[11.5px] text-danger">{imageError}</p>
+								) : null}
 							</div>
 							<div className="flex gap-3.5">
 								<div className="flex-1">

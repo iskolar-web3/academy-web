@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ReviewEvidenceChips } from "#/components/project/ReviewCheckPanel";
 import { UpvoteButton } from "#/components/project/UpvoteButton";
 import { useToggleUpvote } from "#/hooks/upvote/useToggleUpvote";
+import { BACKEND_URL } from "#/lib/api";
 import type { ShowcaseProject } from "#/lib/discover/model";
 import { projectCover } from "#/lib/project/helper";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
@@ -38,15 +39,22 @@ export function DiscoverCard({
 	const params = { projectId: project.id };
 
 	return (
-		<div className="card-surface flex h-[400px] min-w-0 flex-col overflow-hidden rounded-[15px] transition-colors hover:border-action">
+		<div className="card-surface flex h-[448px] min-w-0 flex-col overflow-hidden rounded-[15px] transition-colors hover:border-action">
 			<Link
 				to={to}
 				params={params}
-				className="relative flex h-24 flex-none items-start justify-end p-3"
+				className="relative flex h-36 flex-none items-start justify-end p-3"
 				style={{ background: projectCover(project.hue) }}
 			>
+				{project.imageUrl ? (
+					<img
+						src={`${BACKEND_URL}${project.imageUrl}`}
+						alt={`${project.title} project image`}
+						className="absolute inset-0 size-full object-cover"
+					/>
+				) : null}
 				{project.trending ? (
-					<span className="chip chip--trending relative">▲ Trending</span>
+					<span className="chip chip--trending relative z-10">▲ Trending</span>
 				) : null}
 			</Link>
 

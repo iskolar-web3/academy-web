@@ -5,6 +5,7 @@ import {
 	useWatchlist,
 } from "#/hooks/saved-search/useWatchlist";
 import { useEntitlement } from "#/hooks/subscription/useEntitlement";
+import { BACKEND_URL } from "#/lib/api";
 import type { ShowcaseProject } from "#/lib/discover/model";
 import { projectCover } from "#/lib/project/helper";
 
@@ -74,9 +75,17 @@ export function DealFlowCard({ project }: { project: ShowcaseProject }) {
 				className="mx-[18px] mb-3.5 block overflow-hidden rounded-[13px] border border-[#e3ebfb] transition-colors hover:border-action/40"
 			>
 				<div
-					className="h-[10px]"
+					className="relative h-24"
 					style={{ background: projectCover(project.hue) }}
-				/>
+				>
+					{project.imageUrl ? (
+						<img
+							src={`${BACKEND_URL}${project.imageUrl}`}
+							alt={`${project.title} project image`}
+							className="absolute inset-0 size-full object-cover"
+						/>
+					) : null}
+				</div>
 				<div className="p-[15px]">
 					<p className="mb-2.5 line-clamp-2 text-[13px] leading-normal text-content-soft">
 						{project.pitch}

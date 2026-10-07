@@ -128,3 +128,16 @@ export async function uploadThesisPaper(
 export function thesisPaperUrl(projectId: string): string {
 	return `${BACKEND_URL}/projects/${projectId}/thesis`;
 }
+
+export async function uploadProjectImage(
+	projectId: string,
+	file: File,
+): Promise<{ key: string }> {
+	const formData = new FormData();
+	formData.append("file", file);
+	const envelope = await apiUpload<ApiEnvelope<{ key: string }>>(
+		`/projects/${projectId}/image`,
+		formData,
+	);
+	return envelope.data;
+}

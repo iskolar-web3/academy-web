@@ -22,3 +22,16 @@ export function validateThesisFile(file: File): string | null {
 	}
 	return null;
 }
+
+const PROJECT_IMAGE_MAX_MB = 5;
+const PROJECT_IMAGE_MIME_ALLOW = ["image/jpeg", "image/png", "image/webp"];
+
+export function validateProjectImage(file: File): string | null {
+	if (!PROJECT_IMAGE_MIME_ALLOW.includes(file.type)) {
+		return "Image must be a JPEG, PNG, or WebP file.";
+	}
+	if (file.size > PROJECT_IMAGE_MAX_MB * 1024 * 1024) {
+		return `Image must be under ${PROJECT_IMAGE_MAX_MB} MB.`;
+	}
+	return null;
+}

@@ -1,5 +1,7 @@
 import { Code, MonitorPlay, Play } from "lucide-react";
 import type { ReactNode } from "react";
+import { useProjectImageSrc } from "#/hooks/project/useProjectImageSrc";
+import { BACKEND_URL } from "#/lib/api";
 import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
@@ -51,6 +53,13 @@ export function ProjectDetailView({
 	/** The non-owner rail card content (wired upvote + interest), composed by the route. */
 	interact?: ReactNode;
 }) {
+	const privateImageSrc = useProjectImageSrc(
+		project.status === "published" ? null : project.imageUrl,
+	);
+	const imageSrc =
+		project.status === "published" && project.imageUrl
+			? `${BACKEND_URL}${project.imageUrl}`
+			: privateImageSrc;
 	const links = MVP_LINKS.map((l) => ({
 		...l,
 		href: project.links[l.key],
@@ -61,10 +70,17 @@ export function ProjectDetailView({
 			<div className="card-surface overflow-hidden rounded-[18px]">
 				{/* Cover banner */}
 				<div
-					className="relative flex h-[200px] items-end p-6"
+					className="relative flex h-[240px] items-end p-6 sm:h-[300px]"
 					style={{ background: projectCover(project.hue) }}
 				>
-					<div className="relative flex gap-2.5">
+					{imageSrc ? (
+						<img
+							src={imageSrc}
+							alt={`${project.title} project image`}
+							className="absolute inset-0 size-full object-cover"
+						/>
+					) : null}
+					<div className="relative z-10 flex gap-2.5">
 						<span className="rounded-[7px] bg-[rgba(17,24,39,0.34)] px-[11px] py-[5px] font-mono text-[12px] text-white">
 							{project.category || "Uncategorized"}
 						</span>

@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Reveal } from "#/components/landing/Reveal";
 import { SignInPopover } from "#/components/landing/SignInPopover";
 import { SectionHeading } from "#/components/landing/spine";
+import { BACKEND_URL } from "#/lib/api";
 import { publicTeaserQuery } from "#/lib/discover/api";
 import { toProjectCardData } from "#/lib/discover/model";
 
@@ -40,10 +41,17 @@ export function RecentProjectsPreview() {
 						<Reveal key={project.id} delay={i * 0.08}>
 							<article className="card-surface flex h-full min-w-0 flex-col overflow-hidden">
 								<div
-									className="flex h-32 items-start p-4"
+									className="relative flex h-32 items-start p-4"
 									style={{ background: project.cover }}
 								>
-									<span className="chip bg-[rgba(17,24,39,0.32)] text-white">
+									{project.imageUrl ? (
+										<img
+											src={`${BACKEND_URL}${project.imageUrl}`}
+											alt={`${project.title} project image`}
+											className="absolute inset-0 size-full object-cover"
+										/>
+									) : null}
+									<span className="chip relative z-10 bg-[rgba(17,24,39,0.32)] text-white">
 										{project.category}
 									</span>
 								</div>

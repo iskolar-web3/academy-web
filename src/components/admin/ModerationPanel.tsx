@@ -3,6 +3,7 @@ import { GrantEvidenceChips } from "#/components/grant/GrantReviewPanel";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useGrantMutations } from "#/hooks/grant/useGrantMutations";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
+import { BACKEND_URL } from "#/lib/api";
 import { formatPeso } from "#/lib/grant/helper";
 import type { GrantRequest } from "#/lib/grant/model";
 import { projectCover } from "#/lib/project/helper";
@@ -91,10 +92,18 @@ export function ModerationPanel({
 							key={p.id}
 							className="flex items-center gap-3.5 rounded-[14px] border border-line bg-surface-card px-[18px] py-3.5"
 						>
-							<span
-								className="size-10 flex-none rounded-[11px]"
+							<div
+								className="relative size-10 flex-none overflow-hidden rounded-[11px]"
 								style={{ background: projectCover(p.hue) }}
-							/>
+							>
+								{p.imageUrl ? (
+									<img
+										src={`${BACKEND_URL}${p.imageUrl}`}
+										alt=""
+										className="absolute inset-0 size-full object-cover"
+									/>
+								) : null}
+							</div>
 							<div className="min-w-0 flex-1">
 								<div className="text-[15.5px] text-content-heading">
 									{p.title}

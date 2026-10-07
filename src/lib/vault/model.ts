@@ -27,6 +27,7 @@ export interface MyVault {
 	projectId: string;
 	projectTitle: string;
 	hue: number;
+	imageUrl?: string | null;
 	documents: VaultDocument[];
 }
 
@@ -52,6 +53,7 @@ export const myVaultSchema = z.object({
 	projectId: z.string(),
 	projectTitle: z.string(),
 	hue: z.number(),
+	imageUrl: z.string().nullable().default(null),
 	documents: z.array(vaultDocumentSchema),
 });
 export const myVaultListSchema = z.array(myVaultSchema);

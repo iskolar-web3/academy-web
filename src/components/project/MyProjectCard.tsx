@@ -6,6 +6,7 @@ import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useProjectVerification } from "#/hooks/project/useProjectVerification";
+import { useProjectImageSrc } from "#/hooks/project/useProjectImageSrc";
 import { deleteDraft } from "#/lib/project/api";
 import {
 	dashboardAction,
@@ -33,6 +34,7 @@ export function MyProjectCard({ project }: { project: Project }) {
 		project.status !== "draft",
 	);
 	const status = statusMeta(project.status);
+	const imageSrc = useProjectImageSrc(project.imageUrl);
 	const action = dashboardAction(project.status);
 	const when =
 		project.updatedDays === 0 ? "today" : `${project.updatedDays}d ago`;
@@ -46,9 +48,18 @@ export function MyProjectCard({ project }: { project: Project }) {
 			/>
 			<div className="flex-1 px-[22px] py-[18px]">
 				<div className="mb-1.5 flex items-start justify-between gap-3">
-					<span className="text-lg leading-tight text-content-heading">
-						{project.title}
-					</span>
+					<div className="flex min-w-0 items-center gap-3">
+						{imageSrc ? (
+							<img
+								src={imageSrc}
+								alt=""
+								className="size-12 flex-none rounded-lg object-cover"
+							/>
+						) : null}
+						<span className="min-w-0 text-lg leading-tight text-content-heading">
+							{project.title}
+						</span>
+					</div>
 					<span
 						className={`flex-none rounded-md px-[11px] py-1 font-mono text-[11.5px] ${statusChipClass(project.status)}`}
 					>

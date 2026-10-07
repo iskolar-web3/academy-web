@@ -67,6 +67,7 @@ export interface ProjectOwnership {
 
 export interface Project {
 	id: string;
+	imageUrl?: string | null;
 	title: string;
 	category: Category | "";
 	type: ProjectType;
@@ -105,6 +106,7 @@ export type ProjectInput = Omit<
 	| "hue"
 	| "school"
 	| "verified"
+	| "imageUrl"
 >;
 
 const urlOrEmpty = z.union([z.url(), z.literal("")]);
@@ -116,6 +118,7 @@ const urlOrEmpty = z.union([z.url(), z.literal("")]);
 /** Wire schema for a `Project` returned by academy-server (parsed in `lib/project/api.ts`). */
 export const projectSchema = z.object({
 	id: z.string(),
+	imageUrl: z.string().nullable().default(null),
 	title: z.string(),
 	category: z.enum(CATEGORIES).or(z.literal("")),
 	type: z.enum(PROJECT_TYPES),

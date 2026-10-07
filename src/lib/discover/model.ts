@@ -44,6 +44,7 @@ export interface ProjectCardData {
 	upvotes: number;
 	verified?: boolean;
 	cover: string;
+	imageUrl: string | null;
 }
 
 /** Showcase item → the landing preview card view-model. */
@@ -57,5 +58,6 @@ export function toProjectCardData(p: ShowcaseProject): ProjectCardData {
 		upvotes: p.upvotes,
 		verified: p.verified,
 		cover: projectCover(p.hue),
+		imageUrl: p.imageUrl,
 	};
 }

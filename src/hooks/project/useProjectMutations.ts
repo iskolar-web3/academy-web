@@ -6,6 +6,7 @@ import {
 	submitProject,
 	updateProject,
 	uploadThesisPaper,
+	uploadProjectImage as uploadProjectImageRequest,
 	withdrawProject,
 } from "#/lib/project/api";
 import type { ProjectInput } from "#/lib/project/model";
@@ -16,7 +17,12 @@ import type { ProjectInput } from "#/lib/project/model";
  */
 export function useProjectMutations() {
 	const qc = useQueryClient();
-	const invalidate = () => qc.invalidateQueries({ queryKey: ["project"] });
+	const invalidate = async () => {
+		await Promise.all([
+			qc.invalidateQueries({ queryKey: ["project"] }),
+			qc.invalidateQueries({ queryKey: ["discover"] }),
+		]);
+	};
 
 	const create = useMutation({
 		mutationFn: (input: ProjectInput) => createDraft(input),
@@ -55,5 +61,20 @@ export function useProjectMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { create, update, submit, resubmit, withdraw, remove, uploadThesis };
+	const uploadImage = useMutation({
+		mutationFn: (vars: { id: string; file: File }) =>
+			uploadProjectImageRequest(vars.id, vars.file),
+		onSuccess: invalidate,
+	});
+
+	return {
+		create,
+		update,
+		submit,
+		resubmit,
+		withdraw,
+		remove,
+		uploadThesis,
+		uploadImage,
+	};
 }

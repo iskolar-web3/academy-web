@@ -1,4 +1,5 @@
 import { Upload } from "lucide-react";
+import { useProjectImageSrc } from "#/hooks/project/useProjectImageSrc";
 import { useUploadVaultDoc } from "#/hooks/vault/useVault";
 import { projectCover } from "#/lib/project/helper";
 import { toast } from "#/lib/toast";
@@ -52,65 +53,83 @@ export function VaultManager({ vaults }: { vaults: MyVault[] }) {
 	return (
 		<div className="flex flex-col gap-4">
 			{vaults.map((v) => (
-				<div
-					key={v.projectId}
-					className="card-surface overflow-hidden rounded-2xl"
-				>
-					<div className="flex items-center gap-3 border-[#eef1fa] border-b px-[18px] py-4">
-						<span
-							className="size-[38px] flex-none rounded-[11px]"
-							style={{ background: projectCover(v.hue) }}
-						/>
-						<div className="flex-1">
-							<div className="text-[16px] text-content-heading">
-								{v.projectTitle}
-							</div>
-							<div className="font-mono text-[11.5px] text-content-faint">
-								🔒 Locked vault
-							</div>
-						</div>
-						<label className="flex h-9 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
-							<Upload className="mr-1.5 size-3.5" aria-hidden />
-							Upload
-							<input
-								type="file"
-								accept="application/pdf"
-								className="hidden"
-								onChange={(e) => onPick(v.projectId, e.target.files?.[0])}
-							/>
-						</label>
-					</div>
-					{v.documents.length === 0 ? (
-						<p className="px-[18px] py-4 text-[13.5px] text-content-soft">
-							No documents yet.
-						</p>
-					) : (
-						<div className="p-2.5">
-							{v.documents.map((d) => (
-								<a
-									key={d.id}
-									href={vaultDocumentUrl(v.projectId, d.id)}
-									target="_blank"
-									rel="noreferrer"
-									className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 transition-colors hover:bg-surface-tint"
-								>
-									<span className="flex w-6 flex-none items-center justify-center text-[17px] text-action">
-										▤
-									</span>
-									<div className="flex-1">
-										<div className="text-[14px] text-content-heading">
-											{d.label}
-										</div>
-										<div className="font-mono text-[11px] text-content-faint">
-											{d.meta}
-										</div>
-									</div>
-								</a>
-							))}
-						</div>
-					)}
-				</div>
+				<VaultCard key={v.projectId} vault={v} onPick={onPick} />
 			))}
+		</div>
+	);
+}
+
+function VaultCard({
+	vault: v,
+	onPick,
+}: {
+	vault: MyVault;
+	onPick: (projectId: string, file: File | undefined) => void;
+}) {
+	const imageSrc = useProjectImageSrc(v.imageUrl);
+	return (
+		<div className="card-surface overflow-hidden rounded-2xl">
+			<div className="flex items-center gap-3 border-[#eef1fa] border-b px-[18px] py-4">
+				<span
+					className="relative size-[38px] flex-none overflow-hidden rounded-[11px]"
+					style={{ background: projectCover(v.hue) }}
+				>
+					{imageSrc ? (
+						<img
+							src={imageSrc}
+							alt=""
+							className="absolute inset-0 size-full object-cover"
+						/>
+					) : null}
+				</span>
+				<div className="flex-1">
+					<div className="text-[16px] text-content-heading">
+						{v.projectTitle}
+					</div>
+					<div className="font-mono text-[11.5px] text-content-faint">
+						🔒 Locked vault
+					</div>
+				</div>
+				<label className="flex h-9 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
+					<Upload className="mr-1.5 size-3.5" aria-hidden />
+					Upload
+					<input
+						type="file"
+						accept="application/pdf"
+						className="hidden"
+						onChange={(e) => onPick(v.projectId, e.target.files?.[0])}
+					/>
+				</label>
+			</div>
+			{v.documents.length === 0 ? (
+				<p className="px-[18px] py-4 text-[13.5px] text-content-soft">
+					No documents yet.
+				</p>
+			) : (
+				<div className="p-2.5">
+					{v.documents.map((d) => (
+						<a
+							key={d.id}
+							href={vaultDocumentUrl(v.projectId, d.id)}
+							target="_blank"
+							rel="noreferrer"
+							className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 transition-colors hover:bg-surface-tint"
+						>
+							<span className="flex w-6 flex-none items-center justify-center text-[17px] text-action">
+								▤
+							</span>
+							<div className="flex-1">
+								<div className="text-[14px] text-content-heading">
+									{d.label}
+								</div>
+								<div className="font-mono text-[11px] text-content-faint">
+									{d.meta}
+								</div>
+							</div>
+						</a>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

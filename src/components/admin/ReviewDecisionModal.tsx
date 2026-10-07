@@ -1,5 +1,5 @@
 import { Check, Code, MonitorPlay, Play, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
 } from "#/components/ui/dialog";
 import { useReviewDecision } from "#/hooks/review/useReviewDecision";
 import { useReviewVerification } from "#/hooks/review/useReviewQueue";
+import { BACKEND_URL } from "#/lib/api";
 import { thesisPaperUrl } from "#/lib/project/api";
 import {
 	documentLabel,
@@ -61,6 +62,33 @@ export function ReviewDecisionModal({
 	const [returning, setReturning] = useState(false);
 	const [note, setNote] = useState("");
 	const [noteError, setNoteError] = useState(false);
+	const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!project.imageUrl) {
+			setImageSrc(null);
+			return;
+		}
+
+		const controller = new AbortController();
+		let objectUrl: string | null = null;
+		fetch(`${BACKEND_URL}${project.imageUrl}`, {
+			credentials: "include",
+			signal: controller.signal,
+		})
+			.then((response) => (response.ok ? response.blob() : null))
+			.then((blob) => {
+				if (!blob || controller.signal.aborted) return;
+				objectUrl = URL.createObjectURL(blob);
+				setImageSrc(objectUrl);
+			})
+			.catch(() => {});
+
+		return () => {
+			controller.abort();
+			if (objectUrl) URL.revokeObjectURL(objectUrl);
+		};
+	}, [project.id, project.imageUrl]);
 
 	const links = MVP_LINKS.map((l) => ({
 		...l,
@@ -113,16 +141,23 @@ export function ReviewDecisionModal({
 					className="relative h-[120px] rounded-t-[22px]"
 					style={{ background: projectCover(project.hue) }}
 				>
+					{imageSrc ? (
+						<img
+							src={imageSrc}
+							alt={`${project.title} project image`}
+							className="absolute inset-0 size-full rounded-t-[22px] object-cover"
+						/>
+					) : null}
 					<DialogClose asChild>
 						<button
 							type="button"
 							aria-label="Close"
-							className="absolute top-3.5 right-3.5 flex size-8 items-center justify-center rounded-full border-none text-white transition-opacity hover:opacity-70"
+							className="absolute top-3.5 right-3.5 z-10 flex size-8 items-center justify-center rounded-full border-none text-white transition-opacity hover:opacity-70"
 						>
 							<X className="size-[15px]" aria-hidden />
 						</button>
 					</DialogClose>
-					<div className="absolute bottom-3.5 left-6 flex gap-2">
+					<div className="absolute bottom-3.5 left-6 z-10 flex gap-2">
 						<span className="rounded-[7px] bg-[rgba(17,24,39,0.34)] px-[11px] py-[5px] font-mono text-[12px] text-white">
 							{TYPE_LABEL[project.type]}
 						</span>
