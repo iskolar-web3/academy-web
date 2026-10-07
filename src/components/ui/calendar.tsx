@@ -43,7 +43,7 @@ function Calendar({
 				dropdown: "absolute inset-0 opacity-0",
 				caption_label:
 					"flex items-center gap-1 text-[13.5px] text-content-heading",
-				table: "w-full border-collapse",
+				month_grid: "w-full border-collapse",
 				weekdays: "flex",
 				weekday:
 					"w-8 flex-1 text-center font-mono text-[10.5px] text-content-faint",
