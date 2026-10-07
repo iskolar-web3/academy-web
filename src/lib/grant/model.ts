@@ -84,7 +84,7 @@ export const grantFormSchema = z.object({
 	title: z.string().min(2, "Title is too short").max(120),
 	category: z.enum(CATEGORIES).or(z.literal("")),
 	techText: z.string().max(300),
-	purpose: z.string().max(400),
+	purpose: z.string().max(1000),
 	teamNote: z.string().max(80),
 	targetRaw: z.string(),
 	ownershipDeclared: z.boolean(),

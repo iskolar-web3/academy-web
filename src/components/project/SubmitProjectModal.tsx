@@ -143,6 +143,7 @@ export function SubmitProjectModal({
 	const type = watch("type");
 	const category = watch("category");
 	const pitch = watch("pitch");
+	const purpose = watch("purpose");
 	const thesisPaperName = watch("thesisPaperName");
 	const ownershipDeclared = watch("ownershipDeclared");
 	const members = watch("members");
@@ -419,9 +420,13 @@ export function SubmitProjectModal({
 								<div className={fieldLabelCls}>Purpose</div>
 								<textarea
 									className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
+									maxLength={1000}
 									placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
 									{...register("purpose")}
 								/>
+								<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
+									{(purpose ?? "").length}/1000
+								</div>
 							</div>
 							<div className="flex gap-3.5">
 								<div className="flex-1">

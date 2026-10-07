@@ -157,7 +157,7 @@ export const projectFormSchema = z.object({
 	category: z.enum(CATEGORIES).or(z.literal("")),
 	type: z.enum(PROJECT_TYPES),
 	pitch: z.string().max(300),
-	purpose: z.string().max(400),
+	purpose: z.string().max(1000),
 	techText: z.string().max(300),
 	links: z.object({ demo: urlOrEmpty, repo: urlOrEmpty, video: urlOrEmpty }),
 	isTeam: z.boolean(),
