@@ -663,9 +663,6 @@ export function SubmitProjectModal({
 											<div className="text-[14px] text-content-heading">
 												{thesisPaperName ??
 													`${documentLabel(type).charAt(0).toUpperCase()}${documentLabel(type).slice(1)} (PDF)`}
-												<span className="ml-1 text-content-faint">
-													(optional)
-												</span>
 												{editing &&
 												project.ownership.thesisPaperName &&
 												!thesisFile ? (
