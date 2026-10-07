@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { toast } from "#/lib/toast";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import {
@@ -32,11 +31,12 @@ import {
 } from "#/lib/project/helper";
 import {
 	CATEGORIES,
+	PROJECT_TYPE_LABELS,
 	type Project,
 	type ProjectFormValues,
-	PROJECT_TYPE_LABELS,
 	projectFormSchema,
 } from "#/lib/project/model";
+import { toast } from "#/lib/toast";
 import { cn } from "#/lib/utils";
 import { validateThesisFile } from "#/utils/fileHandling";
 
@@ -98,9 +98,13 @@ export function SubmitProjectModal({
 			: null;
 
 	useEffect(() => {
-		if (!localDraftKey) return;
+		if (!localDraftKey) {
+			return;
+		}
 		const raw = window.localStorage.getItem(localDraftKey);
-		if (!raw) return;
+		if (!raw) {
+			return;
+		}
 
 		try {
 			const parsed = projectFormSchema.partial().safeParse(JSON.parse(raw));
@@ -118,7 +122,9 @@ export function SubmitProjectModal({
 	}, [localDraftKey, reset]);
 
 	useEffect(() => {
-		if (!localDraftKey) return;
+		if (!localDraftKey) {
+			return;
+		}
 		const subscription = form.watch((values) => {
 			window.localStorage.setItem(
 				localDraftKey,
@@ -159,17 +165,31 @@ export function SubmitProjectModal({
 	// Submission gate — matches the fields the template wizard collects (a live demo and a
 	// public repo are required; the demo video is optional; ownership + consent declared).
 	const gateIssues: string[] = [];
-	if (!title || title.trim().length < 2) gateIssues.push("Add a project title");
-	if (!category) gateIssues.push("Pick a category");
-	if ((pitch ?? "").trim().length < 8) gateIssues.push("Add a one-line pitch");
-	if (!isValidUrl(links?.demo ?? ""))
+	if (!title || title.trim().length < 2) {
+		gateIssues.push("Add a project title");
+	}
+	if (!category) {
+		gateIssues.push("Pick a category");
+	}
+	if ((pitch ?? "").trim().length < 8) {
+		gateIssues.push("Add a one-line pitch");
+	}
+	if (!isValidUrl(links?.demo ?? "")) {
 		gateIssues.push("Add a valid live demo URL");
-	if (!isValidUrl(links?.repo ?? ""))
+	}
+	if (!isValidUrl(links?.repo ?? "")) {
 		gateIssues.push("Add a valid public repository URL");
-	if (!ownershipDeclared) gateIssues.push("Confirm the ownership declaration");
-	if (!consented) gateIssues.push("Consent to review & public showcase");
+	}
+	if (!ownershipDeclared) {
+		gateIssues.push("Confirm the ownership declaration");
+	}
+	if (!consented) {
+		gateIssues.push("Consent to review & public showcase");
+	}
 	const teamConsentIssues = (() => {
-		if (!watch("isTeam")) return [];
+		if (!watch("isTeam")) {
+			return [];
+		}
 
 		const consents = (members ?? [])
 			.filter((member) => member.linked)
@@ -186,8 +206,9 @@ export function SubmitProjectModal({
 			: [];
 	})();
 	gateIssues.push(...teamConsentIssues);
-	if (requiresDocumentUpload(type) && !thesisPaperName)
+	if (requiresDocumentUpload(type) && !thesisPaperName) {
 		gateIssues.push(`Upload the ${documentLabel(type)}`);
+	}
 
 	// Per-step slice of the gate — "Continue" used to advance unconditionally
 	// regardless of that step's own required fields (the reported bug: MVP step's
@@ -218,7 +239,9 @@ export function SubmitProjectModal({
 	const currentStepIssues = stepIssues[step] ?? [];
 
 	const onPickFile = (file: File | undefined) => {
-		if (!file) return;
+		if (!file) {
+			return;
+		}
 		const err = validateThesisFile(file);
 		if (err) {
 			setFileError(err);
@@ -230,7 +253,9 @@ export function SubmitProjectModal({
 	};
 
 	const onSubmitProject = async () => {
-		if (gateIssues.length > 0) return;
+		if (gateIssues.length > 0) {
+			return;
+		}
 		const input = formToProjectInput(getValues());
 		// mutateAsync re-throws (unlike mutate), so this chain owns its catch: surface the
 		// server's envelope message (422 gate / 403 owner / network) as a toast and keep
@@ -253,7 +278,9 @@ export function SubmitProjectModal({
 				) {
 					await resubmit.mutateAsync(project.id);
 				}
-				if (localDraftKey) window.localStorage.removeItem(localDraftKey);
+				if (localDraftKey) {
+					window.localStorage.removeItem(localDraftKey);
+				}
 				toast.success(
 					willReReview ? "Saved and sent back to review" : "Changes saved",
 				);
@@ -266,7 +293,9 @@ export function SubmitProjectModal({
 				await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
 			}
 			await submit.mutateAsync(created.id);
-			if (localDraftKey) window.localStorage.removeItem(localDraftKey);
+			if (localDraftKey) {
+				window.localStorage.removeItem(localDraftKey);
+			}
 			toast.success("Project submitted", {
 				description: "Your project is in the Academy review queue.",
 			});
@@ -290,7 +319,9 @@ export function SubmitProjectModal({
 					await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
 				}
 			}
-			if (localDraftKey) window.localStorage.removeItem(localDraftKey);
+			if (localDraftKey) {
+				window.localStorage.removeItem(localDraftKey);
+			}
 			toast.success("Draft saved", {
 				description: "You can return to it from My Projects.",
 			});
@@ -558,7 +589,9 @@ export function SubmitProjectModal({
 											type="button"
 											onClick={() => {
 												remove(i);
-												if (fields.length <= 1) setValue("isTeam", false);
+												if (fields.length <= 1) {
+													setValue("isTeam", false);
+												}
 											}}
 											aria-label="Remove member"
 											className="flex size-9 flex-none items-center justify-center rounded-[9px] border border-info-bd text-content-muted hover:bg-surface-sunken"

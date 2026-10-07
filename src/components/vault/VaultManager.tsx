@@ -1,7 +1,7 @@
 import { Upload } from "lucide-react";
-import { toast } from "#/lib/toast";
 import { useUploadVaultDoc } from "#/hooks/vault/useVault";
 import { projectCover } from "#/lib/project/helper";
+import { toast } from "#/lib/toast";
 import { vaultDocumentUrl } from "#/lib/vault/api";
 import type { MyVault } from "#/lib/vault/model";
 import { validateThesisFile } from "#/utils/fileHandling";
@@ -21,7 +21,9 @@ export function VaultManager({ vaults }: { vaults: MyVault[] }) {
 	const upload = useUploadVaultDoc();
 
 	const onPick = (projectId: string, file: File | undefined) => {
-		if (!file) return;
+		if (!file) {
+			return;
+		}
 		const err = validateThesisFile(file);
 		if (err) {
 			toast.error(err);

@@ -78,7 +78,9 @@ function ClientDevtools() {
 		setMounted(true);
 	}, []);
 
-	if (!enableDevtools || !mounted) return null;
+	if (!enableDevtools || !mounted) {
+		return null;
+	}
 
 	return (
 		<TanStackDevtools

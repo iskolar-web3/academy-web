@@ -25,8 +25,12 @@ export function useToggleUpvote() {
 					: p;
 			// Discover caches hold both lists (gallery/teaser) and single projects (detail).
 			qc.setQueriesData({ queryKey: ["discover"] }, (data: unknown) => {
-				if (!data) return data;
-				if (Array.isArray(data)) return data.map(flip);
+				if (!data) {
+					return data;
+				}
+				if (Array.isArray(data)) {
+					return data.map(flip);
+				}
 				return flip(data as ShowcaseProject);
 			});
 			return { previous };

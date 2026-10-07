@@ -109,9 +109,13 @@ export function pipelineSteps(status: ProjectStatus): PipelineStep[] {
 	const isReturned = status === "returned";
 	return PIPELINE_STAGES.map((label, i) => {
 		let state: PipelineState;
-		if (i < currentIndex) state = "done";
-		else if (i === currentIndex) state = isReturned ? "returned" : "current";
-		else state = "upcoming";
+		if (i < currentIndex) {
+			state = "done";
+		} else if (i === currentIndex) {
+			state = isReturned ? "returned" : "current";
+		} else {
+			state = "upcoming";
+		}
 		return { label, state, isLast: i === PIPELINE_STAGES.length - 1 };
 	});
 }

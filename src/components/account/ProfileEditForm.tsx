@@ -2,11 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "#/lib/toast";
 import { useMyProfile } from "#/hooks/account/useProfile";
 import { useUpdateProfile } from "#/hooks/account/useUpdateProfile";
 import { type ProfileEdit, profileEditSchema } from "#/lib/account/model";
 import { AcademyRole } from "#/lib/auth/model";
+import { toast } from "#/lib/toast";
 
 /**
  * Own-profile edit form (STU-01 / SPN-01) — a 1:1 port of the design-template EDIT

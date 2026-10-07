@@ -1,8 +1,8 @@
 import { Check, X } from "lucide-react";
-import { toast } from "#/lib/toast";
 import { useNotificationMutations } from "#/hooks/notification/useNotificationMutations";
 import { useNotifications } from "#/hooks/notification/useNotifications";
 import { hueFromString, projectCover } from "#/lib/project/helper";
+import { toast } from "#/lib/toast";
 
 /**
  * Membership invitations (STU-08) — where a credited member accepts or declines being shown
@@ -29,7 +29,9 @@ export function IncomingInvites() {
 	const pending = (data ?? []).filter(
 		(n) => n.type === "member_invite" && n.unread && n.projectId && n.memberId,
 	);
-	if (pending.length === 0) return null;
+	if (pending.length === 0) {
+		return null;
+	}
 
 	const busy = accept.isPending || decline.isPending;
 
@@ -47,8 +49,11 @@ export function IncomingInvites() {
 			onError: (err: Error) =>
 				toast.error(err.message || "Something went wrong."),
 		};
-		if (action === "accept") accept.mutate(vars, opts);
-		else decline.mutate(vars, opts);
+		if (action === "accept") {
+			accept.mutate(vars, opts);
+		} else {
+			decline.mutate(vars, opts);
+		}
 	};
 
 	return (

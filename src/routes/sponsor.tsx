@@ -17,7 +17,9 @@ function SponsorLayout() {
 		kind: "role",
 		role: AcademyRole.Sponsor,
 	});
-	if (!allowed) return <RouteFallback />;
+	if (!allowed) {
+		return <RouteFallback />;
+	}
 	return (
 		<div className="min-h-screen bg-background">
 			<RoleNav role={AcademyRole.Sponsor} />

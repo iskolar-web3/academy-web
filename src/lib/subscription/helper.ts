@@ -7,6 +7,8 @@ export function hasEntitlement(
 	subscription: Subscription | undefined,
 	key: Entitlement,
 ): boolean {
-	if (!subscription) return false;
+	if (!subscription) {
+		return false;
+	}
 	return planInfo(subscription.tier).entitlements.includes(key);
 }

@@ -53,7 +53,9 @@ export function useRouteGuard(mode: GuardMode): { allowed: boolean } {
 	}
 
 	useEffect(() => {
-		if (redirectTo) navigate({ to: redirectTo });
+		if (redirectTo) {
+			navigate({ to: redirectTo });
+		}
 	}, [redirectTo, navigate]);
 
 	return { allowed };

@@ -26,7 +26,9 @@ export function VaultAccessButton({
 		status === "approved",
 	);
 
-	if (!entitled) return null;
+	if (!entitled) {
+		return null;
+	}
 
 	if (status === "approved") {
 		return (

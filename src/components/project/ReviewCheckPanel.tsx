@@ -101,7 +101,7 @@ export function ReviewCheckPanel({
 						{title}
 					</div>
 					<div className="mt-1 text-[13px] text-content-soft">
-						{summary.pass} accepted, {summary.pending} awaiting review, {" "}
+						{summary.pass} accepted, {summary.pending} awaiting review,{" "}
 						{summary.attention} needs action
 					</div>
 				</div>
@@ -123,8 +123,8 @@ export function ReviewCheckPanel({
 				))}
 			</div>
 			<p className="mt-3 text-[11.5px] leading-relaxed text-content-faint">
-				These signals explain what is present in the submission. Final acceptance
-				still comes from Academy review.
+				These signals explain what is present in the submission. Final
+				acceptance still comes from Academy review.
 			</p>
 		</div>
 	);

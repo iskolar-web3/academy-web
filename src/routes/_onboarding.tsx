@@ -13,7 +13,9 @@ export const Route = createFileRoute("/_onboarding")({
 
 function OnboardingLayout() {
 	const { allowed } = useRouteGuard({ kind: "onboarding" });
-	if (!allowed) return <RouteFallback />;
+	if (!allowed) {
+		return <RouteFallback />;
+	}
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-surface px-6 py-16">
 			<div className="w-full">

@@ -44,7 +44,9 @@ function RoleSelect() {
 
 	// Role already confirmed (e.g. back button) — this step is done, move on.
 	useEffect(() => {
-		if (user?.roleConfirmed) navigate({ to: "/basic-info" });
+		if (user?.roleConfirmed) {
+			navigate({ to: "/basic-info" });
+		}
 	}, [user?.roleConfirmed, navigate]);
 
 	const onRole = (role: RoleCard["role"]) => {
@@ -82,9 +84,7 @@ function RoleSelect() {
 						onClick={() => onRole(r.role)}
 						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-[border-color,background-color] hover:border-action hover:bg-surface-tint/60 disabled:cursor-not-allowed disabled:opacity-60"
 					>
-						<span
-							className="flex size-[52px] flex-none items-center justify-center text-[20px] text-action"
-						>
+						<span className="flex size-[52px] flex-none items-center justify-center text-[20px] text-action">
 							{r.initial}
 						</span>
 						<div className="flex-1">

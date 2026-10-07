@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "#/lib/toast";
 import { useGrantBadge } from "#/hooks/badge/useGrantBadge";
 import { useModerationProjects } from "#/hooks/review/useReviewQueue";
 import {
@@ -7,6 +6,7 @@ import {
 	BADGE_KINDS,
 	type BadgeKind,
 } from "#/lib/badge/model";
+import { toast } from "#/lib/toast";
 import { validateThesisFile } from "#/utils/fileHandling";
 
 /**
@@ -25,7 +25,9 @@ export function BadgeGrantForm() {
 	const [fileError, setFileError] = useState<string | null>(null);
 
 	const onPick = (picked: File | undefined) => {
-		if (!picked) return;
+		if (!picked) {
+			return;
+		}
 		const err = validateThesisFile(picked);
 		if (err) {
 			setFileError(err);

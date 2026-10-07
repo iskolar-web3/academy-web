@@ -1,6 +1,5 @@
 import { Check, Github, MonitorPlay, Play, X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "#/lib/toast";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
 import {
@@ -19,6 +18,7 @@ import {
 } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
+import { toast } from "#/lib/toast";
 
 /**
  * Admin review modal — a 1:1 port of the design-template ADMIN REVIEW MODAL: a 680px sheet
@@ -269,7 +269,9 @@ export function ReviewDecisionModal({
 								value={note}
 								onChange={(e) => {
 									setNote(e.target.value);
-									if (noteError) setNoteError(false);
+									if (noteError) {
+										setNoteError(false);
+									}
 								}}
 								rows={3}
 								placeholder="Tell the student exactly what to fix before resubmitting."

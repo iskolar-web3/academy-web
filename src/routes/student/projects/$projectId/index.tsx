@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "#/lib/toast";
 import { ProjectDetailView } from "#/components/project/ProjectDetailView";
 import { ProjectStatusBadge } from "#/components/project/ProjectStatusBadge";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useProject } from "#/hooks/project/useProject";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
 import { nextActions } from "#/lib/project/helper";
+import { toast } from "#/lib/toast";
 
 /**
  * Owner project view (STU-09/10/11) — the design-template PROJECT DETAIL (`ProjectDetailView`)

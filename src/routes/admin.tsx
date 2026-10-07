@@ -14,7 +14,9 @@ export const Route = createFileRoute("/admin")({
 
 function AdminLayout() {
 	const { allowed } = useRouteGuard({ kind: "role", role: AcademyRole.Admin });
-	if (!allowed) return <RouteFallback />;
+	if (!allowed) {
+		return <RouteFallback />;
+	}
 	return (
 		<div className="min-h-screen bg-background">
 			<RoleNav role={AcademyRole.Admin} />

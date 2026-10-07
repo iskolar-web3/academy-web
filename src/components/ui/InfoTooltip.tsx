@@ -12,7 +12,9 @@ export function InfoTooltip({
 	portal?: boolean;
 }) {
 	const tooltipId = useId();
-	if (portal) return <DirectoryTooltip text={text} label={label} />;
+	if (portal) {
+		return <DirectoryTooltip text={text} label={label} />;
+	}
 	return (
 		<span className="group relative inline-flex align-middle">
 			<button

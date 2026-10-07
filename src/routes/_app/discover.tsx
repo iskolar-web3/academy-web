@@ -88,9 +88,13 @@ function Discover() {
 	const projects = gallery.data ?? [];
 
 	useEffect(() => {
-		if (!filterOpen) return;
+		if (!filterOpen) {
+			return;
+		}
 		const onKey = (e: KeyboardEvent) => {
-			if (e.key === "Escape") setFilterOpen(false);
+			if (e.key === "Escape") {
+				setFilterOpen(false);
+			}
 		};
 		document.addEventListener("keydown", onKey);
 		return () => document.removeEventListener("keydown", onKey);

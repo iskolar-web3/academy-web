@@ -57,7 +57,9 @@ function NotificationsPage() {
 							key={n.id}
 							notification={n}
 							onActivate={() => {
-								if (n.unread) read.mutate(n.id);
+								if (n.unread) {
+									read.mutate(n.id);
+								}
 							}}
 						/>
 					))
