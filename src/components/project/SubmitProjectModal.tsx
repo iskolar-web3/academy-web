@@ -162,8 +162,7 @@ export function SubmitProjectModal({
 		project.status === "published" &&
 		triggersReReview(project, formToProjectInput(getValues()));
 
-	// Submission gate — matches the fields the template wizard collects (a live demo and a
-	// public repo are required; the demo video is optional; ownership + consent declared).
+	// Submission gate — the demo is required; repository and video are optional.
 	const gateIssues: string[] = [];
 	if (!title || title.trim().length < 2) {
 		gateIssues.push("Add a project title");
@@ -176,9 +175,6 @@ export function SubmitProjectModal({
 	}
 	if (!isValidUrl(links?.demo ?? "")) {
 		gateIssues.push("Add a valid live demo URL");
-	}
-	if (!isValidUrl(links?.repo ?? "")) {
-		gateIssues.push("Add a valid public repository URL");
 	}
 	if (!ownershipDeclared) {
 		gateIssues.push("Confirm the ownership declaration");
@@ -222,9 +218,6 @@ export function SubmitProjectModal({
 		].filter((issue): issue is string => issue !== null),
 		[
 			!isValidUrl(links?.demo ?? "") ? "Add a valid live demo URL" : null,
-			!isValidUrl(links?.repo ?? "")
-				? "Add a valid public repository URL"
-				: null,
 		].filter((issue): issue is string => issue !== null),
 		teamConsentIssues,
 		[
@@ -460,7 +453,7 @@ export function SubmitProjectModal({
 						<div>
 							<p className={helperCls}>
 								Every published project must clear the MVP evidence track. Add a
-								live demo and a public repo; slow demos should be warmed up and
+								live demo; a public repo is optional. Slow demos should be warmed up and
 								probed before any return decision.
 							</p>
 							<div className="flex flex-col gap-3.5">
@@ -487,7 +480,7 @@ export function SubmitProjectModal({
 									] as const
 								).map(({ key, Icon, ph, hint }) => {
 									const value = links?.[key] ?? "";
-									const required = key !== "video";
+											const required = key === "demo";
 									return (
 										<div key={key} className="flex flex-col gap-1">
 											<label

@@ -86,12 +86,12 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 			label: "Repository access",
 			status: hasRepo
 				? acceptedOrQueued(project, project.links.repo)
-				: "attention",
+				: "pending",
 			evidence: hasRepo
 				? githubParts.length >= 2
 					? "GitHub repository captured; Academy review will verify access."
 					: "Repository URL is present; public access still needs review."
-				: "Add a public repository URL.",
+				: "No repository URL provided; repository access is optional.",
 		},
 		{
 			id: "repo-meta",
@@ -101,13 +101,13 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 					? "pass"
 					: hasRepo && githubParts.length >= 2
 						? "pending"
-						: "attention",
+					: "pending",
 			evidence:
 				project.status === "published"
 					? "Accepted during Academy review; README and license automation is next."
 					: hasRepo && githubParts.length >= 2
 						? "A public GitHub URL is ready for README and license review."
-						: "Use a public repo link so metadata can be checked.",
+						: "Repository metadata checks are skipped when no URL is provided.",
 		},
 		{
 			id: "purpose",
