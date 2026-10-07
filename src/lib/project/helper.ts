@@ -204,14 +204,13 @@ export function triggersReReview(
 	);
 }
 
-// The MVP submission gate (STU-04/05) lives in `components/project/SubmitProjectModal`
-// (the single create + edit surface): a live demo and public repo are required, the demo
-// video is optional, plus the ownership + consent declarations — matching the design-template
-// SUBMIT WIZARD. The server re-validates it on submit (never trust the client gate).
+// The MVP submission gate lives in `components/project/SubmitProjectModal` (the single
+// create + edit surface). Demo, repository, and video URLs are optional; ownership and
+// consent declarations remain required. The server re-validates the gate on submit.
 
 /**
- * A thesis/capstone claims academic credit; a startup claims investor-facing legitimacy —
- * both need a supporting document before publishing. An idea/prototype doesn't (unchanged).
+ * A thesis/capstone or startup may attach a supporting document. An idea/prototype does not
+ * use this upload field.
  */
 export function requiresDocumentUpload(type: ProjectType): boolean {
 	return type === "thesis_capstone" || type === "startup";

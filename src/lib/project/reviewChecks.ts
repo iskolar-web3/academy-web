@@ -132,12 +132,12 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 			status: needsDocument
 				? project.ownership.thesisPaperName
 					? "pass"
-					: "attention"
+					: "pass"
 				: "pass",
 			evidence: needsDocument
 				? project.ownership.thesisPaperName
 					? `${project.ownership.thesisPaperName} is attached.`
-					: "Attach the required paper or pitch deck."
+					: `No optional ${project.type === "startup" ? "pitch deck" : "academic paper"} attached.`
 				: "Not required for this project type.",
 		},
 		{

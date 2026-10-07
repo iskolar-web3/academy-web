@@ -205,9 +205,6 @@ export function SubmitProjectModal({
 			: [];
 	})();
 	gateIssues.push(...teamConsentIssues);
-	if (requiresDocumentUpload(type) && !thesisPaperName) {
-		gateIssues.push(`Upload the ${documentLabel(type)}`);
-	}
 
 	// Per-step slice of the gate — "Continue" used to advance unconditionally
 	// regardless of that step's own required fields (the reported bug: MVP step's
@@ -231,9 +228,6 @@ export function SubmitProjectModal({
 		[
 			!ownershipDeclared ? "Confirm the ownership declaration" : null,
 			!consented ? "Consent to review & public showcase" : null,
-			requiresDocumentUpload(type) && !thesisPaperName
-				? `Upload the ${documentLabel(type)}`
-				: null,
 		].filter((issue): issue is string => issue !== null),
 		gateIssues,
 	];
@@ -488,7 +482,6 @@ export function SubmitProjectModal({
 									] as const
 								).map(({ key, Icon, ph, hint }) => {
 									const value = links?.[key] ?? "";
-									const required = false;
 									return (
 										<div key={key} className="flex flex-col gap-1">
 											<label
@@ -496,16 +489,9 @@ export function SubmitProjectModal({
 												className="pl-11 text-[13px] text-content-muted"
 											>
 												{ph}
-												{!required ? (
-													<span className="ml-1 text-content-faint">
-														(optional)
-													</span>
-												) : null}
-												{required ? (
-													<span className="ml-1 text-danger" aria-hidden="true">
-														*
-													</span>
-												) : null}
+												<span className="ml-1 text-content-faint">
+													(optional)
+												</span>
 											</label>
 											<div className="flex items-center gap-3">
 												<span className="flex w-8 flex-none justify-center text-action">
@@ -677,8 +663,8 @@ export function SubmitProjectModal({
 											<div className="text-[14px] text-content-heading">
 												{thesisPaperName ??
 													`${documentLabel(type).charAt(0).toUpperCase()}${documentLabel(type).slice(1)} (PDF)`}
-												<span className="ml-1 text-danger" aria-hidden="true">
-													*
+												<span className="ml-1 text-content-faint">
+													(optional)
 												</span>
 												{editing &&
 												project.ownership.thesisPaperName &&
@@ -694,8 +680,8 @@ export function SubmitProjectModal({
 												) : null}
 											</div>
 											<div className="mt-0.5 font-mono text-[11.5px] text-content-faint">
-												Required for {documentLabel(type)}, stored in the Lumen
-												document vault
+												Optional {documentLabel(type)} PDF, stored in the Lumen
+												 document vault
 											</div>
 											{fileError ? (
 												<div className="mt-1 text-[11.5px] text-danger">
