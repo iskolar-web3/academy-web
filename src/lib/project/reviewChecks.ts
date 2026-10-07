@@ -74,12 +74,12 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 			label: "Demo liveness",
 			status: hasDemo
 				? acceptedOrQueued(project, project.links.demo)
-				: "attention",
+				: "pending",
 			evidence: hasDemo
 				? project.status === "published"
 					? "Accepted during Academy review."
 					: "URL captured; Academy review will verify the running demo."
-				: "Add a working live demo URL before review.",
+				: "No live demo URL provided; demo verification is optional.",
 		},
 		{
 			id: "repo",

@@ -162,7 +162,7 @@ export function SubmitProjectModal({
 		project.status === "published" &&
 		triggersReReview(project, formToProjectInput(getValues()));
 
-	// Submission gate — the demo is required; repository and video are optional.
+	// Demo, repository, and video URLs are optional; ownership + consent are declared.
 	const gateIssues: string[] = [];
 	if (!title || title.trim().length < 2) {
 		gateIssues.push("Add a project title");
@@ -173,8 +173,11 @@ export function SubmitProjectModal({
 	if ((pitch ?? "").trim().length < 8) {
 		gateIssues.push("Add a one-line pitch");
 	}
-	if (!isValidUrl(links?.demo ?? "")) {
+	if (links?.demo && !isValidUrl(links.demo)) {
 		gateIssues.push("Add a valid live demo URL");
+	}
+	if (links?.repo && !isValidUrl(links.repo)) {
+		gateIssues.push("Add a valid public repository URL");
 	}
 	if (!ownershipDeclared) {
 		gateIssues.push("Confirm the ownership declaration");
@@ -217,7 +220,12 @@ export function SubmitProjectModal({
 			(pitch ?? "").trim().length < 8 ? "Add a one-line pitch" : null,
 		].filter((issue): issue is string => issue !== null),
 		[
-			!isValidUrl(links?.demo ?? "") ? "Add a valid live demo URL" : null,
+			links?.demo && !isValidUrl(links.demo)
+				? "Add a valid live demo URL"
+				: null,
+			links?.repo && !isValidUrl(links.repo)
+				? "Add a valid public repository URL"
+				: null,
 		].filter((issue): issue is string => issue !== null),
 		teamConsentIssues,
 		[
@@ -452,8 +460,8 @@ export function SubmitProjectModal({
 					{step === 1 ? (
 						<div>
 							<p className={helperCls}>
-								Every published project must clear the MVP evidence track. Add a
-								live demo; a public repo is optional. Slow demos should be warmed up and
+								Every published project must clear the MVP evidence track. Live demo
+								and public repository URLs are optional. Slow demos should be warmed up and
 								probed before any return decision.
 							</p>
 							<div className="flex flex-col gap-3.5">
@@ -480,7 +488,7 @@ export function SubmitProjectModal({
 									] as const
 								).map(({ key, Icon, ph, hint }) => {
 									const value = links?.[key] ?? "";
-											const required = key === "demo";
+									const required = false;
 									return (
 										<div key={key} className="flex flex-col gap-1">
 											<label
@@ -488,6 +496,11 @@ export function SubmitProjectModal({
 												className="pl-11 text-[13px] text-content-muted"
 											>
 												{ph}
+												{!required ? (
+													<span className="ml-1 text-content-faint">
+														(optional)
+													</span>
+												) : null}
 												{required ? (
 													<span className="ml-1 text-danger" aria-hidden="true">
 														*
