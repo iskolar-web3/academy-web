@@ -1,11 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
 import { type ApiEnvelope, apiFetch } from "#/lib/api";
 import { type Project, projectListSchema } from "#/lib/project/model";
-import type { ModerationInput, ReviewDecisionInput } from "#/lib/review/model";
 import {
-	projectVerificationListSchema,
 	type ProjectVerificationCheck,
+	projectVerificationListSchema,
 } from "#/lib/project/verification";
+import type { ModerationInput, ReviewDecisionInput } from "#/lib/review/model";
 
 /**
  * Review API — calls the `review` slice on academy-server (contract in that repo's

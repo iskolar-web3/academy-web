@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "#/lib/toast";
 import { ProjectPipeline } from "#/components/project/ProjectPipeline";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
@@ -15,6 +14,7 @@ import {
 	statusMeta,
 } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
+import { toast } from "#/lib/toast";
 
 /**
  * Owned-project card for the student dashboard — a 1:1 port of the design-template's

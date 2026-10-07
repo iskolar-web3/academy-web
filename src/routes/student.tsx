@@ -18,7 +18,9 @@ function StudentLayout() {
 		kind: "role",
 		role: AcademyRole.Student,
 	});
-	if (!allowed) return <RouteFallback />;
+	if (!allowed) {
+		return <RouteFallback />;
+	}
 	return (
 		<div className="min-h-screen bg-background">
 			<RoleNav role={AcademyRole.Student} />

@@ -14,7 +14,9 @@ export const Route = createFileRoute("/_app")({
 
 function AppShell() {
 	const { allowed } = useRouteGuard({ kind: "signed-in" });
-	if (!allowed) return <RouteFallback />;
+	if (!allowed) {
+		return <RouteFallback />;
+	}
 	return (
 		<div className="min-h-screen bg-background">
 			<RoleNav />

@@ -19,7 +19,9 @@ export const projectVerificationListSchema = z.array(
 export function verificationIsActive(
 	checks: ProjectVerificationCheck[] | undefined,
 ): boolean {
-	if (!checks?.length) return false;
+	if (!checks?.length) {
+		return false;
+	}
 	return (
 		checks.some((check) => check.status === "running") ||
 		checks.every((check) => check.status === "pending")

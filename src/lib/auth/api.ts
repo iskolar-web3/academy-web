@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { BACKEND_URL, type ApiEnvelope, apiFetch } from "#/lib/api";
+import { type ApiEnvelope, apiFetch, BACKEND_URL } from "#/lib/api";
 import { type AcademyUser, academyUserSchema } from "#/lib/auth/model";
 
 /**
@@ -37,7 +37,9 @@ export function validateSessionQuery() {
  */
 export function ssoLoginUrl(redirectTo = "/"): string {
 	const base = import.meta.env.VITE_ISKOLAR_SSO_URL;
-	if (!base) return "";
+	if (!base) {
+		return "";
+	}
 	return `${base}?redirect=${encodeURIComponent(redirectTo)}`;
 }
 

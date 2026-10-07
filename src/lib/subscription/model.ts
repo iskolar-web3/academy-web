@@ -7,10 +7,7 @@ import { z } from "zod";
 export const PLAN_KEYS = ["scout", "alpha", "venture_partner"] as const;
 export type PlanKey = (typeof PLAN_KEYS)[number];
 
-export const ENTITLEMENTS = [
-	"vaultAccess",
-	"watchlists",
-] as const;
+export const ENTITLEMENTS = ["vaultAccess", "watchlists"] as const;
 export type Entitlement = (typeof ENTITLEMENTS)[number];
 
 export interface PlanInfo {

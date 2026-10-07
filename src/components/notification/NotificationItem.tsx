@@ -41,7 +41,9 @@ const TONE_CLS: Record<NotificationTone, string> = {
 };
 
 function iconOf(n: AcademyNotification): LucideIcon {
-	if (n.type === "review_decision" && n.tone === "danger") return AlertCircle;
+	if (n.type === "review_decision" && n.tone === "danger") {
+		return AlertCircle;
+	}
 	return ICONS[n.type];
 }
 

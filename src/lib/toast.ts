@@ -17,12 +17,18 @@ let cleanupTimer: ReturnType<typeof setTimeout> | null = null;
 const listeners = new Set<() => void>();
 
 function notify() {
-	for (const listener of listeners) listener();
+	for (const listener of listeners) {
+		listener();
+	}
 }
 
 function show(type: ToastType, title: string, options?: ToastOptions) {
-	if (dismissTimer) clearTimeout(dismissTimer);
-	if (cleanupTimer) clearTimeout(cleanupTimer);
+	if (dismissTimer) {
+		clearTimeout(dismissTimer);
+	}
+	if (cleanupTimer) {
+		clearTimeout(cleanupTimer);
+	}
 
 	const id = `toast-${Date.now()}-${Math.random()}`;
 	state = {
@@ -36,11 +42,15 @@ function show(type: ToastType, title: string, options?: ToastOptions) {
 
 	dismissTimer = setTimeout(
 		() => {
-			if (state?.id !== id) return;
+			if (state?.id !== id) {
+				return;
+			}
 			state = { ...state, visible: false };
 			notify();
 			cleanupTimer = setTimeout(() => {
-				if (state?.id !== id) return;
+				if (state?.id !== id) {
+					return;
+				}
 				state = null;
 				notify();
 			}, 400);

@@ -27,7 +27,9 @@ export const Route = createFileRoute("/_public/")({
 function Landing() {
 	// Client-only (effect) and skipped for reduced-motion users; torn down on route leave.
 	useEffect(() => {
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			return;
+		}
 		const lenis = new Lenis({ autoRaf: true });
 		return () => lenis.destroy();
 	}, []);

@@ -12,7 +12,9 @@ export function formatPeso(n: number): string {
 }
 
 export function fundingPct(raised: number, target: number): number {
-	if (target <= 0) return 0;
+	if (target <= 0) {
+		return 0;
+	}
 	return Math.min(100, Math.round((raised / target) * 100));
 }
 

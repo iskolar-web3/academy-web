@@ -47,10 +47,11 @@ export async function searchPlaces(
 		`${import.meta.env.VITE_TBI_GEOCODER_URL || "https://nominatim.openstreetmap.org/search"}?${params}`,
 		{ signal },
 	);
-	if (!response.ok)
+	if (!response.ok) {
 		throw new Error(
 			"Place search is unavailable. Choose a directory city below or try again.",
 		);
+	}
 	return resultsSchema.parse(await response.json()).map((place) => ({
 		id: String(place.place_id),
 		label: place.display_name,

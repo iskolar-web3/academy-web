@@ -209,7 +209,9 @@ function BirthDateField({
 						mode="single"
 						selected={selected}
 						onSelect={(date) => {
-							if (!date) return;
+							if (!date) {
+								return;
+							}
 							onChange(date.toISOString().slice(0, 10));
 							setOpen(false);
 						}}
@@ -452,9 +454,7 @@ function SponsorTypeSelect({
 						onClick={() => onSelect(c.type)}
 						className="flex w-full items-center gap-4 rounded-2xl border border-line bg-surface-card px-[22px] py-5 text-left transition-[border-color,background-color] hover:border-action hover:bg-surface-tint/60"
 					>
-						<span
-							className="flex size-[52px] flex-none items-center justify-center text-[20px] text-action"
-						>
+						<span className="flex size-[52px] flex-none items-center justify-center text-[20px] text-action">
 							{c.initial}
 						</span>
 						<div className="flex-1">
@@ -801,7 +801,9 @@ function BasicInfo() {
 
 	// Role not confirmed yet — this step comes after role-select, not before.
 	useEffect(() => {
-		if (user && !user.roleConfirmed) navigate({ to: "/role-select" });
+		if (user && !user.roleConfirmed) {
+			navigate({ to: "/role-select" });
+		}
 	}, [user, navigate]);
 
 	const onDone = () => {
@@ -813,7 +815,11 @@ function BasicInfo() {
 		});
 	};
 
-	if (role === AcademyRole.Sponsor) return <SponsorForm onDone={onDone} />;
-	if (role === AcademyRole.Admin) return <AdminForm onDone={onDone} />;
+	if (role === AcademyRole.Sponsor) {
+		return <SponsorForm onDone={onDone} />;
+	}
+	if (role === AcademyRole.Admin) {
+		return <AdminForm onDone={onDone} />;
+	}
 	return <StudentForm onDone={onDone} />;
 }

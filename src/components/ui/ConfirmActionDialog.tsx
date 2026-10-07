@@ -43,7 +43,10 @@ export function ConfirmActionDialog({
 				</DialogDescription>
 				{reasonLabel ? (
 					<label className="mt-5 block text-[14px] text-content-heading">
-						{reasonLabel} <span className="text-danger" aria-hidden="true">*</span>
+						{reasonLabel}{" "}
+						<span className="text-danger" aria-hidden="true">
+							*
+						</span>
 						<textarea
 							value={reason}
 							onChange={(event) => setReason(event.target.value)}

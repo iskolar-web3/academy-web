@@ -1,9 +1,9 @@
-import { toast } from "#/lib/toast";
 import { useMyProfile } from "#/hooks/account/useProfile";
 import {
 	useExpressInterest,
 	useMyInterests,
 } from "#/hooks/interest/useInterest";
+import { toast } from "#/lib/toast";
 import { cn } from "#/lib/utils";
 
 /**
@@ -21,7 +21,9 @@ export function InterestButton({ projectId }: { projectId: string }) {
 	const sent = (interests ?? []).includes(projectId);
 
 	const onClick = () => {
-		if (sent || express.isPending) return;
+		if (sent || express.isPending) {
+			return;
+		}
 		if (!profile?.org?.trim()) {
 			toast.error(
 				"Add your organization to your sponsor profile before expressing interest.",

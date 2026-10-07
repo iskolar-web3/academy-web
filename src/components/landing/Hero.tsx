@@ -74,7 +74,9 @@ export function Hero() {
 	const shiftBottomY = useTransform(my, [-0.5, 0.5], [10, -10]);
 
 	function onMove(e: React.MouseEvent<HTMLElement>) {
-		if (reduce) return;
+		if (reduce) {
+			return;
+		}
 		mxRaw.set(e.clientX / window.innerWidth - 0.5);
 		myRaw.set(e.clientY / window.innerHeight - 0.5);
 	}

@@ -69,8 +69,8 @@ export function VaultAccessRequests({
 									{r.sponsorName}
 								</div>
 								<div className="font-mono text-[11.5px] text-content-faint">
-									{r.sponsorKind} wants {r.projectTitle}, {" "}
-									{r.requestedDaysAgo}d ago
+									{r.sponsorKind} wants {r.projectTitle}, {r.requestedDaysAgo}d
+									ago
 								</div>
 							</div>
 						</div>

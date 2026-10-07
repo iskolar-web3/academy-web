@@ -32,7 +32,9 @@ function initialsOf(name: string): string {
 }
 
 function formatRaised(raised: number): string {
-	if (raised >= 1000) return `₱${Math.round(raised / 1000)}k`;
+	if (raised >= 1000) {
+		return `₱${Math.round(raised / 1000)}k`;
+	}
 	return `₱${raised.toLocaleString("en-US")}`;
 }
 
@@ -63,14 +65,18 @@ function MyDetailsPanel({ own }: { own: MyAccountProfile }) {
 	if (own.birthDate) {
 		rows.push({ label: "Birth date", value: formatBirthDate(own.birthDate) });
 	}
-	if (own.phone) rows.push({ label: "Phone", value: own.phone });
+	if (own.phone) {
+		rows.push({ label: "Phone", value: own.phone });
+	}
 	if (own.educationLevel) {
 		rows.push({
 			label: "Education level",
 			value: EDUCATION_LEVEL_LABELS[own.educationLevel],
 		});
 	}
-	if (rows.length === 0) return null;
+	if (rows.length === 0) {
+		return null;
+	}
 
 	return (
 		<div className={panelCls}>

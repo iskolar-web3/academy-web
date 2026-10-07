@@ -48,7 +48,9 @@ function acceptedOrQueued(
 function githubRepoParts(repo: string): string[] {
 	try {
 		const url = new URL(repo);
-		if (!url.hostname.includes("github.com")) return [];
+		if (!url.hostname.includes("github.com")) {
+			return [];
+		}
 		return url.pathname.split("/").filter(Boolean);
 	} catch {
 		return [];

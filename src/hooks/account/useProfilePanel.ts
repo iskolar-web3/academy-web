@@ -16,7 +16,9 @@ function initialsOf(name: string): string {
  */
 export function useProfilePanel(): StudentProfileCardModel | null {
 	const { data: profile } = useMyProfile();
-	if (!profile) return null;
+	if (!profile) {
+		return null;
+	}
 
 	return {
 		userId: profile.academyUserId,

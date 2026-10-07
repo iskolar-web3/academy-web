@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "#/lib/toast";
 import { GrantEvidenceChips } from "#/components/grant/GrantReviewPanel";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
 import { useGrantMutations } from "#/hooks/grant/useGrantMutations";
@@ -8,6 +7,7 @@ import { formatPeso } from "#/lib/grant/helper";
 import type { GrantRequest } from "#/lib/grant/model";
 import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
+import { toast } from "#/lib/toast";
 
 /**
  * Moderation (ADM-05/ADM-02) — a 1:1 port of the design-template ADMIN › MODERATION: a
@@ -49,7 +49,9 @@ export function ModerationPanel({
 		);
 
 	const onCancelGrant = (reason: string) => {
-		if (!grantToCancel) return;
+		if (!grantToCancel) {
+			return;
+		}
 		cancel.mutate(
 			{ id: grantToCancel.id, reason },
 			{
@@ -98,7 +100,7 @@ export function ModerationPanel({
 									{p.title}
 								</div>
 								<div className="font-mono text-[12px] text-content-faint">
-									{p.school || "iSkolar Academy"}, {" "}
+									{p.school || "iSkolar Academy"},{" "}
 									{p.category || "Uncategorized"}
 								</div>
 							</div>

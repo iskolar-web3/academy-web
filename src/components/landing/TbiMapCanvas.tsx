@@ -60,7 +60,9 @@ export function TbiMapCanvas({
 				// The cluster plugin's browser build extends the global Leaflet instance.
 				(window as Window & { L?: typeof Leaflet }).L = L;
 				await import("leaflet.markercluster");
-				if (cancelled || !container.current) return;
+				if (cancelled || !container.current) {
+					return;
+				}
 				map = L.map(container.current, {
 					scrollWheelZoom: false,
 					zoomSnap: 0.25,
@@ -78,14 +80,17 @@ export function TbiMapCanvas({
 					},
 				).addTo(map);
 				tiles.on("tileerror", () => {
-					if (!cancelled) setTileError(true);
+					if (!cancelled) {
+						setTileError(true);
+					}
 				});
 				tiles.on("load", () => {
 					if (
 						!cancelled &&
 						container.current?.querySelector(".leaflet-tile-loaded")
-					)
+					) {
 						setTileError(false);
+					}
 				});
 				const clusters = L.markerClusterGroup({
 					maxClusterRadius: 45,
@@ -134,11 +139,12 @@ export function TbiMapCanvas({
 				engine.current = { L, map, clusters, markers };
 				observer = new ResizeObserver(() => {
 					map?.invalidateSize();
-					if (countryView.current)
+					if (countryView.current) {
 						map?.fitBounds(COUNTRY_BOUNDS, {
 							padding: [20, 20],
 							animate: false,
 						});
+					}
 				});
 				observer.observe(container.current);
 				setReady(true);
@@ -160,14 +166,19 @@ export function TbiMapCanvas({
 	}, [onSelect, attempt, tbis]);
 
 	useEffect(() => {
-		if (!ready || !engine.current) return;
+		if (!ready || !engine.current) {
+			return;
+		}
 		const { L, markers } = engine.current;
-		for (const [id, marker] of markers)
+		for (const [id, marker] of markers) {
 			marker.setIcon(markerIcon(L, id === selectedId || id === nearestId));
+		}
 	}, [ready, selectedId, nearestId]);
 
 	useEffect(() => {
-		if (!ready || !origin || !engine.current) return;
+		if (!ready || !origin || !engine.current) {
+			return;
+		}
 		countryView.current = false;
 		const { L, map } = engine.current;
 		const layers = L.layerGroup().addTo(map);
@@ -181,13 +192,14 @@ export function TbiMapCanvas({
 		})
 			.bindTooltip(origin.label)
 			.addTo(layers);
-		if (origin.kind === "device" && origin.accuracy)
+		if (origin.kind === "device" && origin.accuracy) {
 			L.circle([origin.lat, origin.lng], {
 				radius: origin.accuracy,
 				color: "#607ef2",
 				weight: 1,
 				fillOpacity: 0.08,
 			}).addTo(layers);
+		}
 		const nearest = tbis.find((tbi) => tbi.id === nearestId);
 		if (nearest) {
 			// A separate halo keeps the nearest visible even inside a dense cluster.
@@ -213,19 +225,27 @@ export function TbiMapCanvas({
 	}, [ready, origin, nearestId, tbis]);
 
 	useEffect(() => {
-		if (!ready || !focus || !engine.current) return;
+		if (!ready || !focus || !engine.current) {
+			return;
+		}
 		countryView.current = false;
 		const { map, clusters, markers } = engine.current;
 		const marker = markers.get(focus.id);
-		if (!marker) return;
+		if (!marker) {
+			return;
+		}
 		map.setView(marker.getLatLng(), 13, { animate: false });
 		clusters.zoomToShowLayer(marker, () => {
-			if (engine.current?.map === map) marker.openPopup();
+			if (engine.current?.map === map) {
+				marker.openPopup();
+			}
 		});
 	}, [ready, focus]);
 
 	useEffect(() => {
-		if (!ready || reset === 0 || !engine.current) return;
+		if (!ready || reset === 0 || !engine.current) {
+			return;
+		}
 		countryView.current = true;
 		engine.current.map.closePopup();
 		engine.current.map.fitBounds(COUNTRY_BOUNDS, {

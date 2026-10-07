@@ -14,9 +14,15 @@ import {
 /** MVP-link summary line; missing a required demo/repo turns it into a red warning. */
 function linkSummary(p: Project): { label: string; danger: boolean } {
 	const present: string[] = [];
-	if (p.links.demo) present.push("Live demo");
-	if (p.links.repo) present.push("Repository");
-	if (p.links.video) present.push("Demo video");
+	if (p.links.demo) {
+		present.push("Live demo");
+	}
+	if (p.links.repo) {
+		present.push("Repository");
+	}
+	if (p.links.video) {
+		present.push("Demo video");
+	}
 	const missing = !p.links.demo || !p.links.repo;
 	return {
 		label: present.length ? present.join(", ") : "No MVP links",
@@ -85,11 +91,11 @@ export function ReviewQueuePanel({
 											{links.label}
 										</div>
 										<div className="mt-3 flex flex-wrap gap-1.5">
-							<span className="status-pill status-pill--success text-[10.5px]">
-								{checkSummary.pass} accepted
-							</span>
-							<span className="status-pill status-pill--info text-[10.5px]">
-								{checkSummary.pending} awaiting review
+											<span className="status-pill status-pill--success text-[10.5px]">
+												{checkSummary.pass} accepted
+											</span>
+											<span className="status-pill status-pill--info text-[10.5px]">
+												{checkSummary.pending} awaiting review
 											</span>
 											{checkSummary.attention > 0 ? (
 												<span className="status-pill status-pill--warning text-[10.5px]">

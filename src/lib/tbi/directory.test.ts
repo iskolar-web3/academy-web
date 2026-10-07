@@ -17,7 +17,9 @@ describe("TBI distance and directory", () => {
 	});
 	it("ranks the full directory independently of display filters", () => {
 		const cebu = TBIS.find((tbi) => tbi.id === "up-cebu");
-		if (!cebu) throw new Error("Missing Cebu TBI");
+		if (!cebu) {
+			throw new Error("Missing Cebu TBI");
+		}
 		const ranked = rankTbis(cebu);
 		expect(ranked[0].tbi.id).toBe("up-cebu");
 		expect(ranked[0].distance).toBe(0);

@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "#/lib/toast";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import { useMyProfile } from "#/hooks/account/useProfile";
@@ -11,6 +10,7 @@ import { useGrantMutations } from "#/hooks/grant/useGrantMutations";
 import { emptyGrantFormValues, grantFormToInput } from "#/lib/grant/helper";
 import { type GrantFormValues, grantFormSchema } from "#/lib/grant/model";
 import { CATEGORIES } from "#/lib/project/model";
+import { toast } from "#/lib/toast";
 import { validateThesisFile } from "#/utils/fileHandling";
 
 const inputCls =
@@ -47,7 +47,9 @@ export function GrantForm() {
 	const ownershipDeclared = watch("ownershipDeclared");
 
 	const onPickFile = (picked: File | undefined) => {
-		if (!picked) return;
+		if (!picked) {
+			return;
+		}
 		const err = validateThesisFile(picked);
 		if (err) {
 			setFileError(err);

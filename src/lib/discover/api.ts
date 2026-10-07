@@ -20,11 +20,18 @@ export function publishedProjectsQuery(params: GalleryParams = {}) {
 		queryKey: ["discover", "projects", params] as const,
 		queryFn: async (): Promise<ShowcaseProject[]> => {
 			const search = new URLSearchParams();
-			if (params.q) search.set("q", params.q);
-			if (params.category && params.category !== "All")
+			if (params.q) {
+				search.set("q", params.q);
+			}
+			if (params.category && params.category !== "All") {
 				search.set("category", params.category);
-			if (params.sort) search.set("sort", params.sort);
-			if (params.owner) search.set("owner", params.owner);
+			}
+			if (params.sort) {
+				search.set("sort", params.sort);
+			}
+			if (params.owner) {
+				search.set("owner", params.owner);
+			}
 			const qs = search.toString();
 			const res = await apiFetch<ApiEnvelope<unknown>>(
 				`/discover/projects${qs ? `?${qs}` : ""}`,
