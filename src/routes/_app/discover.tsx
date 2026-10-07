@@ -5,9 +5,7 @@ import { StudentProfileCard } from "#/components/account/StudentProfileCard";
 import { DiscoverCard } from "#/components/discover/DiscoverCard";
 import { AppPageLayout } from "#/components/layout/AppPageLayout";
 import { useProfilePanel } from "#/hooks/account/useProfilePanel";
-import { useSession } from "#/hooks/auth/useSession";
 import { useProjectGallery } from "#/hooks/discover/useProjectGallery";
-import { AcademyRole } from "#/lib/auth/model";
 import { GALLERY_SORTS, type GallerySort } from "#/lib/discover/model";
 
 /**
@@ -56,7 +54,6 @@ const CATEGORIES = [
 ];
 
 function Discover() {
-	const { role } = useSession();
 	const panel = useProfilePanel();
 	const search = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
@@ -232,11 +229,7 @@ function Discover() {
 			) : (
 				<div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(258px,1fr))] sm:gap-[22px]">
 					{projects.map((project) => (
-						<DiscoverCard
-							key={project.id}
-							project={project}
-							canUpvote={role !== AcademyRole.Admin}
-						/>
+						<DiscoverCard key={project.id} project={project} />
 					))}
 				</div>
 			)}
