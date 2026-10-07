@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { projectCover } from "#/lib/project/helper";
 import { projectSchema } from "#/lib/project/model";
 import { VAULT_ACCESS_STATUSES } from "#/lib/vault/model";
 
@@ -38,12 +37,8 @@ export interface GalleryParams {
 export interface ProjectCardData {
 	id: string;
 	title: string;
-	category: string;
 	pitch: string;
 	school: string;
-	upvotes: number;
-	verified?: boolean;
-	cover: string;
 	imageUrl: string | null;
 }
 
@@ -52,12 +47,8 @@ export function toProjectCardData(p: ShowcaseProject): ProjectCardData {
 	return {
 		id: p.id,
 		title: p.title,
-		category: p.category || "Uncategorized",
 		pitch: p.pitch,
 		school: p.school || "iSkolar Academy",
-		upvotes: p.upvotes,
-		verified: p.verified,
-		cover: projectCover(p.hue),
 		imageUrl: p.imageUrl,
 	};
 }

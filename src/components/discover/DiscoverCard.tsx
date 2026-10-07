@@ -10,15 +10,15 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 			params={{ projectId: project.id }}
 			className="card-surface block min-w-0 overflow-hidden rounded-[15px] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-action hover:shadow-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
 		>
-			<div className="aspect-square w-full overflow-hidden bg-surface-card">
-				{project.imageUrl ? (
+			{project.imageUrl ? (
+				<div className="flex justify-center bg-surface-card px-4 pt-4">
 					<img
 						src={`${BACKEND_URL}${project.imageUrl}`}
 						alt={`${project.title} project image`}
-						className="size-full object-cover"
+						className="aspect-square w-full max-w-56 object-contain"
 					/>
-				) : null}
-			</div>
+				</div>
+			) : null}
 			<div className="p-4">
 				<h2
 					className="truncate text-[18px] leading-tight text-content-heading"

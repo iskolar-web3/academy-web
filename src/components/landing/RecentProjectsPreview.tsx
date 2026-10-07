@@ -36,49 +36,40 @@ export function RecentProjectsPreview() {
 					Recent projects could not be loaded. Please try again later.
 				</output>
 			) : cards.length > 0 ? (
-				<div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+				<div className="mt-10 grid justify-center gap-6 sm:grid-cols-[repeat(auto-fit,minmax(258px,340px))]">
 					{cards.map((project, i) => (
-						<Reveal key={project.id} delay={i * 0.08}>
-							<article className="card-surface flex h-full min-w-0 flex-col overflow-hidden">
-								<div
-									className="relative flex h-32 items-start p-4"
-									style={{ background: project.cover }}
+						<Reveal key={project.id} delay={i * 0.08} className="h-full">
+							<SignInPopover>
+								<button
+									type="button"
+									aria-label={`Sign in to explore ${project.title}`}
+									className="card-surface block h-full w-full min-w-0 overflow-hidden rounded-[15px] text-left transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-action hover:shadow-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
 								>
 									{project.imageUrl ? (
-										<img
-											src={`${BACKEND_URL}${project.imageUrl}`}
-											alt={`${project.title} project image`}
-											className="absolute inset-0 size-full object-cover"
-										/>
+										<div className="flex justify-center bg-surface-card px-4 pt-4">
+											<img
+												src={`${BACKEND_URL}${project.imageUrl}`}
+												alt={`${project.title} project image`}
+												className="aspect-square w-full max-w-56 object-contain"
+											/>
+										</div>
 									) : null}
-									<span className="chip relative z-10 bg-[rgba(17,24,39,0.32)] text-white">
-										{project.category}
-									</span>
-								</div>
-								<div className="flex flex-1 flex-col p-5">
-									<h3 className="mb-2 line-clamp-2 min-h-[3.5rem] break-words text-xl leading-tight text-foreground">
-										{project.title}
-									</h3>
-									<p className="mb-5 line-clamp-3 min-h-[4.5rem] flex-1 text-base leading-relaxed text-content-soft">
-										{project.pitch}
-									</p>
-									<div className="ruled-line mb-4" />
-									<div className="flex items-center justify-between gap-3">
-										<span className="min-w-0 truncate font-mono text-xs text-content-faint">
+									<div className="p-4">
+										<span
+											className="block truncate text-[18px] leading-tight text-content-heading"
+											title={project.title}
+										>
+											{project.title}
+										</span>
+										<span className="mt-1 block truncate text-[12px] text-content-faint">
 											{project.school}
 										</span>
-										<SignInPopover>
-											<button
-												type="button"
-												className="inline-flex min-h-11 shrink-0 items-center gap-1 text-sm text-action hover:underline"
-											>
-												Sign in to explore{" "}
-												<ArrowRight className="size-4" aria-hidden />
-											</button>
-										</SignInPopover>
+										<span className="mt-3 line-clamp-3 text-[14px] leading-normal text-content-soft">
+											{project.pitch}
+										</span>
 									</div>
-								</div>
-							</article>
+								</button>
+							</SignInPopover>
 						</Reveal>
 					))}
 				</div>
