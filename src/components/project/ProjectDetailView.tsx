@@ -118,8 +118,11 @@ export function ProjectDetailView({
 						<h2 className={sectionLabel}>
 							{project.isTeam ? "Team & contributions" : "Ownership"}
 						</h2>
+						<p className="mt-2 text-[13px] leading-snug text-content-strong">
+							Uploaded by <span className="text-content-heading">{project.ownerName}</span>
+						</p>
 						{project.isTeam && project.members.length > 0 ? (
-							<div className="mt-2 grid gap-2">
+							<div className="mt-3 grid gap-2">
 								{project.members.map((member) => (
 									<div key={member.id} className="flex min-w-0 items-center gap-2">
 										<span className="flex size-8 flex-none items-center justify-center rounded-[8px] bg-action text-[11px] text-white">
@@ -135,7 +138,7 @@ export function ProjectDetailView({
 								))}
 							</div>
 						) : (
-							<p className="mt-2 text-[13px] leading-snug text-content-strong">
+							<p className="mt-1 text-[13px] leading-snug text-content-strong">
 								Individual project
 								{project.ownership.declared ? " · Ownership declared" : ""}
 								{project.ownership.thesisPaperName ? (

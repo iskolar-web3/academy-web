@@ -72,6 +72,7 @@ function PublicProjectDetail() {
 							<UpvoteButton
 								size="lg"
 								count={project.upvotes}
+								showCount={false}
 								upvoted={project.upvotedByMe}
 								onToggle={() => toggle.mutate(project.id)}
 								title={`Upvote ${project.title}`}

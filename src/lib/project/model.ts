@@ -82,10 +82,11 @@ export interface Project {
 	returnedNote: string | null;
 	/** Deterministic "updated N days ago" (SSR-safe — no Date in render). */
 	updatedDays: number;
-	/** Display fields (server-owned): community upvotes, cover hue, owner's school. */
+	/** Display fields (server-owned): upvotes, cover hue, and uploader details. */
 	upvotes: number;
 	hue: number;
 	school: string;
+	ownerName: string;
 	/**
 	 * Verified Builder badge (P5, ADM-07) — additive, admin-granted, never gates anything.
 	 * Correction: earlier code stood this in with `status === "published"` (`ProjectDetailView`)
@@ -105,6 +106,7 @@ export type ProjectInput = Omit<
 	| "upvotes"
 	| "hue"
 	| "school"
+	| "ownerName"
 	| "verified"
 	| "imageUrl"
 >;
@@ -150,6 +152,7 @@ export const projectSchema = z.object({
 	upvotes: z.number(),
 	hue: z.number(),
 	school: z.string(),
+	ownerName: z.string().default("Project uploader"),
 	verified: z.boolean(),
 });
 
