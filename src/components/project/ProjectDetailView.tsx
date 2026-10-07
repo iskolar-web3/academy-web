@@ -3,43 +3,28 @@ import type { ReactNode } from "react";
 import { useProjectImageSrc } from "#/hooks/project/useProjectImageSrc";
 import { BACKEND_URL } from "#/lib/api";
 import { thesisPaperUrl } from "#/lib/project/api";
-import { projectCover } from "#/lib/project/helper";
 import type { Project } from "#/lib/project/model";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
-/**
- * Project detail — a 1:1 port of the design-template PROJECT DETAIL: a gradient cover
- * banner with category/type chips, a two-column body (pitch · purpose quote · tech · team
- * on the left; a side rail with the interact/manage card, MVP links, and the Venture Pitch
- * Vault on the right). Presentational + viewer-aware so it serves the owner (P1) and the
- * sponsor/public showcase view (P3) from one design.
- *
- * `viewer`:
- *  - `owner`             → the `manage` slot (status · returned note · lifecycle actions).
- *  - `sponsor`/`public`  → the `interact` slot (wired upvote + interest, composed by the
- *    route so this stays presentational).
- */
-
-function initialsOf(name: string): string {
-	const parts = name.split(/[^a-zA-Z0-9]+/).filter(Boolean);
-	return (
-		parts
-			.slice(0, 2)
-			.map((w) => w[0]?.toUpperCase() ?? "")
-			.join("") || "?"
-	);
-}
-
-const railCardCls =
-	"rounded-[14px] border border-line bg-surface-card p-[18px]";
-const eyebrowText =
-	"font-mono text-[11.5px] uppercase tracking-[0.2em] text-action/60";
+/** Shared project detail for owners and showcase viewers. */
+const sectionLabel = "font-mono text-[11px] uppercase tracking-[0.16em] text-content-faint";
 
 const MVP_LINKS = [
 	{ key: "demo", Icon: MonitorPlay, label: "Live demo" },
 	{ key: "repo", Icon: Code, label: "Repository" },
 	{ key: "video", Icon: Play, label: "Demo video" },
 ] as const;
+
+function initialsOf(name: string): string {
+	return (
+		name
+			.split(/[^a-zA-Z0-9]+/)
+			.filter(Boolean)
+			.slice(0, 2)
+			.map((part) => part[0]?.toUpperCase() ?? "")
+			.join("") || "?"
+	);
+}
 
 export function ProjectDetailView({
 	project,
@@ -50,7 +35,6 @@ export function ProjectDetailView({
 	project: Project;
 	viewer: "owner" | "sponsor" | "public" | "admin";
 	manage?: ReactNode;
-	/** The non-owner rail card content (wired upvote + interest), composed by the route. */
 	interact?: ReactNode;
 }) {
 	const privateImageSrc = useProjectImageSrc(
@@ -60,112 +44,103 @@ export function ProjectDetailView({
 		project.status === "published" && project.imageUrl
 			? `${BACKEND_URL}${project.imageUrl}`
 			: privateImageSrc;
-	const links = MVP_LINKS.map((l) => ({
-		...l,
-		href: project.links[l.key],
-	})).filter((l) => l.href);
+	const hasImage = Boolean(imageSrc);
+	const links = MVP_LINKS.map((link) => ({
+		...link,
+		href: project.links[link.key],
+	})).filter((link) => link.href);
 
 	return (
-		<div className="mx-auto max-w-[1340px]">
-			<div className="card-surface overflow-hidden rounded-[18px]">
-				{/* Cover banner */}
-				<div
-					className="relative flex h-[240px] items-end p-6 sm:h-[300px]"
-					style={{ background: projectCover(project.hue) }}
-				>
-					{imageSrc ? (
+		<div
+			className={`card-surface mx-auto grid max-w-[1500px] min-w-0 overflow-hidden rounded-[18px] ${hasImage ? "md:grid-cols-[minmax(210px,260px)_minmax(0,1fr)] xl:grid-cols-[minmax(220px,280px)_minmax(0,1fr)_minmax(250px,285px)]" : "md:grid-cols-[minmax(0,1fr)_minmax(240px,290px)]"}`}
+		>
+			{imageSrc ? (
+				<div className="border-line border-b p-4 md:border-r md:border-b-0 xl:p-5">
+					<div className="mx-auto aspect-square w-full max-w-[320px] overflow-hidden rounded-[12px] bg-surface-card md:max-w-none">
 						<img
 							src={imageSrc}
 							alt={`${project.title} project image`}
-							className="absolute inset-0 size-full object-cover"
+							className="size-full object-contain"
 						/>
-					) : null}
-					<div className="relative z-10 flex gap-2.5">
-						<span className="rounded-[7px] bg-[rgba(17,24,39,0.34)] px-[11px] py-[5px] font-mono text-[12px] text-white">
-							{project.category || "Uncategorized"}
-						</span>
-						<span className="rounded-[7px] bg-[rgba(17,24,39,0.34)] px-[11px] py-[5px] font-mono text-[12px] text-white">
-							{TYPE_LABEL[project.type]}
-						</span>
 					</div>
 				</div>
+			) : null}
 
-				<div className="flex min-w-0 flex-wrap gap-6 p-4 sm:p-6 lg:flex-nowrap lg:p-8">
-					{/* Left column */}
-					<div className="min-w-0 flex-1 basis-full lg:basis-auto">
-						<div className="mb-1.5 flex flex-wrap items-center gap-2.5">
-							<h1 className="break-words text-[26px] text-content-heading sm:text-[32px]">
-								{project.title}
-							</h1>
-							{project.verified ? (
-								<span className="inline-flex items-center gap-1.5 rounded-[7px] border border-success-bd bg-success-bg px-2.5 py-1 text-[12px] text-verified">
-									✔ Verified Builder
-								</span>
-							) : null}
-						</div>
-						<div className="mb-[18px] font-mono text-[13px] text-content-faint">
-							{project.school || "iSkolar Academy"}
-						</div>
-						<p className="mb-[22px] text-[17px] leading-[1.6] text-content-strong">
-							{project.pitch || "No pitch provided"}
-						</p>
+			<div className="min-w-0 p-5 sm:p-6">
+				<div className="flex flex-wrap items-start gap-2">
+					<h1 className="min-w-0 break-words text-[28px] leading-tight text-content-heading sm:text-[32px]">
+						{project.title}
+					</h1>
+					{project.verified ? (
+						<span className="rounded-[7px] border border-success-bd bg-success-bg px-2.5 py-1 text-[12px] text-verified">
+							✔ Verified Builder
+						</span>
+					) : null}
+				</div>
+				<p className="mt-1 text-[13px] text-content-faint">
+					{project.school || "iSkolar Academy"}
+				</p>
+				<div className="mt-3 flex flex-wrap gap-2">
+					<span className="chip chip--category">
+						{project.category || "Uncategorized"}
+					</span>
+					<span className="chip chip--type">{TYPE_LABEL[project.type]}</span>
+				</div>
 
-						<div className="mb-2.5 flex items-center gap-2.5">
-							<span className={eyebrowText}>Purpose</span>
-						</div>
-						<p className="mb-6 text-[15.5px] leading-[1.6] text-content-strong">
-							{project.purpose || "No purpose provided"}
-						</p>
+				<section className="mt-5">
+					<h2 className={sectionLabel}>Overview</h2>
+					<p className="mt-1.5 text-[16px] leading-[1.5] text-content-strong">
+						{project.pitch || "No pitch provided"}
+					</p>
+				</section>
 
-						{project.tech.length > 0 ? (
-							<>
-								<div className="mb-3 flex items-center gap-2.5">
-									<span className={eyebrowText}>Tech stack</span>
-								</div>
-								<div className="mb-[26px] flex flex-wrap gap-2">
-									{project.tech.map((t) => (
-										<span key={t} className="chip chip--category">
-											{t}
-										</span>
-									))}
-								</div>
-							</>
-						) : null}
+				<section className="mt-4">
+					<h2 className={sectionLabel}>Purpose</h2>
+					<p className="mt-1.5 text-[15px] leading-[1.5] text-content-strong">
+						{project.purpose || "No purpose provided"}
+					</p>
+				</section>
 
-						<div className="mb-3.5 flex items-center gap-2.5">
-							<span className={eyebrowText}>
-								{project.isTeam ? "Team & contributions" : "Ownership"}
-							</span>
-						</div>
+				<div className="mt-5 grid gap-5 border-line border-t pt-4 sm:grid-cols-2">
+					{project.tech.length > 0 ? (
+						<section>
+							<h2 className={sectionLabel}>Tech stack</h2>
+							<div className="mt-2 flex flex-wrap gap-1.5">
+								{project.tech.map((tech) => (
+									<span key={tech} className="chip chip--category">
+										{tech}
+									</span>
+								))}
+							</div>
+						</section>
+					) : null}
+					<section>
+						<h2 className={sectionLabel}>
+							{project.isTeam ? "Team & contributions" : "Ownership"}
+						</h2>
 						{project.isTeam && project.members.length > 0 ? (
-							<div className="flex flex-col gap-3">
-								{project.members.map((m) => (
-									<div key={m.id} className="flex items-start gap-3">
-										<span className="flex size-10 flex-none items-center justify-center rounded-[10px] bg-action text-[14px] text-white">
-											{initialsOf(m.name)}
+							<div className="mt-2 grid gap-2">
+								{project.members.map((member) => (
+									<div key={member.id} className="flex min-w-0 items-center gap-2">
+										<span className="flex size-8 flex-none items-center justify-center rounded-[8px] bg-action text-[11px] text-white">
+											{initialsOf(member.name)}
 										</span>
-										<div>
-											<div className="text-[15.5px] text-content-heading">
-												{m.name}
-												{m.contribution ? (
-													<span className="text-[13px] text-content-faint">
-														{" "}
-														, {m.contribution}
-													</span>
-												) : null}
-											</div>
+										<div className="min-w-0 text-[13px] leading-snug">
+											<span className="text-content-heading">{member.name}</span>
+											{member.contribution ? (
+												<span className="text-content-faint"> · {member.contribution}</span>
+											) : null}
 										</div>
 									</div>
 								))}
 							</div>
 						) : (
-							<p className="text-[15px] text-content-strong">
+							<p className="mt-2 text-[13px] leading-snug text-content-strong">
 								Individual project
-								{project.ownership.declared ? ", ownership declared" : ""}
+								{project.ownership.declared ? " · Ownership declared" : ""}
 								{project.ownership.thesisPaperName ? (
 									<>
-										{" "}
-										,{" "}
+										{" · "}
 										<a
 											href={thesisPaperUrl(project.id)}
 											target="_blank"
@@ -178,44 +153,40 @@ export function ProjectDetailView({
 								) : null}
 							</p>
 						)}
-					</div>
-
-					{/* Side rail */}
-					<aside className="flex w-full flex-col gap-3.5 lg:w-[300px] lg:flex-none">
-						{viewer !== "admin" ? (
-							<div className={railCardCls}>
-								{viewer === "owner" ? manage : interact}
-							</div>
-						) : null}
-
-						<div className={railCardCls}>
-							<div className="mb-3 font-mono text-[11.5px] uppercase tracking-[0.18em] text-action/60">
-								MVP links
-							</div>
-							{links.length > 0 ? (
-								<div className="flex flex-col gap-2.5">
-									{links.map(({ key, Icon, label, href }) => (
-										<a
-											key={key}
-											href={href}
-											target="_blank"
-											rel="noreferrer"
-											className="flex items-center gap-2.5 rounded-[9px] border border-info-bd px-3 py-2.5 text-[14px] text-content-heading transition-colors hover:bg-surface-sunken"
-										>
-											<Icon className="size-[17px] text-action" aria-hidden />
-											<span className="min-w-0 flex-1">{label}</span>
-										</a>
-									))}
-								</div>
-							) : (
-								<p className="text-[13px] text-content-soft">
-									No links added yet.
-								</p>
-							)}
-						</div>
-					</aside>
+					</section>
 				</div>
 			</div>
+
+			<aside
+				className={`grid min-w-0 gap-4 border-line border-t p-5 md:p-6 xl:p-5 ${hasImage ? "md:col-span-2 md:grid-cols-2 xl:col-span-1 xl:block xl:border-t-0 xl:border-l" : "md:block md:border-t-0 md:border-l"}`}
+			>
+				{viewer !== "admin" ? (
+					<div className="min-w-0 xl:mb-5">
+						{viewer === "owner" ? manage : interact}
+					</div>
+				) : null}
+				<section className="min-w-0">
+					<h2 className={sectionLabel}>MVP links</h2>
+					{links.length > 0 ? (
+						<div className="mt-2 grid gap-2">
+							{links.map(({ key, Icon, label, href }) => (
+								<a
+									key={key}
+									href={href}
+									target="_blank"
+									rel="noreferrer"
+									className="flex items-center gap-2 rounded-[9px] border border-line bg-surface-card px-3 py-2 text-[13px] text-content-heading transition-colors hover:bg-surface-sunken"
+								>
+									<Icon className="size-4 flex-none text-action" aria-hidden />
+									{label}
+								</a>
+							))}
+						</div>
+					) : (
+						<p className="mt-2 text-[13px] text-content-soft">No links added yet.</p>
+					)}
+				</section>
+			</aside>
 		</div>
 	);
 }

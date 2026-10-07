@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { BACKEND_URL } from "#/lib/api";
 import type { ShowcaseProject } from "#/lib/discover/model";
-import { projectCover } from "#/lib/project/helper";
 
 /** A compact project preview that opens the full project detail. */
 export function DiscoverCard({ project }: { project: ShowcaseProject }) {
@@ -11,10 +10,7 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 			params={{ projectId: project.id }}
 			className="card-surface block min-w-0 overflow-hidden rounded-[15px] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-action hover:shadow-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
 		>
-			<div
-				className="aspect-square w-full overflow-hidden"
-				style={{ background: projectCover(project.hue) }}
-			>
+			<div className="aspect-square w-full overflow-hidden bg-surface-card">
 				{project.imageUrl ? (
 					<img
 						src={`${BACKEND_URL}${project.imageUrl}`}
