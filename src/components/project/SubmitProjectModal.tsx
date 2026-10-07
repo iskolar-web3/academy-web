@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	CheckCircle2,
-	Github,
+	Code,
 	MonitorPlay,
 	Play,
 	Upload,
@@ -474,7 +474,7 @@ export function SubmitProjectModal({
 										},
 										{
 											key: "repo",
-											Icon: Github,
+											Icon: Code,
 											ph: "Public repository URL",
 											hint: null,
 										},

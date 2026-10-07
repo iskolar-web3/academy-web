@@ -1,4 +1,4 @@
-import { Check, Github, MonitorPlay, Play, X } from "lucide-react";
+import { Check, Code, MonitorPlay, Play, X } from "lucide-react";
 import { useState } from "react";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
@@ -31,7 +31,7 @@ import { toast } from "#/lib/toast";
 
 const MVP_LINKS = [
 	{ key: "demo", Icon: MonitorPlay, label: "Live demo" },
-	{ key: "repo", Icon: Github, label: "Repository" },
+	{ key: "repo", Icon: Code, label: "Repository" },
 	{ key: "video", Icon: Play, label: "Demo video" },
 ] as const;
 

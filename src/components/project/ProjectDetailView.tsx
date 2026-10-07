@@ -1,4 +1,4 @@
-import { Github, MonitorPlay, Play } from "lucide-react";
+import { Code, MonitorPlay, Play } from "lucide-react";
 import type { ReactNode } from "react";
 import { thesisPaperUrl } from "#/lib/project/api";
 import { projectCover } from "#/lib/project/helper";
@@ -35,7 +35,7 @@ const eyebrowText =
 
 const MVP_LINKS = [
 	{ key: "demo", Icon: MonitorPlay, label: "Live demo" },
-	{ key: "repo", Icon: Github, label: "Repository" },
+	{ key: "repo", Icon: Code, label: "Repository" },
 	{ key: "video", Icon: Play, label: "Demo video" },
 ] as const;
 
