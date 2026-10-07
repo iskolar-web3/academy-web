@@ -95,7 +95,7 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 		},
 		{
 			id: "repo-meta",
-			label: "Repository documentation and license",
+			label: "Repository README",
 			status:
 				project.status === "published"
 					? "pass"
@@ -104,9 +104,9 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 					: "pending",
 			evidence:
 				project.status === "published"
-					? "Accepted during Academy review; README and license automation is next."
+					? "Accepted during Academy review. Repository license is optional."
 					: hasRepo && githubParts.length >= 2
-						? "A public GitHub URL is ready for README and license review."
+						? "A public GitHub URL is ready for README review. Repository license is optional."
 						: "Repository metadata checks are skipped when no URL is provided.",
 		},
 		{
