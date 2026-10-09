@@ -15,7 +15,7 @@ import { useSession } from "#/hooks/auth/useSession";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
 import { searchUsers, type UserSearchHit } from "#/lib/account/api";
 import { BACKEND_URL } from "#/lib/api";
-import { thesisPaperUrl } from "#/lib/project/api";
+import { projectQuery, thesisPaperUrl } from "#/lib/project/api";
 import {
 	documentLabel,
 	emptyFormValues,
@@ -73,6 +73,8 @@ export function SubmitProjectModal({
 }) {
 	const editing = !!project;
 	const { user } = useSession();
+	// Id of a project this modal created (Send invites / Save draft keep the modal open).
+	const [savedId, setSavedId] = useState<string | null>(null);
 	const { create, update, submit, resubmit, uploadThesis, uploadImage } =
 		useProjectMutations();
 	const [step, setStep] = useState(0);
@@ -175,6 +177,23 @@ export function SubmitProjectModal({
 	const thesisPaperName = watch("thesisPaperName");
 	const ownershipDeclared = watch("ownershipDeclared");
 	const members = watch("members");
+	// Live consent: poll the stored project every 5s while any invite is pending, so a
+	// teammate accepting shows up here without reopening the modal. ponytail: polling,
+	// swap for SSE/websocket if invite latency matters.
+	const { data: liveProject } = useQuery({
+		...projectQuery(project?.id ?? savedId ?? ""),
+		enabled: !!(project || savedId),
+		initialData: project,
+		refetchInterval: (q) =>
+			q.state.data?.members.some((m) => m.consent === "pending") ? 5000 : false,
+	});
+	const current = liveProject ?? project;
+	const consentOf = (m: { name: string; linkedUserId?: string | null }) =>
+		current?.members.find(
+			(e) =>
+				(m.linkedUserId && e.linkedUserId === m.linkedUserId) ||
+				e.name === m.name,
+		)?.consent;
 	const name = user?.displayName || user?.iskolarUserId || "You";
 
 	const busy =
@@ -222,11 +241,7 @@ export function SubmitProjectModal({
 
 		const consents = (members ?? [])
 			.filter((member) => member.linked)
-			.map(
-				(member) =>
-					project?.members.find((existing) => existing.name === member.name)
-						?.consent ?? "pending",
-			);
+			.map((member) => consentOf(member) ?? "pending");
 		if (consents.includes("declined")) {
 			return ["Resolve declined team member consent"];
 		}
@@ -304,28 +319,28 @@ export function SubmitProjectModal({
 		// server's envelope message (422 gate / 403 owner / network) as a toast and keep
 		// the modal open so nothing typed is lost.
 		try {
-			if (project) {
-				await update.mutateAsync({ id: project.id, input });
+			if (current) {
+				await update.mutateAsync({ id: current.id, input });
 				// A newly picked file uploads after the save so it lands on the record
 				// that now has the latest ownership/type; re-review below re-checks it.
 				if (thesisFile) {
-					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
+					await uploadThesis.mutateAsync({ id: current.id, file: thesisFile });
 				}
 				if (projectImageFile) {
 					await uploadImage.mutateAsync({
-						id: project.id,
+						id: current.id,
 						file: projectImageFile,
 					});
 				}
 				// Draft/returned/withdrawn re-enter review explicitly; a published edit
 				// re-reviews itself server-side when MVP-critical fields change.
-				if (project.status === "draft") {
-					await submit.mutateAsync(project.id);
+				if (current.status === "draft") {
+					await submit.mutateAsync(current.id);
 				} else if (
-					project.status === "returned" ||
-					project.status === "withdrawn"
+					current.status === "returned" ||
+					current.status === "withdrawn"
 				) {
-					await resubmit.mutateAsync(project.id);
+					await resubmit.mutateAsync(current.id);
 				}
 				if (localDraftKey) {
 					window.localStorage.removeItem(localDraftKey);
@@ -360,17 +375,17 @@ export function SubmitProjectModal({
 		}
 	};
 
-	const onSaveDraft = async () => {
+	const onSaveDraft = async (invite = false) => {
 		try {
 			const input = formToProjectInput(getValues());
-			if (project) {
-				await update.mutateAsync({ id: project.id, input });
+			if (current) {
+				await update.mutateAsync({ id: current.id, input });
 				if (thesisFile) {
-					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
+					await uploadThesis.mutateAsync({ id: current.id, file: thesisFile });
 				}
 				if (projectImageFile) {
 					await uploadImage.mutateAsync({
-						id: project.id,
+						id: current.id,
 						file: projectImageFile,
 					});
 				}
@@ -385,6 +400,14 @@ export function SubmitProjectModal({
 						file: projectImageFile,
 					});
 				}
+				setSavedId(created.id);
+			}
+			if (invite) {
+				// The server sends invites as part of the save above; stay on this step.
+				toast.success("Invites sent", {
+					description: "Teammates were notified. Status updates here live.",
+				});
+				return;
 			}
 			if (localDraftKey) {
 				window.localStorage.removeItem(localDraftKey);
@@ -723,6 +746,9 @@ export function SubmitProjectModal({
 												{...register(`members.${i}.contribution`)}
 											/>
 										</div>
+										{members?.[i]?.linkedUserId ? (
+											<ConsentBadge consent={consentOf(members[i]) ?? null} />
+										) : null}
 										<button
 											type="button"
 											onClick={() => {
@@ -754,6 +780,16 @@ export function SubmitProjectModal({
 								>
 									+ Invite a teammate from iSkolar
 								</button>
+								{(members ?? []).some((m) => m.linkedUserId) ? (
+									<Button
+										type="button"
+										variant="secondary"
+										disabled={busy}
+										onClick={() => onSaveDraft(true)}
+									>
+										Send invites
+									</Button>
+								) : null}
 							</div>
 						</div>
 					) : null}
@@ -922,7 +958,7 @@ export function SubmitProjectModal({
 								variant="secondary"
 								size="lg"
 								disabled={busy}
-								onClick={onSaveDraft}
+								onClick={() => onSaveDraft()}
 								className="rounded-[10px] px-4"
 							>
 								Save draft
@@ -1028,5 +1064,20 @@ function MemberPicker({
 				</ul>
 			) : null}
 		</div>
+	);
+}
+
+function ConsentBadge({ consent }: { consent: string | null }) {
+	const [label, cls] =
+		consent === "accepted"
+			? ["Accepted", "bg-success-bg text-success"]
+			: consent === "declined"
+				? ["Declined", "bg-surface-sunken text-content-muted"]
+				: consent === "pending"
+					? ["Invite pending", "bg-surface-sunken text-content-muted"]
+					: ["Not invited yet", "bg-surface-sunken text-content-faint"];
+
+	return (
+		<span className={`rounded-md px-2.5 py-1 text-[12px] ${cls}`}>{label}</span>
 	);
 }
