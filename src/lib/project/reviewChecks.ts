@@ -101,7 +101,7 @@ export function buildReviewChecks(project: Project): ReviewCheck[] {
 					? "pass"
 					: hasRepo && githubParts.length >= 2
 						? "pending"
-					: "pending",
+						: "pending",
 			evidence:
 				project.status === "published"
 					? "Accepted during Academy review. Repository license is optional."

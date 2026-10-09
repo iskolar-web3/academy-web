@@ -5,8 +5,8 @@ import { ProjectPipeline } from "#/components/project/ProjectPipeline";
 import { ReviewCheckPanel } from "#/components/project/ReviewCheckPanel";
 import { Button } from "#/components/ui/button";
 import { ConfirmActionDialog } from "#/components/ui/ConfirmActionDialog";
-import { useProjectVerification } from "#/hooks/project/useProjectVerification";
 import { useProjectImageSrc } from "#/hooks/project/useProjectImageSrc";
+import { useProjectVerification } from "#/hooks/project/useProjectVerification";
 import { deleteDraft } from "#/lib/project/api";
 import {
 	dashboardAction,

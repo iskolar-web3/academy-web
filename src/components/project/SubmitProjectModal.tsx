@@ -1,12 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	CheckCircle2,
-	Code,
-	MonitorPlay,
-	Play,
-	Upload,
-	X,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { CheckCircle2, Code, MonitorPlay, Play, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "#/components/ui/button";
@@ -19,6 +13,7 @@ import {
 } from "#/components/ui/dialog";
 import { useSession } from "#/hooks/auth/useSession";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
+import { searchUsers, type UserSearchHit } from "#/lib/account/api";
 import { BACKEND_URL } from "#/lib/api";
 import { thesisPaperUrl } from "#/lib/project/api";
 import {
@@ -39,10 +34,7 @@ import {
 } from "#/lib/project/model";
 import { toast } from "#/lib/toast";
 import { cn } from "#/lib/utils";
-import {
-	validateProjectImage,
-	validateThesisFile,
-} from "#/utils/fileHandling";
+import { validateProjectImage, validateThesisFile } from "#/utils/fileHandling";
 
 /**
  * Submit-a-project wizard — a 1:1 port of the design-template SUBMIT WIZARD MODAL: a 760px
@@ -243,6 +235,12 @@ export function SubmitProjectModal({
 			: [];
 	})();
 	gateIssues.push(...teamConsentIssues);
+	if (
+		watch("isTeam") &&
+		(members ?? []).some((m) => m.linked && !m.linkedUserId)
+	) {
+		gateIssues.push("Pick each teammate from search results");
+	}
 
 	// Per-step slice of the gate — "Continue" used to advance unconditionally
 	// regardless of that step's own required fields (the reported bug: MVP step's
@@ -314,7 +312,10 @@ export function SubmitProjectModal({
 					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
 				}
 				if (projectImageFile) {
-					await uploadImage.mutateAsync({ id: project.id, file: projectImageFile });
+					await uploadImage.mutateAsync({
+						id: project.id,
+						file: projectImageFile,
+					});
 				}
 				// Draft/returned/withdrawn re-enter review explicitly; a published edit
 				// re-reviews itself server-side when MVP-critical fields change.
@@ -341,7 +342,10 @@ export function SubmitProjectModal({
 				await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
 			}
 			if (projectImageFile) {
-				await uploadImage.mutateAsync({ id: created.id, file: projectImageFile });
+				await uploadImage.mutateAsync({
+					id: created.id,
+					file: projectImageFile,
+				});
 			}
 			await submit.mutateAsync(created.id);
 			if (localDraftKey) {
@@ -365,7 +369,10 @@ export function SubmitProjectModal({
 					await uploadThesis.mutateAsync({ id: project.id, file: thesisFile });
 				}
 				if (projectImageFile) {
-					await uploadImage.mutateAsync({ id: project.id, file: projectImageFile });
+					await uploadImage.mutateAsync({
+						id: project.id,
+						file: projectImageFile,
+					});
 				}
 			} else {
 				const created = await create.mutateAsync(input);
@@ -373,7 +380,10 @@ export function SubmitProjectModal({
 					await uploadThesis.mutateAsync({ id: created.id, file: thesisFile });
 				}
 				if (projectImageFile) {
-					await uploadImage.mutateAsync({ id: created.id, file: projectImageFile });
+					await uploadImage.mutateAsync({
+						id: created.id,
+						file: projectImageFile,
+					});
 				}
 			}
 			if (localDraftKey) {
@@ -560,9 +570,9 @@ export function SubmitProjectModal({
 					{step === 1 ? (
 						<div>
 							<p className={helperCls}>
-								Every published project must clear the MVP evidence track. Live demo
-								and public repository URLs are optional. Slow demos should be warmed up and
-								probed before any return decision.
+								Every published project must clear the MVP evidence track. Live
+								demo and public repository URLs are optional. Slow demos should
+								be warmed up and probed before any return decision.
 							</p>
 							<div className="flex flex-col gap-3.5">
 								{(
@@ -662,13 +672,43 @@ export function SubmitProjectModal({
 												htmlFor={`member-name-${i}`}
 												className={requiredLabelCls}
 											>
-												Team member's name
+												Team member
 											</label>
-											<input
-												id={`member-name-${i}`}
-												className={inputCls}
-												{...register(`members.${i}.name`)}
-											/>
+											{members?.[i]?.linked ? (
+												<MemberPicker
+													id={`member-name-${i}`}
+													selectedName={
+														members[i]?.linkedUserId ? members[i]?.name : ""
+													}
+													excludeIds={(members ?? [])
+														.map((m) => m.linkedUserId)
+														.filter((v): v is string => !!v)}
+													onPick={(hit) => {
+														setValue(`members.${i}.name`, hit.displayName, {
+															shouldDirty: true,
+														});
+														setValue(
+															`members.${i}.linkedUserId`,
+															hit.iskolarUserId,
+															{ shouldDirty: true },
+														);
+													}}
+													onClear={() => {
+														setValue(`members.${i}.name`, "", {
+															shouldDirty: true,
+														});
+														setValue(`members.${i}.linkedUserId`, null, {
+															shouldDirty: true,
+														});
+													}}
+												/>
+											) : (
+												<input
+													id={`member-name-${i}`}
+													className={inputCls}
+													{...register(`members.${i}.name`)}
+												/>
+											)}
 										</div>
 										<div className="sm:flex-1">
 											<label
@@ -702,12 +742,17 @@ export function SubmitProjectModal({
 								<button
 									type="button"
 									onClick={() => {
-										append({ name: "", contribution: "", linked: true });
+										append({
+											name: "",
+											contribution: "",
+											linked: true,
+											linkedUserId: null,
+										});
 										setValue("isTeam", true);
 									}}
 									className="h-[46px] rounded-[10px] border border-[#c3d0f2] border-dashed bg-surface-sunken text-[14.5px] text-action transition-colors hover:bg-surface-tint"
 								>
-									+ Invite a teammate by iSkolar ID
+									+ Invite a teammate from iSkolar
 								</button>
 							</div>
 						</div>
@@ -784,7 +829,7 @@ export function SubmitProjectModal({
 											</div>
 											<div className="mt-0.5 font-mono text-[11.5px] text-content-faint">
 												Optional {documentLabel(type)} PDF, stored in the Lumen
-												 document vault
+												document vault
 											</div>
 											{fileError ? (
 												<div className="mt-1 text-[11.5px] text-danger">
@@ -908,5 +953,80 @@ export function SubmitProjectModal({
 				</div>
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+function MemberPicker({
+	id,
+	selectedName,
+	excludeIds,
+	onPick,
+	onClear,
+}: {
+	id: string;
+	selectedName: string | undefined;
+	excludeIds: string[];
+	onPick: (hit: UserSearchHit) => void;
+	onClear: () => void;
+}) {
+	const [text, setText] = useState("");
+	const [q, setQ] = useState("");
+	useEffect(() => {
+		const t = setTimeout(() => setQ(text.trim()), 250);
+		return () => clearTimeout(t);
+	}, [text]);
+	const { data = [], isFetching } = useQuery({
+		queryKey: ["account", "search", q],
+		queryFn: () => searchUsers(q),
+		enabled: q.length >= 2 && !selectedName,
+	});
+	const hits = data.filter((h) => !excludeIds.includes(h.iskolarUserId));
+
+	if (selectedName) {
+		return (
+			<div className="flex h-[46px] items-center justify-between rounded-[10px] border border-[#eef1fa] px-3.5 text-[15px] text-content-heading">
+				<span>{selectedName}</span>
+				<button
+					type="button"
+					onClick={onClear}
+					className="text-[12.5px] text-action"
+				>
+					Change
+				</button>
+			</div>
+		);
+	}
+
+	return (
+		<div className="relative">
+			<input
+				id={id}
+				className={inputCls}
+				placeholder="Search iSkolar accounts by name"
+				value={text}
+				onChange={(e) => setText(e.target.value)}
+				autoComplete="off"
+			/>
+			{q.length >= 2 ? (
+				<ul className="absolute z-10 mt-1 w-full rounded-[10px] border border-[#eef1fa] bg-white shadow-md">
+					{hits.map((h) => (
+						<li key={h.iskolarUserId}>
+							<button
+								type="button"
+								onClick={() => onPick(h)}
+								className="w-full px-3.5 py-2.5 text-left text-[14.5px] hover:bg-surface-sunken"
+							>
+								{h.displayName}
+							</button>
+						</li>
+					))}
+					{!hits.length ? (
+						<li className="px-3.5 py-2.5 text-[13px] text-content-faint">
+							{isFetching ? "Searching…" : "No accounts found"}
+						</li>
+					) : null}
+				</ul>
+			) : null}
+		</div>
 	);
 }
