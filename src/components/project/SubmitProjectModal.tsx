@@ -359,7 +359,7 @@ export function SubmitProjectModal({
 		setThesisFile(file);
 	};
 
-	const onPickProjectImage = (file: File | undefined) => {
+	const onPickProjectImage = async (file: File | undefined) => {
 		if (!file) {
 			return;
 		}
@@ -369,8 +369,13 @@ export function SubmitProjectModal({
 			return;
 		}
 		setImageError(null);
-		setProjectImageFile(file);
-		setImagePreviewUrl(URL.createObjectURL(file));
+		try {
+			const square = await cropToSquare(file);
+			setProjectImageFile(square);
+			setImagePreviewUrl(URL.createObjectURL(square));
+		} catch {
+			setImageError("Could not read that image. Try another file.");
+		}
 	};
 
 	const onSubmitProject = async () => {
@@ -799,120 +804,118 @@ export function SubmitProjectModal({
 											{(purpose ?? "").length}/1000
 										</div>
 									</div>
-									<div>
-										<div className={fieldLabelCls}>
-											Project image (optional)
-										</div>
-										<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
-											<div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
-												{imageSrc ? (
-													<img
-														src={imageSrc}
-														alt="Preview of the selected cover"
-														className="absolute inset-0 size-full object-cover"
-													/>
-												) : (
-													<Upload
-														className="size-7 text-action/60"
-														aria-hidden
-													/>
-												)}
+									<div className="grid gap-4 sm:grid-cols-[200px_1fr]">
+										<div>
+											<div className={fieldLabelCls}>
+												Project image (optional)
 											</div>
-											<div className="flex items-center justify-between gap-3 p-3">
-												<p className="min-w-0 truncate text-[12px] text-content-faint">
-													{projectImageFile?.name ??
-														"JPEG, PNG, or WebP · up to 5 MB"}
+											<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
+												<div className="relative flex aspect-square w-full items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
+													{imageSrc ? (
+														<img
+															src={imageSrc}
+															alt="Preview of the selected cover"
+															className="absolute inset-0 size-full object-cover"
+														/>
+													) : (
+														<Upload
+															className="size-7 text-action/60"
+															aria-hidden
+														/>
+													)}
+												</div>
+												<div className="flex flex-col gap-2 p-3">
+													<p className="min-w-0 break-words text-[12px] text-content-faint">
+														{projectImageFile?.name ??
+															"JPEG, PNG, or WebP · up to 5 MB · cropped to a square"}
+													</p>
+													<label className="flex h-9 shrink-0 cursor-pointer items-center justify-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
+														{projectImageFile || project?.imageUrl
+															? "Change image"
+															: "Choose image"}
+														<input
+															type="file"
+															accept="image/jpeg,image/png,image/webp"
+															className="hidden"
+															disabled={uploadImage.isPending}
+															onChange={(event) => {
+																onPickProjectImage(event.target.files?.[0]);
+																event.target.value = "";
+															}}
+														/>
+													</label>
+												</div>
+											</div>
+											{imageError ? (
+												<p className="mt-1 text-[11.5px] text-danger">
+													{imageError}
 												</p>
-												<label className="flex h-9 shrink-0 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
-													{projectImageFile || project?.imageUrl
-														? "Change image"
-														: "Choose image"}
-													<input
-														type="file"
-														accept="image/jpeg,image/png,image/webp"
-														className="hidden"
-														disabled={uploadImage.isPending}
-														onChange={(event) => {
-															onPickProjectImage(event.target.files?.[0]);
-															event.target.value = "";
-														}}
-													/>
-												</label>
-											</div>
+											) : null}
 										</div>
-										{imageError ? (
-											<p className="mt-1 text-[11.5px] text-danger">
-												{imageError}
-											</p>
-										) : null}
-									</div>
-									<div>
-										<p className={helperCls}>
-											Live demo and public repository URLs are optional. They
-											help reviewers check your MVP.
-										</p>
-										<div className="flex flex-col gap-3.5">
-											{(
-												[
-													{
-														key: "demo",
-														Icon: MonitorPlay,
-														ph: "Live demo URL",
-														hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
-													},
-													{
-														key: "repo",
-														Icon: Code,
-														ph: "Public repository URL",
-														hint: null,
-													},
-													{
-														key: "video",
-														Icon: Play,
-														ph: "Demo video URL (optional)",
-														hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
-													},
-												] as const
-											).map(({ key, Icon, ph, hint }) => {
-												const value = links?.[key] ?? "";
-												return (
-													<div key={key} className="flex flex-col gap-1">
-														<label
-															htmlFor={`project-${key}`}
-															className="pl-11 text-[13px] text-content-muted"
-														>
-															{ph}
-															<span className="ml-1 text-content-faint">
-																(optional)
-															</span>
-														</label>
-														<div className="flex items-center gap-3">
-															<span className="flex w-8 flex-none justify-center text-action">
-																<Icon
-																	className="size-5"
-																	strokeWidth={1.6}
-																	aria-hidden
+										<div>
+											<div className="flex flex-col gap-3.5">
+												{(
+													[
+														{
+															key: "demo",
+															Icon: MonitorPlay,
+															ph: "Live demo URL",
+															hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
+														},
+														{
+															key: "repo",
+															Icon: Code,
+															ph: "Public repository URL",
+															hint: null,
+														},
+														{
+															key: "video",
+															Icon: Play,
+															ph: "Demo video URL (optional)",
+															hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
+														},
+													] as const
+												).map(({ key, Icon, ph, hint }) => {
+													const value = links?.[key] ?? "";
+													return (
+														<div key={key} className="flex flex-col gap-1">
+															<label
+																htmlFor={`project-${key}`}
+																className="pl-11 text-[13px] text-content-muted"
+															>
+																{ph}
+																<span className="ml-1 text-content-faint">
+																	(optional)
+																</span>
+															</label>
+															<div className="flex items-center gap-3">
+																<span className="flex w-8 flex-none justify-center text-action">
+																	<Icon
+																		className="size-5"
+																		strokeWidth={1.6}
+																		aria-hidden
+																	/>
+																</span>
+																<input
+																	id={`project-${key}`}
+																	className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
+																		value && !isValidUrl(value)
+																			? "border-danger"
+																			: "border-line"
+																	}`}
+																	placeholder={ph}
+																	{...register(`links.${key}`)}
 																/>
-															</span>
-															<input
-																id={`project-${key}`}
-																className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
-																	value && !isValidUrl(value)
-																		? "border-danger"
-																		: "border-line"
-																}`}
-																placeholder={ph}
-																{...register(`links.${key}`)}
-															/>
+															</div>
+															{hint ? (
+																<p className="pl-11 font-mono text-[11px] text-content-faint">
+																	{hint}
+																</p>
+															) : null}
 														</div>
-														{hint ? (
-															<p className="pl-11 font-mono text-[11px] text-content-faint">
-																{hint}
-															</p>
-														) : null}
-													</div>
-												);
-											})}
+													);
+												})}
+											</div>
 										</div>
 									</div>
 								</div>
@@ -1208,6 +1211,38 @@ function ConsentBadge({ consent }: { consent: string | null }) {
 	return (
 		<span className={`rounded-md px-2.5 py-1 text-[12px] ${cls}`}>{label}</span>
 	);
+}
+
+// Center-crop to a 1:1 square (max 1600px) so every project cover matches the square cards.
+async function cropToSquare(file: File): Promise<File> {
+	const bitmap = await createImageBitmap(file);
+	const side = Math.min(bitmap.width, bitmap.height);
+	const out = Math.min(side, 1600);
+	const canvas = document.createElement("canvas");
+	canvas.width = out;
+	canvas.height = out;
+	canvas
+		.getContext("2d")
+		?.drawImage(
+			bitmap,
+			(bitmap.width - side) / 2,
+			(bitmap.height - side) / 2,
+			side,
+			side,
+			0,
+			0,
+			out,
+			out,
+		);
+	bitmap.close();
+	const blob = await new Promise<Blob | null>((resolve) =>
+		canvas.toBlob(resolve, file.type, 0.92),
+	);
+	if (!blob) {
+		throw new Error("Crop failed");
+	}
+
+	return new File([blob], file.name, { type: file.type });
 }
 
 function FieldError({ msg }: { msg: string | null }) {
