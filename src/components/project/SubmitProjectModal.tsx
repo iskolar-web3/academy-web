@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Code, MonitorPlay, Play, Upload, X } from "lucide-react";
+import { Code, MonitorPlay, Play, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "#/components/ui/button";
@@ -44,7 +44,7 @@ import { validateProjectImage, validateThesisFile } from "#/utils/fileHandling";
  * gate, and `useProjectMutations`. Closes on ✕ / backdrop / Escape.
  */
 
-const STEPS = ["Details", "MVP", "Team", "Ownership", "Review"] as const;
+const STEPS = ["Project", "Confirm"] as const;
 
 const inputCls =
 	"h-[46px] w-full rounded-[10px] border border-line bg-surface-card px-[14px] text-[15px] text-content-heading outline-none transition-colors focus:border-action";
@@ -75,6 +75,9 @@ export function SubmitProjectModal({
 	const { user } = useSession();
 	// Id of a project this modal created (Send invites / Save draft keep the modal open).
 	const [savedId, setSavedId] = useState<string | null>(null);
+	// Errors stay hidden until a field is blurred or Continue/Submit is clicked.
+	const [showErrors, setShowErrors] = useState(false);
+	const [moreOpen, setMoreOpen] = useState(false);
 	const { create, update, submit, resubmit, uploadThesis, uploadImage } =
 		useProjectMutations();
 	const [step, setStep] = useState(0);
@@ -185,6 +188,8 @@ export function SubmitProjectModal({
 	const thesisPaperName = watch("thesisPaperName");
 	const ownershipDeclared = watch("ownershipDeclared");
 	const members = watch("members");
+	const isTeam = watch("isTeam");
+	const touched = form.formState.touchedFields;
 	// Live consent: poll the stored project every 5s while any invite is pending, so a
 	// teammate accepting shows up here without reopening the modal. ponytail: polling,
 	// swap for SSE/websocket if invite latency matters.
@@ -196,6 +201,19 @@ export function SubmitProjectModal({
 			q.state.data?.members.some((m) => m.consent === "pending") ? 5000 : false,
 	});
 	const current = liveProject ?? project;
+	const hasOptional = !!(
+		purpose ||
+		links?.demo ||
+		links?.repo ||
+		links?.video ||
+		projectImageFile ||
+		project?.imageUrl
+	);
+	useEffect(() => {
+		if (hasOptional) {
+			setMoreOpen(true);
+		}
+	}, [hasOptional]);
 	const consentOf = (m: { name: string; linkedUserId?: string | null }) =>
 		current?.members.find(
 			(e) =>
@@ -269,28 +287,63 @@ export function SubmitProjectModal({
 	// regardless of that step's own required fields (the reported bug: MVP step's
 	// "required" URLs didn't actually block advancing). Team consent is also required
 	// before submission when linked teammates are part of the project.
+	const urlIssues = [
+		links?.demo && !isValidUrl(links.demo) ? "Add a valid live demo URL" : null,
+		links?.repo && !isValidUrl(links.repo)
+			? "Add a valid public repository URL"
+			: null,
+	].filter((issue): issue is string => issue !== null);
+	const pickIssues =
+		isTeam && (members ?? []).some((m) => m.linked && !m.linkedUserId)
+			? ["Pick each teammate from search results"]
+			: [];
+	// Step 0 gates Continue; teammate acceptance only gates the final Submit, so a team
+	// can move on to Confirm while invites are still pending.
 	const stepIssues: string[][] = [
 		[
 			!title || title.trim().length < 2 ? "Add a project title" : null,
 			!category ? "Pick a category" : null,
 			(pitch ?? "").trim().length < 8 ? "Add a one-line pitch" : null,
-		].filter((issue): issue is string => issue !== null),
-		[
-			links?.demo && !isValidUrl(links.demo)
-				? "Add a valid live demo URL"
-				: null,
-			links?.repo && !isValidUrl(links.repo)
-				? "Add a valid public repository URL"
-				: null,
-		].filter((issue): issue is string => issue !== null),
-		teamConsentIssues,
-		[
-			!ownershipDeclared ? "Confirm the ownership declaration" : null,
-			!consented ? "Consent to review & public showcase" : null,
-		].filter((issue): issue is string => issue !== null),
+		]
+			.filter((issue): issue is string => issue !== null)
+			.concat(urlIssues, pickIssues),
 		gateIssues,
 	];
 	const currentStepIssues = stepIssues[step] ?? [];
+	const fieldError = (key: "title" | "pitch" | "category") => {
+		if (!showErrors && !touched[key]) {
+			return null;
+		}
+		const issue = {
+			title: "Add a project title",
+			pitch: "Add a one-line pitch",
+			category: "Pick a category",
+		}[key];
+		return stepIssues[0]?.includes(issue) ? issue : null;
+	};
+	const FIRST_FIELD_IDS = {
+		"Add a project title": "project-title",
+		"Pick a category": "project-category",
+		"Add a one-line pitch": "project-pitch",
+		"Add a valid live demo URL": "project-demo",
+		"Add a valid public repository URL": "project-repo",
+	} as Record<string, string>;
+	// Shared by Continue and Submit: reveal errors, jump to step 0 if its fields are the
+	// problem, and focus the first invalid field instead of silently disabling buttons.
+	const blockedByStep0 = () => {
+		setShowErrors(true);
+		const first = stepIssues[0]?.[0];
+		if (!first) {
+			return false;
+		}
+		setStep(0);
+		if (FIRST_FIELD_IDS[first] && urlIssues.includes(first)) {
+			setMoreOpen(true);
+		}
+		const id = FIRST_FIELD_IDS[first];
+		setTimeout(() => document.getElementById(id ?? "")?.focus(), 0);
+		return true;
+	};
 
 	const onPickFile = (file: File | undefined) => {
 		if (!file) {
@@ -321,7 +374,11 @@ export function SubmitProjectModal({
 	};
 
 	const onSubmitProject = async () => {
+		if (blockedByStep0()) {
+			return;
+		}
 		if (gateIssues.length > 0) {
+			setStep(1);
 			return;
 		}
 		const input = formToProjectInput(getValues());
@@ -507,75 +564,31 @@ export function SubmitProjectModal({
 							<div>
 								<div className={requiredLabelCls}>Project title</div>
 								<input
+									id="project-title"
 									className={inputCls}
 									placeholder="e.g. AralBot"
 									{...register("title")}
 								/>
+								<FieldError msg={fieldError("title")} />
 							</div>
 							<div>
 								<div className={requiredLabelCls}>One-line pitch</div>
 								<input
+									id="project-pitch"
 									className={inputCls}
 									placeholder="What does it do, in a sentence?"
 									{...register("pitch")}
 								/>
-							</div>
-							<div>
-								<div className={fieldLabelCls}>Purpose</div>
-								<textarea
-									className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
-									maxLength={1000}
-									placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
-									{...register("purpose")}
-								/>
-								<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
-									{(purpose ?? "").length}/1000
-								</div>
-							</div>
-							<div>
-								<div className={fieldLabelCls}>Project image (optional)</div>
-								<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
-									<div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
-										{imageSrc ? (
-											<img
-												src={imageSrc}
-												alt="Preview of the selected cover"
-												className="absolute inset-0 size-full object-cover"
-											/>
-										) : (
-											<Upload className="size-7 text-action/60" aria-hidden />
-										)}
-									</div>
-									<div className="flex items-center justify-between gap-3 p-3">
-										<p className="min-w-0 truncate text-[12px] text-content-faint">
-											{projectImageFile?.name ??
-												"JPEG, PNG, or WebP · up to 5 MB"}
-										</p>
-										<label className="flex h-9 shrink-0 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
-											{projectImageFile || project?.imageUrl
-												? "Change image"
-												: "Choose image"}
-											<input
-												type="file"
-												accept="image/jpeg,image/png,image/webp"
-												className="hidden"
-												disabled={uploadImage.isPending}
-												onChange={(event) => {
-													onPickProjectImage(event.target.files?.[0]);
-													event.target.value = "";
-												}}
-											/>
-										</label>
-									</div>
-								</div>
-								{imageError ? (
-									<p className="mt-1 text-[11.5px] text-danger">{imageError}</p>
-								) : null}
+								<FieldError msg={fieldError("pitch")} />
 							</div>
 							<div className="flex gap-3.5">
 								<div className="flex-1">
 									<div className={requiredLabelCls}>Category</div>
-									<select className={inputCls} {...register("category")}>
+									<select
+										id="project-category"
+										className={inputCls}
+										{...register("category")}
+									>
 										<option value="">Select…</option>
 										{CATEGORIES.map((c) => (
 											<option key={c} value={c}>
@@ -583,6 +596,7 @@ export function SubmitProjectModal({
 											</option>
 										))}
 									</select>
+									<FieldError msg={fieldError("category")} />
 								</div>
 								<div className="flex-1">
 									<div className={requiredLabelCls}>Type</div>
@@ -597,218 +611,338 @@ export function SubmitProjectModal({
 									</select>
 								</div>
 							</div>
-						</div>
-					) : null}
-
-					{step === 1 ? (
-						<div>
-							<p className={helperCls}>
-								Every published project must clear the MVP evidence track. Live
-								demo and public repository URLs are optional. Slow demos should
-								be warmed up and probed before any return decision.
-							</p>
-							<div className="flex flex-col gap-3.5">
-								{(
-									[
-										{
-											key: "demo",
-											Icon: MonitorPlay,
-											ph: "Live demo URL",
-											hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
-										},
-										{
-											key: "repo",
-											Icon: Code,
-											ph: "Public repository URL",
-											hint: null,
-										},
-										{
-											key: "video",
-											Icon: Play,
-											ph: "Demo video URL (optional)",
-											hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
-										},
-									] as const
-								).map(({ key, Icon, ph, hint }) => {
-									const value = links?.[key] ?? "";
-									return (
-										<div key={key} className="flex flex-col gap-1">
-											<label
-												htmlFor={`project-${key}`}
-												className="pl-11 text-[13px] text-content-muted"
-											>
-												{ph}
-												<span className="ml-1 text-content-faint">
-													(optional)
-												</span>
-											</label>
-											<div className="flex items-center gap-3">
-												<span className="flex w-8 flex-none justify-center text-action">
-													<Icon
-														className="size-5"
-														strokeWidth={1.6}
-														aria-hidden
-													/>
-												</span>
-												<input
-													id={`project-${key}`}
-													className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
-														value && !isValidUrl(value)
-															? "border-danger"
-															: "border-line"
-													}`}
-													placeholder={ph}
-													{...register(`links.${key}`)}
-												/>
-											</div>
-											{hint ? (
-												<p className="pl-11 font-mono text-[11px] text-content-faint">
-													{hint}
-												</p>
-											) : null}
-										</div>
-									);
-								})}
-							</div>
-						</div>
-					) : null}
-
-					{step === 2 ? (
-						<div>
-							<p className={helperCls}>
-								Add teammates and note who did what. Each member confirms their
-								own contribution.
-							</p>
-							<div className="flex flex-col gap-3">
-								<div className="flex items-center gap-3 rounded-[11px] border border-[#eef1fa] px-3.5 py-3">
-									<span className="flex size-[38px] flex-none items-center justify-center rounded-[10px] bg-action text-white">
-										{initialsOf(name)}
-									</span>
-									<div className="flex-1">
-										<div className="text-[15px] text-content-heading">
-											{name} (you)
-										</div>
-										<div className="text-[12.5px] text-content-faint">Lead</div>
-									</div>
-									<span className="rounded-md bg-success-bg px-2.5 py-1 text-[12px] text-success">
-										Confirmed
-									</span>
+							<div>
+								<div className={fieldLabelCls}>
+									Working on this with others?
 								</div>
-
-								{fields.map((field, i) => (
-									<div
-										key={field.id}
-										className="flex flex-col gap-2.5 rounded-[11px] border border-[#eef1fa] p-3.5 sm:flex-row sm:items-center"
-									>
-										<div className="sm:flex-1">
-											<label
-												htmlFor={`member-name-${i}`}
-												className={requiredLabelCls}
-											>
-												Team member
-											</label>
-											{members?.[i]?.linked ? (
-												<MemberPicker
-													id={`member-name-${i}`}
-													selectedName={
-														members[i]?.linkedUserId ? members[i]?.name : ""
-													}
-													excludeIds={(members ?? [])
-														.map((m) => m.linkedUserId)
-														.filter((v): v is string => !!v)}
-													onPick={(hit) => {
-														setValue(`members.${i}.name`, hit.displayName, {
-															shouldDirty: true,
-														});
-														setValue(
-															`members.${i}.linkedUserId`,
-															hit.iskolarUserId,
-															{ shouldDirty: true },
-														);
-													}}
-													onClear={() => {
-														setValue(`members.${i}.name`, "", {
-															shouldDirty: true,
-														});
-														setValue(`members.${i}.linkedUserId`, null, {
-															shouldDirty: true,
-														});
-													}}
-												/>
-											) : (
-												<input
-													id={`member-name-${i}`}
-													className={inputCls}
-													{...register(`members.${i}.name`)}
-												/>
+								<div className="flex gap-2">
+									{(
+										[
+											["Solo", false],
+											["Team", true],
+										] as const
+									).map(([label, value]) => (
+										<button
+											type="button"
+											key={label}
+											aria-pressed={isTeam === value}
+											onClick={() => {
+												setValue("isTeam", value);
+												if (!value) {
+													remove();
+												}
+											}}
+											className={cn(
+												"h-10 flex-1 rounded-[10px] border text-[14px] transition-colors",
+												isTeam === value
+													? "border-action bg-surface-tint text-action"
+													: "border-line text-content-muted hover:bg-surface-sunken",
 											)}
+										>
+											{label}
+										</button>
+									))}
+								</div>
+							</div>
+							{isTeam ? (
+								<div>
+									<p className={helperCls}>
+										Add teammates and note who did what. Each member confirms
+										their own contribution.
+									</p>
+									<div className="flex flex-col gap-3">
+										<div className="flex items-center gap-3 rounded-[11px] border border-[#eef1fa] px-3.5 py-3">
+											<span className="flex size-[38px] flex-none items-center justify-center rounded-[10px] bg-action text-white">
+												{initialsOf(name)}
+											</span>
+											<div className="flex-1">
+												<div className="text-[15px] text-content-heading">
+													{name} (you)
+												</div>
+												<div className="text-[12.5px] text-content-faint">
+													Lead
+												</div>
+											</div>
+											<span className="rounded-md bg-success-bg px-2.5 py-1 text-[12px] text-success">
+												Confirmed
+											</span>
 										</div>
-										<div className="sm:flex-1">
-											<label
-												htmlFor={`member-contribution-${i}`}
-												className={fieldLabelCls}
+
+										{fields.map((field, i) => (
+											<div
+												key={field.id}
+												className="flex flex-col gap-2.5 rounded-[11px] border border-[#eef1fa] p-3.5 sm:flex-row sm:items-center"
 											>
-												Contribution
-											</label>
-											<input
-												id={`member-contribution-${i}`}
-												className={inputCls}
-												{...register(`members.${i}.contribution`)}
-											/>
-										</div>
-										{members?.[i]?.linkedUserId ? (
-											<ConsentBadge consent={consentOf(members[i]) ?? null} />
-										) : null}
+												<div className="sm:flex-1">
+													<label
+														htmlFor={`member-name-${i}`}
+														className={requiredLabelCls}
+													>
+														Team member
+													</label>
+													{members?.[i]?.linked ? (
+														<MemberPicker
+															id={`member-name-${i}`}
+															selectedName={
+																members[i]?.linkedUserId ? members[i]?.name : ""
+															}
+															excludeIds={(members ?? [])
+																.map((m) => m.linkedUserId)
+																.filter((v): v is string => !!v)}
+															onPick={(hit) => {
+																setValue(`members.${i}.name`, hit.displayName, {
+																	shouldDirty: true,
+																});
+																setValue(
+																	`members.${i}.linkedUserId`,
+																	hit.iskolarUserId,
+																	{ shouldDirty: true },
+																);
+															}}
+															onClear={() => {
+																setValue(`members.${i}.name`, "", {
+																	shouldDirty: true,
+																});
+																setValue(`members.${i}.linkedUserId`, null, {
+																	shouldDirty: true,
+																});
+															}}
+														/>
+													) : (
+														<input
+															id={`member-name-${i}`}
+															className={inputCls}
+															{...register(`members.${i}.name`)}
+														/>
+													)}
+												</div>
+												<div className="sm:flex-1">
+													<label
+														htmlFor={`member-contribution-${i}`}
+														className={fieldLabelCls}
+													>
+														Contribution
+													</label>
+													<input
+														id={`member-contribution-${i}`}
+														className={inputCls}
+														{...register(`members.${i}.contribution`)}
+													/>
+												</div>
+												{members?.[i]?.linkedUserId ? (
+													<ConsentBadge
+														consent={consentOf(members[i]) ?? null}
+													/>
+												) : null}
+												<button
+													type="button"
+													onClick={() => {
+														remove(i);
+														if (fields.length <= 1) {
+															setValue("isTeam", false);
+														}
+													}}
+													aria-label="Remove member"
+													className="flex size-9 flex-none items-center justify-center rounded-[9px] border border-info-bd text-content-muted hover:bg-surface-sunken"
+												>
+													<X className="size-4" aria-hidden />
+												</button>
+											</div>
+										))}
+
 										<button
 											type="button"
 											onClick={() => {
-												remove(i);
-												if (fields.length <= 1) {
-													setValue("isTeam", false);
-												}
+												append({
+													name: "",
+													contribution: "",
+													linked: true,
+													linkedUserId: null,
+												});
+												setValue("isTeam", true);
 											}}
-											aria-label="Remove member"
-											className="flex size-9 flex-none items-center justify-center rounded-[9px] border border-info-bd text-content-muted hover:bg-surface-sunken"
+											className="h-[46px] rounded-[10px] border border-[#c3d0f2] border-dashed bg-surface-sunken text-[14.5px] text-action transition-colors hover:bg-surface-tint"
 										>
-											<X className="size-4" aria-hidden />
+											+ Invite a teammate from iSkolar
 										</button>
+										{(members ?? []).some((m) => m.linkedUserId) ? (
+											<Button
+												type="button"
+												variant="secondary"
+												disabled={busy}
+												onClick={() => onSaveDraft(true)}
+											>
+												Send invites
+											</Button>
+										) : null}
 									</div>
-								))}
-
-								<button
-									type="button"
-									onClick={() => {
-										append({
-											name: "",
-											contribution: "",
-											linked: true,
-											linkedUserId: null,
-										});
-										setValue("isTeam", true);
-									}}
-									className="h-[46px] rounded-[10px] border border-[#c3d0f2] border-dashed bg-surface-sunken text-[14.5px] text-action transition-colors hover:bg-surface-tint"
-								>
-									+ Invite a teammate from iSkolar
-								</button>
-								{(members ?? []).some((m) => m.linkedUserId) ? (
-									<Button
-										type="button"
-										variant="secondary"
-										disabled={busy}
-										onClick={() => onSaveDraft(true)}
-									>
-										Send invites
-									</Button>
-								) : null}
-							</div>
+								</div>
+							) : null}
+							<details
+								open={moreOpen}
+								onToggle={(e) => setMoreOpen(e.currentTarget.open)}
+								className="rounded-[11px] border border-[#eef1fa] p-3.5"
+							>
+								<summary className="cursor-pointer text-[14px] text-action">
+									More details (optional): purpose, image, demo and repo links
+								</summary>
+								<div className="mt-4 flex flex-col gap-4">
+									<div>
+										<div className={fieldLabelCls}>Purpose</div>
+										<textarea
+											className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
+											maxLength={1000}
+											placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
+											{...register("purpose")}
+										/>
+										<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
+											{(purpose ?? "").length}/1000
+										</div>
+									</div>
+									<div>
+										<div className={fieldLabelCls}>
+											Project image (optional)
+										</div>
+										<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
+											<div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
+												{imageSrc ? (
+													<img
+														src={imageSrc}
+														alt="Preview of the selected cover"
+														className="absolute inset-0 size-full object-cover"
+													/>
+												) : (
+													<Upload
+														className="size-7 text-action/60"
+														aria-hidden
+													/>
+												)}
+											</div>
+											<div className="flex items-center justify-between gap-3 p-3">
+												<p className="min-w-0 truncate text-[12px] text-content-faint">
+													{projectImageFile?.name ??
+														"JPEG, PNG, or WebP · up to 5 MB"}
+												</p>
+												<label className="flex h-9 shrink-0 cursor-pointer items-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
+													{projectImageFile || project?.imageUrl
+														? "Change image"
+														: "Choose image"}
+													<input
+														type="file"
+														accept="image/jpeg,image/png,image/webp"
+														className="hidden"
+														disabled={uploadImage.isPending}
+														onChange={(event) => {
+															onPickProjectImage(event.target.files?.[0]);
+															event.target.value = "";
+														}}
+													/>
+												</label>
+											</div>
+										</div>
+										{imageError ? (
+											<p className="mt-1 text-[11.5px] text-danger">
+												{imageError}
+											</p>
+										) : null}
+									</div>
+									<div>
+										<p className={helperCls}>
+											Live demo and public repository URLs are optional. They
+											help reviewers check your MVP.
+										</p>
+										<div className="flex flex-col gap-3.5">
+											{(
+												[
+													{
+														key: "demo",
+														Icon: MonitorPlay,
+														ph: "Live demo URL",
+														hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
+													},
+													{
+														key: "repo",
+														Icon: Code,
+														ph: "Public repository URL",
+														hint: null,
+													},
+													{
+														key: "video",
+														Icon: Play,
+														ph: "Demo video URL (optional)",
+														hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
+													},
+												] as const
+											).map(({ key, Icon, ph, hint }) => {
+												const value = links?.[key] ?? "";
+												return (
+													<div key={key} className="flex flex-col gap-1">
+														<label
+															htmlFor={`project-${key}`}
+															className="pl-11 text-[13px] text-content-muted"
+														>
+															{ph}
+															<span className="ml-1 text-content-faint">
+																(optional)
+															</span>
+														</label>
+														<div className="flex items-center gap-3">
+															<span className="flex w-8 flex-none justify-center text-action">
+																<Icon
+																	className="size-5"
+																	strokeWidth={1.6}
+																	aria-hidden
+																/>
+															</span>
+															<input
+																id={`project-${key}`}
+																className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
+																	value && !isValidUrl(value)
+																		? "border-danger"
+																		: "border-line"
+																}`}
+																placeholder={ph}
+																{...register(`links.${key}`)}
+															/>
+														</div>
+														{hint ? (
+															<p className="pl-11 font-mono text-[11px] text-content-faint">
+																{hint}
+															</p>
+														) : null}
+													</div>
+												);
+											})}
+										</div>
+									</div>
+								</div>
+							</details>
 						</div>
 					) : null}
-
-					{step === 3 ? (
-						<div>
+					{step === 1 ? (
+						<div className="flex flex-col gap-4">
+							<div className="rounded-[11px] bg-surface-sunken px-3.5 py-3 text-[13.5px] text-content-body">
+								<span className="text-content-heading">
+									{title || "Untitled"}
+								</span>
+								{[
+									category,
+									PROJECT_TYPE_LABELS[type],
+									isTeam ? `${(members ?? []).length + 1} people` : "Solo",
+								]
+									.filter(Boolean)
+									.map((part) => (
+										<span key={part}> · {part}</span>
+									))}
+							</div>
 							<p className={helperCls}>
 								Declare ownership and integrity. This is recorded with your
-								submission.
+								submission.{" "}
+								{editing
+									? willReReview
+										? "Changing the title, category, or an MVP link sends this published project back to the review queue."
+										: "Your changes are saved without a new review."
+									: "Your project goes to the Academy review queue."}
 							</p>
 							<div className="flex flex-col gap-3">
 								<label
@@ -906,54 +1040,24 @@ export function SubmitProjectModal({
 									</div>
 								) : null}
 							</div>
-						</div>
-					) : null}
-
-					{step === 4 ? (
-						<div className="py-[18px] text-center">
-							{gateIssues.length === 0 ? (
-								<>
-									<CheckCircle2
-										className="mx-auto mb-4 size-10 text-action"
-										aria-hidden
-									/>
-									<div className="mb-2 text-[19px] text-content-heading">
-										{editing ? "Save your changes" : "Ready to submit"}
-									</div>
-									<p className="mx-auto max-w-[440px] text-[14px] leading-[1.55] text-content-soft">
-										{editing
-											? willReReview
-												? "Changing the title, category, or an MVP link sends this published project back to the review queue."
-												: "Your changes are saved without a new review."
-											: "Your project goes to the Academy review queue. Evidence checks prepare cited pass/return reasons, while reviewers keep final judgment on exceptions."}
-									</p>
-								</>
-							) : (
-								<div className="mx-auto max-w-[440px] text-left">
-									<p className="mb-2 text-[15px] text-content-heading">
+							{showErrors && gateIssues.length > 0 ? (
+								<div className="rounded-[11px] border border-danger p-3.5">
+									<p className="mb-1.5 text-[14px] text-content-heading">
 										Fix these before submitting:
 									</p>
-									<ul className="list-disc space-y-1 pl-5 text-[13.5px] text-content-body">
+									<ul className="list-disc space-y-1 pl-5 text-[13px] text-content-body">
 										{gateIssues.map((issue) => (
 											<li key={issue}>{issue}</li>
 										))}
 									</ul>
 								</div>
-							)}
+							) : null}
 						</div>
 					) : null}
 				</div>
 
 				{/* Footer stays below the scrolling fields, including on short screens. */}
 				<div className="shrink-0 border-line border-t bg-surface-overlay">
-					{!isLast && currentStepIssues.length > 0 ? (
-						<output className="block px-7 pt-3 text-[12.5px] text-danger">
-							{currentStepIssues[0]}
-							{currentStepIssues.length > 1
-								? ` (+${currentStepIssues.length - 1} more)`
-								: ""}
-						</output>
-					) : null}
 					<div className="flex items-center justify-between gap-3 px-7 py-4 max-[420px]:flex-wrap">
 						<div className="flex items-center gap-2">
 							<Button
@@ -973,6 +1077,17 @@ export function SubmitProjectModal({
 							>
 								Save draft
 							</Button>
+							{editing && !isLast && project?.status !== "draft" ? (
+								<Button
+									variant="secondary"
+									size="lg"
+									disabled={busy}
+									onClick={onSubmitProject}
+									className="rounded-[10px] px-4"
+								>
+									Save changes
+								</Button>
+							) : null}
 						</div>
 						{isLast ? (
 							<Button
@@ -986,10 +1101,13 @@ export function SubmitProjectModal({
 						) : (
 							<Button
 								size="lg"
-								disabled={currentStepIssues.length > 0}
-								onClick={() =>
-									setStep((s) => Math.min(STEPS.length - 1, s + 1))
-								}
+								onClick={() => {
+									if (currentStepIssues.length > 0) {
+										blockedByStep0();
+										return;
+									}
+									setStep((s) => Math.min(STEPS.length - 1, s + 1));
+								}}
 								className="rounded-[10px] px-[26px] text-[15px] shadow-none"
 							>
 								Continue
@@ -1090,4 +1208,8 @@ function ConsentBadge({ consent }: { consent: string | null }) {
 	return (
 		<span className={`rounded-md px-2.5 py-1 text-[12px] ${cls}`}>{label}</span>
 	);
+}
+
+function FieldError({ msg }: { msg: string | null }) {
+	return msg ? <p className="mt-1 text-[11.5px] text-danger">{msg}</p> : null;
 }

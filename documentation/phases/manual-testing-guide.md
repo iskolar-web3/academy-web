@@ -214,7 +214,7 @@ at boot too, same as Academy's.
 
 ## 4 · Submission — Projects (as student)
 
-- [ ] From `/student/home`, click **"+ Submit a project"** → the 5-step wizard modal opens (Details · MVP · Team · Ownership · Review), not a separate page.
+- [ ] From `/student/home`, click **"+ Submit a project"** → the 2-step wizard modal opens (Project · Confirm), not a separate page.
 - [ ] Fill details, leave MVP links blank, try to submit → **blocked**, the gate names exactly what's missing (a live demo + a public repo).
 - [ ] Fill a demo URL + a repo URL, declare ownership, submit → status becomes `submitted`; the dashboard's pipeline tracker shows Draft → Submitted.
 - [ ] Create a `thesis_capstone` or `startup` project → the Ownership step requires a document upload (thesis paper / pitch deck respectively); pick a PDF, verify the picker shows "Uploading…" then "Replace"; after submit, the detail page and (once reviewed) the admin modal both show a working **"View"** link to the uploaded PDF.
