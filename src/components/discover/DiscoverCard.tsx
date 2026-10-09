@@ -14,7 +14,7 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 				<div className="flex justify-center bg-surface-card px-4 pt-4">
 					<img
 						src={`${BACKEND_URL}${project.imageUrl}`}
-						alt={`${project.title} project image`}
+						alt={`${project.title} screenshot`}
 						className="aspect-square w-full max-w-56 object-contain"
 					/>
 				</div>

@@ -60,7 +60,7 @@ export function ProjectDetailView({
 					<div className="mx-auto aspect-square w-full max-w-[320px] overflow-hidden rounded-[12px] bg-surface-card md:max-w-none">
 						<img
 							src={imageSrc}
-							alt={`${project.title} project image`}
+							alt={`${project.title} screenshot`}
 							className="size-full object-contain"
 						/>
 					</div>

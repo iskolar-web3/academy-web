@@ -91,11 +91,15 @@ export function SubmitProjectModal({
 	const imageSrc = imagePreviewUrl ?? storedImageSrc;
 	useEffect(() => {
 		return () => {
-			if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+			if (imagePreviewUrl) {
+				URL.revokeObjectURL(imagePreviewUrl);
+			}
 		};
 	}, [imagePreviewUrl]);
 	useEffect(() => {
-		if (!project?.imageUrl) return;
+		if (!project?.imageUrl) {
+			return;
+		}
 
 		const controller = new AbortController();
 		let objectUrl: string | null = null;
@@ -105,7 +109,9 @@ export function SubmitProjectModal({
 		})
 			.then((response) => (response.ok ? response.blob() : null))
 			.then((blob) => {
-				if (!blob || controller.signal.aborted) return;
+				if (!blob || controller.signal.aborted) {
+					return;
+				}
 				objectUrl = URL.createObjectURL(blob);
 				setStoredImageSrc(objectUrl);
 			})
@@ -113,9 +119,11 @@ export function SubmitProjectModal({
 
 		return () => {
 			controller.abort();
-			if (objectUrl) URL.revokeObjectURL(objectUrl);
+			if (objectUrl) {
+				URL.revokeObjectURL(objectUrl);
+			}
 		};
-	}, [project?.id, project?.imageUrl]);
+	}, [project?.imageUrl]);
 
 	const form = useForm<ProjectFormValues>({
 		resolver: zodResolver(projectFormSchema),
@@ -299,7 +307,9 @@ export function SubmitProjectModal({
 	};
 
 	const onPickProjectImage = (file: File | undefined) => {
-		if (!file) return;
+		if (!file) {
+			return;
+		}
 		const error = validateProjectImage(file);
 		if (error) {
 			setImageError(error);
@@ -529,7 +539,7 @@ export function SubmitProjectModal({
 										{imageSrc ? (
 											<img
 												src={imageSrc}
-												alt="Project image preview"
+												alt="Preview of the selected cover"
 												className="absolute inset-0 size-full object-cover"
 											/>
 										) : (

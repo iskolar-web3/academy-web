@@ -19,7 +19,9 @@ export function useProjectImageSrc(imageUrl?: string | null): string | null {
 		})
 			.then((response) => (response.ok ? response.blob() : null))
 			.then((blob) => {
-				if (!blob || controller.signal.aborted) return;
+				if (!blob || controller.signal.aborted) {
+					return;
+				}
 				objectUrl = URL.createObjectURL(blob);
 				setImageSrc(objectUrl);
 			})
@@ -27,7 +29,9 @@ export function useProjectImageSrc(imageUrl?: string | null): string | null {
 
 		return () => {
 			controller.abort();
-			if (objectUrl) URL.revokeObjectURL(objectUrl);
+			if (objectUrl) {
+				URL.revokeObjectURL(objectUrl);
+			}
 		};
 	}, [imageUrl]);
 

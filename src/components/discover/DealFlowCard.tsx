@@ -81,7 +81,7 @@ export function DealFlowCard({ project }: { project: ShowcaseProject }) {
 					{project.imageUrl ? (
 						<img
 							src={`${BACKEND_URL}${project.imageUrl}`}
-							alt={`${project.title} project image`}
+							alt={`${project.title} screenshot`}
 							className="absolute inset-0 size-full object-cover"
 						/>
 					) : null}
