@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shorter submission flow: two steps (Project and Confirm) instead of five. Solo projects no longer go through a team step, and optional details are tucked into a collapsible section.
 - Buttons are no longer disabled when something is missing. Errors appear next to the field and the first one is focused.
 - Project images now use clearer alt text for screen readers.
+- Change image upload ratio to 1:1 (square) on project submission.
 
 ## [0.1.0] - 2026-10-07
 
