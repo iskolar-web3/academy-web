@@ -5,8 +5,8 @@ import {
 	resubmitProject,
 	submitProject,
 	updateProject,
-	uploadThesisPaper,
 	uploadProjectImage as uploadProjectImageRequest,
+	uploadThesisPaper,
 	withdrawProject,
 } from "#/lib/project/api";
 import type { ProjectInput } from "#/lib/project/model";

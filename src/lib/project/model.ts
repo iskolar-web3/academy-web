@@ -174,6 +174,9 @@ export const projectFormSchema = z.object({
 			name: z.string().max(80),
 			contribution: z.string().max(200),
 			linked: z.boolean(),
+			// Real iSkolar user id from the teammate picker. Optional so older local
+			// drafts (which only had `linked`) still parse.
+			linkedUserId: z.string().nullable().optional(),
 		}),
 	),
 	ownershipDeclared: z.boolean(),

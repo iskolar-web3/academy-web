@@ -91,3 +91,17 @@ export async function logoutRequest(): Promise<void> {
 		// ignore — local sign-out still proceeds
 	}
 }
+
+export type UserSearchHit = {
+	iskolarUserId: string;
+	displayName: string;
+	avatarUrl: string | null;
+};
+
+/** Teammate picker search by name. `GET /accounts/search?q=` (2+ chars). */
+export async function searchUsers(q: string): Promise<UserSearchHit[]> {
+	const res = await apiFetch<ApiEnvelope<UserSearchHit[]>>(
+		`/accounts/search?q=${encodeURIComponent(q)}`,
+	);
+	return res.data;
+}

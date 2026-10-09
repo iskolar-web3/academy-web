@@ -7,7 +7,8 @@ import type { Project } from "#/lib/project/model";
 import { PROJECT_TYPE_LABELS as TYPE_LABEL } from "#/lib/project/model";
 
 /** Shared project detail for owners and showcase viewers. */
-const sectionLabel = "font-mono text-[11px] uppercase tracking-[0.16em] text-content-faint";
+const sectionLabel =
+	"font-mono text-[11px] uppercase tracking-[0.16em] text-content-faint";
 
 const MVP_LINKS = [
 	{ key: "demo", Icon: MonitorPlay, label: "Live demo" },
@@ -59,7 +60,7 @@ export function ProjectDetailView({
 					<div className="mx-auto aspect-square w-full max-w-[320px] overflow-hidden rounded-[12px] bg-surface-card md:max-w-none">
 						<img
 							src={imageSrc}
-							alt={`${project.title} project image`}
+							alt={`${project.title} screenshot`}
 							className="size-full object-contain"
 						/>
 					</div>
@@ -119,19 +120,28 @@ export function ProjectDetailView({
 							{project.isTeam ? "Team & contributions" : "Ownership"}
 						</h2>
 						<p className="mt-2 text-[13px] leading-snug text-content-strong">
-							Uploaded by <span className="text-content-heading">{project.ownerName}</span>
+							Uploaded by{" "}
+							<span className="text-content-heading">{project.ownerName}</span>
 						</p>
 						{project.isTeam && project.members.length > 0 ? (
 							<div className="mt-3 grid gap-2">
 								{project.members.map((member) => (
-									<div key={member.id} className="flex min-w-0 items-center gap-2">
+									<div
+										key={member.id}
+										className="flex min-w-0 items-center gap-2"
+									>
 										<span className="flex size-8 flex-none items-center justify-center rounded-[8px] bg-action text-[11px] text-white">
 											{initialsOf(member.name)}
 										</span>
 										<div className="min-w-0 text-[13px] leading-snug">
-											<span className="text-content-heading">{member.name}</span>
+											<span className="text-content-heading">
+												{member.name}
+											</span>
 											{member.contribution ? (
-												<span className="text-content-faint"> · {member.contribution}</span>
+												<span className="text-content-faint">
+													{" "}
+													· {member.contribution}
+												</span>
 											) : null}
 										</div>
 									</div>
@@ -186,7 +196,9 @@ export function ProjectDetailView({
 							))}
 						</div>
 					) : (
-						<p className="mt-2 text-[13px] text-content-soft">No links added yet.</p>
+						<p className="mt-2 text-[13px] text-content-soft">
+							No links added yet.
+						</p>
 					)}
 				</section>
 			</aside>

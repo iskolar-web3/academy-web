@@ -242,7 +242,7 @@ export function formToProjectInput(v: ProjectFormValues): ProjectInput {
 						id: `m${i}`,
 						name: m.name.trim(),
 						contribution: m.contribution.trim(),
-						linkedUserId: m.linked ? `linked-${i}` : null,
+						linkedUserId: m.linked ? (m.linkedUserId ?? `linked-${i}`) : null,
 						consent: (m.linked ? "pending" : "not_required") as MemberConsent,
 					}))
 			: [],
@@ -268,6 +268,7 @@ export function projectToFormValues(p: Project): ProjectFormValues {
 			name: m.name,
 			contribution: m.contribution,
 			linked: m.linkedUserId !== null,
+			linkedUserId: m.linkedUserId,
 		})),
 		ownershipDeclared: p.ownership.declared,
 		thesisPaperName: p.ownership.thesisPaperName ?? "",

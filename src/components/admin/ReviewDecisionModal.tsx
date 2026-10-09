@@ -78,7 +78,9 @@ export function ReviewDecisionModal({
 		})
 			.then((response) => (response.ok ? response.blob() : null))
 			.then((blob) => {
-				if (!blob || controller.signal.aborted) return;
+				if (!blob || controller.signal.aborted) {
+					return;
+				}
 				objectUrl = URL.createObjectURL(blob);
 				setImageSrc(objectUrl);
 			})
@@ -86,9 +88,11 @@ export function ReviewDecisionModal({
 
 		return () => {
 			controller.abort();
-			if (objectUrl) URL.revokeObjectURL(objectUrl);
+			if (objectUrl) {
+				URL.revokeObjectURL(objectUrl);
+			}
 		};
-	}, [project.id, project.imageUrl]);
+	}, [project.imageUrl]);
 
 	const links = MVP_LINKS.map((l) => ({
 		...l,
@@ -144,7 +148,7 @@ export function ReviewDecisionModal({
 					{imageSrc ? (
 						<img
 							src={imageSrc}
-							alt={`${project.title} project image`}
+							alt={`${project.title} screenshot`}
 							className="absolute inset-0 size-full rounded-t-[22px] object-cover"
 						/>
 					) : null}

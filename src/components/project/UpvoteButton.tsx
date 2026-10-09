@@ -89,7 +89,9 @@ export function UpvoteButton({
 				/>
 			</motion.span>
 			{!showCount ? (
-				<span>{upvoted ? "Upvoted" : size === "lg" ? "Upvote!" : "Upvote"}</span>
+				<span>
+					{upvoted ? "Upvoted" : size === "lg" ? "Upvote!" : "Upvote"}
+				</span>
 			) : size === "sm" && upvoted ? (
 				<span className="tabular-nums">{count}</span>
 			) : (
