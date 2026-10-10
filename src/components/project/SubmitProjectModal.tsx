@@ -237,6 +237,9 @@ export function SubmitProjectModal({
 	// Title, category, purpose, and a project image are required. The pitch and the demo,
 	// repository, and video URLs are optional; ownership + consent are declared.
 	const gateIssues: string[] = [];
+	if (!hasImage) {
+		gateIssues.push("Add a project image");
+	}
 	if (!title || title.trim().length < 2) {
 		gateIssues.push("Add a project title");
 	}
@@ -245,9 +248,6 @@ export function SubmitProjectModal({
 	}
 	if (!category) {
 		gateIssues.push("Pick a category");
-	}
-	if (!hasImage) {
-		gateIssues.push("Add a project image");
 	}
 	if (links?.demo && !isValidUrl(links.demo)) {
 		gateIssues.push("Add a valid live demo URL");
@@ -302,12 +302,13 @@ export function SubmitProjectModal({
 	// can move on to Confirm while invites are still pending.
 	const stepIssues: string[][] = [
 		[
+			// Same order as the form: the image column first, then the fields beside it.
+			!hasImage ? "Add a project image" : null,
 			!title || title.trim().length < 2 ? "Add a project title" : null,
 			(purpose ?? "").trim().length < PURPOSE_MIN_LENGTH
 				? "Add a project purpose"
 				: null,
 			!category ? "Pick a category" : null,
-			!hasImage ? "Add a project image" : null,
 		]
 			.filter((issue): issue is string => issue !== null)
 			.concat(urlIssues, pickIssues),
@@ -571,112 +572,116 @@ export function SubmitProjectModal({
 				<div className="isk-scroll min-h-0 flex-1 overflow-y-auto px-7 pt-[18px] pb-5">
 					{step === 0 ? (
 						<div className="flex flex-col gap-4">
-							<div>
-								<div className={requiredLabelCls}>Project title</div>
-								<input
-									id="project-title"
-									className={inputCls}
-									placeholder="e.g. AralBot"
-									{...register("title")}
-								/>
-								<FieldError msg={fieldError("title")} />
-							</div>
-							<div>
-								<label
-									htmlFor="project-purpose"
-									className={cn("block", requiredLabelCls)}
-								>
-									Purpose
-								</label>
-								<textarea
-									id="project-purpose"
-									className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none transition-colors focus:border-action"
-									maxLength={1000}
-									placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
-									{...register("purpose")}
-								/>
-								<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
-									{(purpose ?? "").length}/1000
-								</div>
-								<FieldError msg={fieldError("purpose")} />
-							</div>
-							<div className="flex gap-3.5">
-								<div className="flex-1">
-									<div className={requiredLabelCls}>Category</div>
-									<select
-										id="project-category"
-										className={inputCls}
-										{...register("category")}
+							<div className="grid gap-4 sm:grid-cols-[200px_minmax(0,1fr)]">
+								<div>
+									<label
+										htmlFor="project-image"
+										className={cn("block", requiredLabelCls)}
 									>
-										<option value="">Select…</option>
-										{CATEGORIES.map((c) => (
-											<option key={c} value={c}>
-												{c}
-											</option>
-										))}
-									</select>
-									<FieldError msg={fieldError("category")} />
-								</div>
-								<div className="flex-1">
-									<div className={requiredLabelCls}>Type</div>
-									<select className={inputCls} {...register("type")}>
-										<option value="idea">{PROJECT_TYPE_LABELS.idea}</option>
-										<option value="thesis_capstone">
-											{PROJECT_TYPE_LABELS.thesis_capstone}
-										</option>
-										<option value="startup">
-											{PROJECT_TYPE_LABELS.startup}
-										</option>
-									</select>
-								</div>
-							</div>
-							<div>
-								<label
-									htmlFor="project-image"
-									className={cn("block", requiredLabelCls)}
-								>
-									Project image
-								</label>
-								<div className="flex items-center gap-4 rounded-[10px] border border-line bg-surface-sunken p-3">
-									<div className="relative flex size-[104px] flex-none items-center justify-center overflow-hidden rounded-[8px] bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
-										{imageSrc ? (
-											<img
-												src={imageSrc}
-												alt="Preview of the selected cover"
-												className="absolute inset-0 size-full object-cover"
+										Project image
+									</label>
+									<div className="w-full max-w-[200px] overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
+										<div className="relative flex aspect-square w-full items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
+											{imageSrc ? (
+												<img
+													src={imageSrc}
+													alt="Preview of the selected cover"
+													className="absolute inset-0 size-full object-cover"
+												/>
+											) : (
+												<Upload className="size-7 text-action/60" aria-hidden />
+											)}
+										</div>
+										<div className="flex flex-col gap-2 p-3">
+											<p className="min-w-0 break-words text-[12px] text-content-faint">
+												{projectImageFile?.name ??
+													"JPEG, PNG, or WebP | Max 5 MB"}
+											</p>
+											<button
+												type="button"
+												id="project-image"
+												disabled={uploadImage.isPending}
+												onClick={() => imageInputRef.current?.click()}
+												className="flex h-9 shrink-0 items-center justify-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken"
+											>
+												{hasImage ? "Change image" : "Choose image"}
+											</button>
+											<input
+												ref={imageInputRef}
+												type="file"
+												accept="image/jpeg,image/png,image/webp"
+												className="hidden"
+												tabIndex={-1}
+												onChange={(event) => {
+													onPickProjectImage(event.target.files?.[0]);
+													event.target.value = "";
+												}}
 											/>
-										) : (
-											<Upload className="size-7 text-action/60" aria-hidden />
-										)}
+										</div>
 									</div>
-									<div className="flex min-w-0 flex-col items-start gap-2">
-										<p className="min-w-0 break-words text-[12px] text-content-faint">
-											{projectImageFile?.name ??
-												"JPEG, PNG, or WebP | Max 5 MB"}
-										</p>
-										<button
-											type="button"
-											id="project-image"
-											disabled={uploadImage.isPending}
-											onClick={() => imageInputRef.current?.click()}
-											className="flex h-9 shrink-0 items-center justify-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken"
-										>
-											{hasImage ? "Change image" : "Choose image"}
-										</button>
+									<FieldError msg={imageError ?? fieldError("image")} />
+								</div>
+								<div className="flex min-w-0 flex-col gap-4">
+									<div>
+										<div className={requiredLabelCls}>Project title</div>
 										<input
-											ref={imageInputRef}
-											type="file"
-											accept="image/jpeg,image/png,image/webp"
-											className="hidden"
-											tabIndex={-1}
-											onChange={(event) => {
-												onPickProjectImage(event.target.files?.[0]);
-												event.target.value = "";
-											}}
+											id="project-title"
+											className={inputCls}
+											placeholder="e.g. AralBot"
+											{...register("title")}
 										/>
+										<FieldError msg={fieldError("title")} />
+									</div>
+									<div>
+										<label
+											htmlFor="project-purpose"
+											className={cn("block", requiredLabelCls)}
+										>
+											Purpose
+										</label>
+										<textarea
+											id="project-purpose"
+											className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none transition-colors focus:border-action"
+											maxLength={1000}
+											placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
+											{...register("purpose")}
+										/>
+										<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
+											{(purpose ?? "").length}/1000
+										</div>
+										<FieldError msg={fieldError("purpose")} />
+									</div>
+									<div className="flex gap-3.5">
+										<div className="flex-1">
+											<div className={requiredLabelCls}>Category</div>
+											<select
+												id="project-category"
+												className={inputCls}
+												{...register("category")}
+											>
+												<option value="">Select…</option>
+												{CATEGORIES.map((c) => (
+													<option key={c} value={c}>
+														{c}
+													</option>
+												))}
+											</select>
+											<FieldError msg={fieldError("category")} />
+										</div>
+										<div className="flex-1">
+											<div className={requiredLabelCls}>Type</div>
+											<select className={inputCls} {...register("type")}>
+												<option value="idea">{PROJECT_TYPE_LABELS.idea}</option>
+												<option value="thesis_capstone">
+													{PROJECT_TYPE_LABELS.thesis_capstone}
+												</option>
+												<option value="startup">
+													{PROJECT_TYPE_LABELS.startup}
+												</option>
+											</select>
+										</div>
 									</div>
 								</div>
-								<FieldError msg={imageError ?? fieldError("image")} />
 							</div>
 							<div>
 								<div className={fieldLabelCls}>
