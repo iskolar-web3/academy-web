@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { projectSummary } from "#/lib/project/helper";
 import { projectSchema } from "#/lib/project/model";
 import { VAULT_ACCESS_STATUSES } from "#/lib/vault/model";
 
@@ -37,7 +38,7 @@ export interface GalleryParams {
 export interface ProjectCardData {
 	id: string;
 	title: string;
-	pitch: string;
+	summary: string;
 	school: string;
 	imageUrl: string | null;
 }
@@ -47,7 +48,7 @@ export function toProjectCardData(p: ShowcaseProject): ProjectCardData {
 	return {
 		id: p.id,
 		title: p.title,
-		pitch: p.pitch,
+		summary: projectSummary(p),
 		school: p.school || "iSkolar Academy",
 		imageUrl: p.imageUrl,
 	};

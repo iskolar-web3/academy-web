@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Code, MonitorPlay, Play, Upload, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
@@ -21,6 +21,7 @@ import {
 	emptyFormValues,
 	formToProjectInput,
 	isValidUrl,
+	PURPOSE_MIN_LENGTH,
 	projectToFormValues,
 	requiresDocumentUpload,
 	triggersReReview,
@@ -91,6 +92,7 @@ export function SubmitProjectModal({
 	const [imageError, setImageError] = useState<string | null>(null);
 	const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 	const [storedImageSrc, setStoredImageSrc] = useState<string | null>(null);
+	const imageInputRef = useRef<HTMLInputElement>(null);
 	const imageSrc = imagePreviewUrl ?? storedImageSrc;
 	useEffect(() => {
 		return () => {
@@ -201,14 +203,9 @@ export function SubmitProjectModal({
 			q.state.data?.members.some((m) => m.consent === "pending") ? 5000 : false,
 	});
 	const current = liveProject ?? project;
-	const hasOptional = !!(
-		purpose ||
-		links?.demo ||
-		links?.repo ||
-		links?.video ||
-		projectImageFile ||
-		project?.imageUrl
-	);
+	// Purpose and the project image are required; the pitch and MVP links are optional.
+	const hasImage = !!(projectImageFile || current?.imageUrl);
+	const hasOptional = !!(pitch || links?.demo || links?.repo || links?.video);
 	useEffect(() => {
 		if (hasOptional) {
 			setMoreOpen(true);
@@ -237,16 +234,20 @@ export function SubmitProjectModal({
 		project.status === "published" &&
 		triggersReReview(project, formToProjectInput(getValues()));
 
-	// Demo, repository, and video URLs are optional; ownership + consent are declared.
+	// Title, category, purpose, and a project image are required. The pitch and the demo,
+	// repository, and video URLs are optional; ownership + consent are declared.
 	const gateIssues: string[] = [];
 	if (!title || title.trim().length < 2) {
 		gateIssues.push("Add a project title");
 	}
+	if ((purpose ?? "").trim().length < PURPOSE_MIN_LENGTH) {
+		gateIssues.push("Add a project purpose");
+	}
 	if (!category) {
 		gateIssues.push("Pick a category");
 	}
-	if ((pitch ?? "").trim().length < 8) {
-		gateIssues.push("Add a one-line pitch");
+	if (!hasImage) {
+		gateIssues.push("Add a project image");
 	}
 	if (links?.demo && !isValidUrl(links.demo)) {
 		gateIssues.push("Add a valid live demo URL");
@@ -302,29 +303,37 @@ export function SubmitProjectModal({
 	const stepIssues: string[][] = [
 		[
 			!title || title.trim().length < 2 ? "Add a project title" : null,
+			(purpose ?? "").trim().length < PURPOSE_MIN_LENGTH
+				? "Add a project purpose"
+				: null,
 			!category ? "Pick a category" : null,
-			(pitch ?? "").trim().length < 8 ? "Add a one-line pitch" : null,
+			!hasImage ? "Add a project image" : null,
 		]
 			.filter((issue): issue is string => issue !== null)
 			.concat(urlIssues, pickIssues),
 		gateIssues,
 	];
 	const currentStepIssues = stepIssues[step] ?? [];
-	const fieldError = (key: "title" | "pitch" | "category") => {
-		if (!showErrors && !touched[key]) {
+	const fieldError = (key: "title" | "purpose" | "category" | "image") => {
+		// The image isn't a form field, so it has no "touched" state — it shows once the
+		// user has tried to continue or submit.
+		const interacted = key !== "image" && touched[key];
+		if (!showErrors && !interacted) {
 			return null;
 		}
 		const issue = {
 			title: "Add a project title",
-			pitch: "Add a one-line pitch",
+			purpose: "Add a project purpose",
 			category: "Pick a category",
+			image: "Add a project image",
 		}[key];
 		return stepIssues[0]?.includes(issue) ? issue : null;
 	};
 	const FIRST_FIELD_IDS = {
 		"Add a project title": "project-title",
+		"Add a project purpose": "project-purpose",
 		"Pick a category": "project-category",
-		"Add a one-line pitch": "project-pitch",
+		"Add a project image": "project-image",
 		"Add a valid live demo URL": "project-demo",
 		"Add a valid public repository URL": "project-repo",
 	} as Record<string, string>;
@@ -573,14 +582,23 @@ export function SubmitProjectModal({
 								<FieldError msg={fieldError("title")} />
 							</div>
 							<div>
-								<div className={requiredLabelCls}>One-line pitch</div>
-								<input
-									id="project-pitch"
-									className={inputCls}
-									placeholder="What does it do, in a sentence?"
-									{...register("pitch")}
+								<label
+									htmlFor="project-purpose"
+									className={cn("block", requiredLabelCls)}
+								>
+									Purpose
+								</label>
+								<textarea
+									id="project-purpose"
+									className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none transition-colors focus:border-action"
+									maxLength={1000}
+									placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
+									{...register("purpose")}
 								/>
-								<FieldError msg={fieldError("pitch")} />
+								<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
+									{(purpose ?? "").length}/1000
+								</div>
+								<FieldError msg={fieldError("purpose")} />
 							</div>
 							<div className="flex gap-3.5">
 								<div className="flex-1">
@@ -611,6 +629,54 @@ export function SubmitProjectModal({
 										</option>
 									</select>
 								</div>
+							</div>
+							<div>
+								<label
+									htmlFor="project-image"
+									className={cn("block", requiredLabelCls)}
+								>
+									Project image
+								</label>
+								<div className="flex items-center gap-4 rounded-[10px] border border-line bg-surface-sunken p-3">
+									<div className="relative flex size-[104px] flex-none items-center justify-center overflow-hidden rounded-[8px] bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
+										{imageSrc ? (
+											<img
+												src={imageSrc}
+												alt="Preview of the selected cover"
+												className="absolute inset-0 size-full object-cover"
+											/>
+										) : (
+											<Upload className="size-7 text-action/60" aria-hidden />
+										)}
+									</div>
+									<div className="flex min-w-0 flex-col items-start gap-2">
+										<p className="min-w-0 break-words text-[12px] text-content-faint">
+											{projectImageFile?.name ??
+												"JPEG, PNG, or WebP | Max 5 MB"}
+										</p>
+										<button
+											type="button"
+											id="project-image"
+											disabled={uploadImage.isPending}
+											onClick={() => imageInputRef.current?.click()}
+											className="flex h-9 shrink-0 items-center justify-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken"
+										>
+											{hasImage ? "Change image" : "Choose image"}
+										</button>
+										<input
+											ref={imageInputRef}
+											type="file"
+											accept="image/jpeg,image/png,image/webp"
+											className="hidden"
+											tabIndex={-1}
+											onChange={(event) => {
+												onPickProjectImage(event.target.files?.[0]);
+												event.target.value = "";
+											}}
+										/>
+									</div>
+								</div>
+								<FieldError msg={imageError ?? fieldError("image")} />
 							</div>
 							<div>
 								<div className={fieldLabelCls}>
@@ -789,127 +855,79 @@ export function SubmitProjectModal({
 								</summary>
 								<div className="mt-4 flex flex-col gap-4">
 									<div>
-										<div className={fieldLabelCls}>Purpose</div>
-										<textarea
-											className="min-h-[84px] w-full resize-y rounded-[10px] border border-line bg-surface-card px-[14px] py-[11px] text-[15px] text-content-heading outline-none focus:border-action"
-											maxLength={1000}
-											placeholder="The problem this solves and who it's for. Shown under Purpose on the project page."
-											{...register("purpose")}
+										<label
+											htmlFor="project-pitch"
+											className={cn("block", fieldLabelCls)}
+										>
+											One-line pitch
+										</label>
+										<input
+											id="project-pitch"
+											className={inputCls}
+											maxLength={300}
+											placeholder="What does it do, in a sentence?"
+											{...register("pitch")}
 										/>
-										<div className="mt-1 text-right font-mono text-[11px] text-content-faint">
-											{(purpose ?? "").length}/1000
-										</div>
 									</div>
-									<div className="grid gap-4 sm:grid-cols-[200px_1fr]">
-										<div>
-											<div className={fieldLabelCls}>
-												Project image
-											</div>
-											<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
-												<div className="relative flex aspect-square w-full items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
-													{imageSrc ? (
-														<img
-															src={imageSrc}
-															alt="Preview of the selected cover"
-															className="absolute inset-0 size-full object-cover"
-														/>
-													) : (
-														<Upload
-															className="size-7 text-action/60"
-															aria-hidden
-														/>
-													)}
-												</div>
-												<div className="flex flex-col gap-2 p-3">
-													<p className="min-w-0 break-words text-[12px] text-content-faint">
-														{projectImageFile?.name ??
-															"JPEG, PNG, or WebP | Max 5 MB"}
-													</p>
-													<label className="flex h-9 shrink-0 cursor-pointer items-center justify-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
-														{projectImageFile || project?.imageUrl
-															? "Change image"
-															: "Choose image"}
-														<input
-															type="file"
-															accept="image/jpeg,image/png,image/webp"
-															className="hidden"
-															disabled={uploadImage.isPending}
-															onChange={(event) => {
-																onPickProjectImage(event.target.files?.[0]);
-																event.target.value = "";
-															}}
-														/>
+									<div className="flex flex-col gap-3.5">
+										{(
+											[
+												{
+													key: "demo",
+													Icon: MonitorPlay,
+													ph: "Live demo URL",
+													hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
+												},
+												{
+													key: "repo",
+													Icon: Code,
+													ph: "Public repository URL",
+													hint: null,
+												},
+												{
+													key: "video",
+													Icon: Play,
+													ph: "Demo video URL",
+													hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
+												},
+											] as const
+										).map(({ key, Icon, ph, hint }) => {
+											const value = links?.[key] ?? "";
+											return (
+												<div key={key} className="flex flex-col gap-1">
+													<label
+														htmlFor={`project-${key}`}
+														className="pl-11 text-[13px] text-content-muted"
+													>
+														{ph}
 													</label>
+													<div className="flex items-center gap-3">
+														<span className="flex w-8 flex-none justify-center text-action">
+															<Icon
+																className="size-5"
+																strokeWidth={1.6}
+																aria-hidden
+															/>
+														</span>
+														<input
+															id={`project-${key}`}
+															className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
+																value && !isValidUrl(value)
+																	? "border-danger"
+																	: "border-line"
+															}`}
+															placeholder={ph}
+															{...register(`links.${key}`)}
+														/>
+													</div>
+													{hint ? (
+														<p className="pl-11 font-mono text-[11px] text-content-faint">
+															{hint}
+														</p>
+													) : null}
 												</div>
-											</div>
-											{imageError ? (
-												<p className="mt-1 text-[11.5px] text-danger">
-													{imageError}
-												</p>
-											) : null}
-										</div>
-										<div>
-											<div className="flex flex-col gap-3.5">
-												{(
-													[
-														{
-															key: "demo",
-															Icon: MonitorPlay,
-															ph: "Live demo URL",
-															hint: "Host it on a free service (Vercel, Netlify, Render, GitHub Pages, etc.). Cold starts should be retried before a project is returned.",
-														},
-														{
-															key: "repo",
-															Icon: Code,
-															ph: "Public repository URL",
-															hint: null,
-														},
-														{
-															key: "video",
-															Icon: Play,
-															ph: "Demo video URL",
-															hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
-														},
-													] as const
-												).map(({ key, Icon, ph, hint }) => {
-													const value = links?.[key] ?? "";
-													return (
-														<div key={key} className="flex flex-col gap-1">
-															<label
-																htmlFor={`project-${key}`}
-																className="pl-11 text-[13px] text-content-muted"
-															>
-																{ph}
-															</label>
-															<div className="flex items-center gap-3">
-																<span className="flex w-8 flex-none justify-center text-action">
-																	<Icon
-																		className="size-5"
-																		strokeWidth={1.6}
-																		aria-hidden
-																	/>
-																</span>
-																<input
-																	id={`project-${key}`}
-																	className={`h-11 flex-1 rounded-[10px] border bg-surface-card px-[14px] text-[14.5px] text-content-heading outline-none transition-colors focus:border-action ${
-																		value && !isValidUrl(value)
-																			? "border-danger"
-																			: "border-line"
-																	}`}
-																	placeholder={ph}
-																	{...register(`links.${key}`)}
-																/>
-															</div>
-															{hint ? (
-																<p className="pl-11 font-mono text-[11px] text-content-faint">
-																	{hint}
-																</p>
-															) : null}
-														</div>
-													);
-												})}
-											</div>
-										</div>
+											);
+										})}
 									</div>
 								</div>
 							</details>

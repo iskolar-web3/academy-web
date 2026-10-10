@@ -9,6 +9,17 @@ import type {
 
 /** Pure helpers for the project domain — status machine, MVP gate, form mappers. */
 
+/** Shortest purpose the submit gate accepts (mirrors academy-server's `PURPOSE_MIN_LENGTH`). */
+export const PURPOSE_MIN_LENGTH = 8;
+
+/**
+ * The one-liner shown under a project title on cards: the optional pitch when the student
+ * wrote one, otherwise the (required) purpose, so a card is never blank.
+ */
+export function projectSummary(p: Pick<Project, "pitch" | "purpose">): string {
+	return p.pitch.trim() || p.purpose.trim();
+}
+
 export function isValidUrl(value: string): boolean {
 	try {
 		const u = new URL(value);
@@ -205,8 +216,9 @@ export function triggersReReview(
 }
 
 // The MVP submission gate lives in `components/project/SubmitProjectModal` (the single
-// create + edit surface). Demo, repository, and video URLs are optional; ownership and
-// consent declarations remain required. The server re-validates the gate on submit.
+// create + edit surface). Title, category, purpose, a project image, and the ownership +
+// consent declarations are required; the one-line pitch and the demo, repository, and video
+// URLs are optional. The server re-validates the gate on submit.
 
 /**
  * A thesis/capstone or startup may attach a supporting document. An idea/prototype does not

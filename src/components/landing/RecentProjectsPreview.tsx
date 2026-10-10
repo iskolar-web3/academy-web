@@ -65,7 +65,7 @@ export function RecentProjectsPreview() {
 											{project.school}
 										</span>
 										<span className="mt-3 line-clamp-3 text-[14px] leading-normal text-content-soft">
-											{project.pitch}
+											{project.summary}
 										</span>
 									</div>
 								</button>

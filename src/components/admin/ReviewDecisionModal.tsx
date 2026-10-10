@@ -178,12 +178,16 @@ export function ReviewDecisionModal({
 							: `${project.updatedDays}d ago`}
 					</div>
 
-					<div className={eyebrowRow}>
-						<span className={eyebrowText}>Pitch</span>
-					</div>
-					<div className="text-[15px] text-content-strong leading-[1.55]">
-						{project.pitch || "No pitch provided"}
-					</div>
+					{project.pitch.trim() ? (
+						<>
+							<div className={eyebrowRow}>
+								<span className={eyebrowText}>Pitch</span>
+							</div>
+							<div className="text-[15px] text-content-strong leading-[1.55]">
+								{project.pitch}
+							</div>
+						</>
+					) : null}
 
 					<div className={eyebrowRow}>
 						<span className={eyebrowText}>Purpose</span>
