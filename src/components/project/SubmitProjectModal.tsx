@@ -562,10 +562,6 @@ export function SubmitProjectModal({
 				<div className="isk-scroll min-h-0 flex-1 overflow-y-auto px-7 pt-[18px] pb-5">
 					{step === 0 ? (
 						<div className="flex flex-col gap-4">
-							<p className="text-[12px] text-content-muted">
-								Fields marked * are required to submit. You can save a draft
-								after entering a title.
-							</p>
 							<div>
 								<div className={requiredLabelCls}>Project title</div>
 								<input
@@ -789,7 +785,7 @@ export function SubmitProjectModal({
 								className="rounded-[11px] border border-[#eef1fa] p-3.5"
 							>
 								<summary className="cursor-pointer text-[14px] text-action">
-									More details (optional): purpose, image, demo and repo links
+									Additional Details (optional)
 								</summary>
 								<div className="mt-4 flex flex-col gap-4">
 									<div>
@@ -807,7 +803,7 @@ export function SubmitProjectModal({
 									<div className="grid gap-4 sm:grid-cols-[200px_1fr]">
 										<div>
 											<div className={fieldLabelCls}>
-												Project image (optional)
+												Project image
 											</div>
 											<div className="overflow-hidden rounded-[10px] border border-line bg-surface-sunken">
 												<div className="relative flex aspect-square w-full items-center justify-center bg-gradient-to-br from-[#dce7ff] to-[#f0e7ff]">
@@ -827,7 +823,7 @@ export function SubmitProjectModal({
 												<div className="flex flex-col gap-2 p-3">
 													<p className="min-w-0 break-words text-[12px] text-content-faint">
 														{projectImageFile?.name ??
-															"JPEG, PNG, or WebP · up to 5 MB · cropped to a square"}
+															"JPEG, PNG, or WebP | Max 5 MB"}
 													</p>
 													<label className="flex h-9 shrink-0 cursor-pointer items-center justify-center rounded-[9px] border border-line bg-surface-card px-3.5 text-[13px] text-action hover:bg-surface-sunken">
 														{projectImageFile || project?.imageUrl
@@ -871,7 +867,7 @@ export function SubmitProjectModal({
 														{
 															key: "video",
 															Icon: Play,
-															ph: "Demo video URL (optional)",
+															ph: "Demo video URL",
 															hint: "Upload to YouTube as Unlisted (not Private) so the link actually opens for reviewers.",
 														},
 													] as const
@@ -884,9 +880,6 @@ export function SubmitProjectModal({
 																className="pl-11 text-[13px] text-content-muted"
 															>
 																{ph}
-																<span className="ml-1 text-content-faint">
-																	(optional)
-																</span>
 															</label>
 															<div className="flex items-center gap-3">
 																<span className="flex w-8 flex-none justify-center text-action">
