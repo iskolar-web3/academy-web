@@ -215,7 +215,8 @@ at boot too, same as Academy's.
 ## 4 · Submission — Projects (as student)
 
 - [ ] From `/student/home`, click **"+ Submit a project"** → the 2-step wizard modal opens (Project · Confirm), not a separate page.
-- [ ] Fill details, leave MVP links blank, try to submit → **blocked**, the gate names exactly what's missing (a live demo + a public repo).
+- [ ] Fill only the title, click **Continue** → **blocked**; inline errors appear on Purpose, Category and Project image (all marked required) and focus jumps to the first one. Leave the one-line pitch and the demo/repo/video links blank — they are optional and never block.
+- [ ] Fill purpose, category and pick an image (JPEG/PNG/WebP, cropped to a square preview) → Continue works; a blank pitch still submits, and the project card falls back to the purpose text.
 - [ ] Fill a demo URL + a repo URL, declare ownership, submit → status becomes `submitted`; the dashboard's pipeline tracker shows Draft → Submitted.
 - [ ] Create a `thesis_capstone` or `startup` project → the Ownership step requires a document upload (thesis paper / pitch deck respectively); pick a PDF, verify the picker shows "Uploading…" then "Replace"; after submit, the detail page and (once reviewed) the admin modal both show a working **"View"** link to the uploaded PDF.
 - [ ] Add a team member on the Team step, mark them "linked" → their consent starts `pending` and they stay uncredited on the public showcase (verified later in §6) until they accept.

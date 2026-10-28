@@ -41,7 +41,7 @@ function ShelfCard({
 					</span>
 					<span className="school">{project.school}</span>
 					<span className="title">{project.title}</span>
-					<span className="pitch">{project.pitch}</span>
+					<span className="pitch">{project.summary}</span>
 				</button>
 			</SignInPopover>
 		</li>

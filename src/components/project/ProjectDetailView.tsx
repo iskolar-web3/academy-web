@@ -88,14 +88,16 @@ export function ProjectDetailView({
 					<span className="chip chip--type">{TYPE_LABEL[project.type]}</span>
 				</div>
 
-				<section className="mt-5">
-					<h2 className={sectionLabel}>Overview</h2>
-					<p className="mt-1.5 text-[16px] leading-[1.5] text-content-strong">
-						{project.pitch || "No pitch provided"}
-					</p>
-				</section>
+				{project.pitch.trim() ? (
+					<section className="mt-5">
+						<h2 className={sectionLabel}>Overview</h2>
+						<p className="mt-1.5 text-[16px] leading-[1.5] text-content-strong">
+							{project.pitch}
+						</p>
+					</section>
+				) : null}
 
-				<section className="mt-4">
+				<section className={project.pitch.trim() ? "mt-4" : "mt-5"}>
 					<h2 className={sectionLabel}>Purpose</h2>
 					<p className="mt-1.5 text-[15px] leading-[1.5] text-content-strong">
 						{project.purpose || "No purpose provided"}

@@ -7,7 +7,7 @@ import {
 import { useEntitlement } from "#/hooks/subscription/useEntitlement";
 import { BACKEND_URL } from "#/lib/api";
 import type { ShowcaseProject } from "#/lib/discover/model";
-import { projectCover } from "#/lib/project/helper";
+import { projectCover, projectSummary } from "#/lib/project/helper";
 
 /**
  * Deal-flow feed card — a 1:1 port of the design-template SPONSOR DEAL-FLOW feed card
@@ -88,7 +88,7 @@ export function DealFlowCard({ project }: { project: ShowcaseProject }) {
 				</div>
 				<div className="p-[15px]">
 					<p className="mb-2.5 line-clamp-2 text-[13px] leading-normal text-content-soft">
-						{project.pitch}
+						{projectSummary(project)}
 					</p>
 					<div className="flex flex-wrap gap-1.5">
 						{tech.map((t) => (

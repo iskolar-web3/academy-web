@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { BACKEND_URL } from "#/lib/api";
 import type { ShowcaseProject } from "#/lib/discover/model";
+import { projectSummary } from "#/lib/project/helper";
 
 /** A compact project preview that opens the full project detail. */
 export function DiscoverCard({ project }: { project: ShowcaseProject }) {
@@ -30,7 +31,7 @@ export function DiscoverCard({ project }: { project: ShowcaseProject }) {
 					{project.school || "iSkolar Academy"}
 				</p>
 				<p className="mt-3 line-clamp-3 text-[14px] leading-normal text-content-soft">
-					{project.pitch}
+					{projectSummary(project)}
 				</p>
 			</div>
 		</Link>
