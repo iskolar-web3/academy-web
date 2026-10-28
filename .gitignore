@@ -14,3 +14,10 @@ __unconfig*
 todos.json
 
 .claude
+blueprint-out/
+
+# impeccable design skill (local install, not shared)
+.claude/skills/impeccable/
+.claude/agents/impeccable-*.md
+.impeccable/
+PRODUCT.md

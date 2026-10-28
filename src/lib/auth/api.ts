@@ -48,6 +48,18 @@ export function isGoogleAuthEnabled(): boolean {
 	return import.meta.env.VITE_GOOGLE_AUTH_ENABLED === "true";
 }
 
-export function googleLoginUrl(): string {
-	return import.meta.env.VITE_GOOGLE_AUTH_URL || `${BACKEND_URL}/auth/google`;
+/**
+ * Google OAuth entry point. `redirectTo` rides along as `?redirect=` (same contract as
+ * `ssoLoginUrl`); academy-server carries it through the OAuth round-trip and lands an
+ * already-onboarded user there. A first-time user goes through onboarding first, so
+ * callers also remember it client-side (`rememberPostSignInRedirect`).
+ */
+export function googleLoginUrl(redirectTo?: string): string {
+	const base =
+		import.meta.env.VITE_GOOGLE_AUTH_URL || `${BACKEND_URL}/auth/google`;
+	if (!redirectTo) {
+		return base;
+	}
+	const separator = base.includes("?") ? "&" : "?";
+	return `${base}${separator}redirect=${encodeURIComponent(redirectTo)}`;
 }

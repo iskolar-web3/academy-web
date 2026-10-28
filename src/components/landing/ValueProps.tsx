@@ -1,7 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { HandCoins, Rocket, Telescope } from "lucide-react";
-import { Reveal } from "#/components/landing/Reveal";
-import { SectionHeading } from "#/components/landing/spine";
+import type { CSSProperties } from "react";
 
 interface ValueProp {
 	Icon: LucideIcon;
@@ -27,27 +26,31 @@ const PROPS: ValueProp[] = [
 	},
 ];
 
-/** Centered three-column overview of Academy's main benefits. */
+/** Display label column + three column-ruled claims with thin-line lucide icons. */
 export function ValueProps() {
 	return (
-		<section className="container-page py-20">
-			<SectionHeading label="Why Academy" />
-			<div className="mt-14 grid gap-12 md:grid-cols-3">
-				{PROPS.map(({ Icon, title, body }, i) => {
-					return (
-						<Reveal key={title} delay={i * 0.08}>
-							<article className="flex w-full flex-col items-center text-center">
-								<span className="mb-6 inline-flex size-24 items-center justify-center text-action">
-									<Icon className="size-12" strokeWidth={1.5} aria-hidden />
-								</span>
-								<h3 className="mb-3 text-2xl text-foreground">{title}</h3>
-								<p className="max-w-xs text-base leading-relaxed text-content-soft">
-									{body}
-								</p>
-							</article>
-						</Reveal>
-					);
-				})}
+		<section
+			className="section compact ground-canvas"
+			aria-labelledby="why-title"
+		>
+			<div className="wrap why-grid">
+				<div className="head">
+					<span className="rule reveal" />
+					<h2 id="why-title" className="display reveal">
+						Why Academy
+					</h2>
+				</div>
+				<ul className="why-list">
+					{PROPS.map(({ Icon, title, body }, i) => (
+						<li key={title}>
+							<Icon className="why-icon reveal" aria-hidden="true" />
+							<h3 className="reveal" style={{ "--i": i } as CSSProperties}>
+								{title}
+							</h3>
+							<p>{body}</p>
+						</li>
+					))}
+				</ul>
 			</div>
 		</section>
 	);
