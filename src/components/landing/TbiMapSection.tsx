@@ -1,7 +1,5 @@
-import { ExternalLink, Mail } from "lucide-react";
 import { useCallback, useState } from "react";
 import { TbiMapCanvas } from "#/components/landing/TbiMapCanvas";
-import { Button } from "#/components/ui/button";
 import type { Tbi } from "#/lib/tbi/directory";
 
 const UMAK_TBI: Tbi = {
@@ -17,127 +15,111 @@ const UMAK_TBI: Tbi = {
 };
 const TBIS = [UMAK_TBI];
 
-export function TbiMapSection() {
-	const [selected, setSelected] = useState<Tbi | null>(null);
-	const [focus, setFocus] = useState<{ id: string; revision: number } | null>(
-		null,
+function MailIcon() {
+	return (
+		<svg
+			className="ico"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="1.75"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+		>
+			<path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+			<rect x="2" y="4" width="20" height="16" rx="2" />
+		</svg>
 	);
-	const selectMarker = useCallback((tbi: Tbi) => setSelected(tbi), []);
+}
 
-	function focusTbi(tbi: Tbi) {
-		setSelected(tbi);
-		setFocus((previous) => ({
-			id: tbi.id,
-			revision: (previous?.revision ?? 0) + 1,
-		}));
-	}
+function ArrowIcon() {
+	return (
+		<svg
+			className="ico arr"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="1.75"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+		>
+			<path d="M5 12h14" />
+			<path d="m12 5 7 7-7 7" />
+		</svg>
+	);
+}
+
+/** Current TBI partner beside the live Leaflet map, then the partnering CTA panel. */
+export function TbiMapSection() {
+	const [selectedId, setSelectedId] = useState<string>();
+	const selectMarker = useCallback((tbi: Tbi) => setSelectedId(tbi.id), []);
 
 	return (
 		<section
+			className="section ground-canvas"
 			id="tbi-map"
-			className="container-page py-16 sm:py-20"
-			aria-labelledby="tbi-heading"
+			aria-labelledby="tbi-title"
 		>
-			<div className="max-w-3xl text-left">
-				<p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-action/70">
-					Technology Business Incubators
-				</p>
-				<h2
-					id="tbi-heading"
-					className="mt-2 text-3xl leading-tight text-foreground sm:text-4xl"
-				>
-					TBI partnerships
-				</h2>
-			</div>
-
-			<div className="mt-8 grid overflow-hidden rounded-2xl border border-line bg-card shadow-card lg:grid-cols-[minmax(300px,0.8fr)_minmax(0,1.2fr)]">
-				<div className="flex min-h-[420px] flex-col items-center justify-center border-b border-line p-6 text-center sm:p-8 lg:border-r lg:border-b-0">
-					<p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-action/70">
-						Current TBI partner
-					</p>
-					<button
-						type="button"
-						className="mt-5 flex max-w-sm flex-col items-center rounded-2xl border border-line bg-surface-card p-6 shadow-card transition hover:border-action/40 focus-visible:outline-2 focus-visible:outline-action"
-						onClick={() => focusTbi(UMAK_TBI)}
-					>
-						<span className="flex size-32 items-center justify-center rounded-xl bg-surface-sunken p-4">
-							<img
-								src="/partnerships/ctied.png"
-								alt="CTIED logo"
-								className="max-h-full max-w-full object-contain"
-								style={{
-									filter:
-										"grayscale(1) sepia(1) hue-rotate(190deg) saturate(2.2) brightness(0.95)",
-								}}
-							/>
-						</span>
-						<span className="mt-4 text-lg leading-snug text-content-heading">
-							UMak Center for Technology Incubation and Enterprise Development
-						</span>
-						<span className="mt-2 text-sm text-content-soft">
-							University of Makati · Makati, Metro Manila
-						</span>
-					</button>
+			<div className="wrap">
+				<div className="head">
+					<span className="rule reveal" />
+					<p className="kicker reveal">Technology Business Incubators</p>
+					<h2 id="tbi-title" className="display reveal">
+						TBI partnerships
+					</h2>
 				</div>
-
-				<div className="relative flex min-w-0 flex-col">
-					<TbiMapCanvas
-						tbis={TBIS}
-						onSelect={selectMarker}
-						selectedId={selected?.id}
-						origin={null}
-						focus={focus}
-						reset={0}
-					/>
-					<div className="border-t border-line px-5 py-3 text-xs text-content-soft">
-						<span className="inline-flex items-center gap-2">
-							<span className="size-2.5 rounded-full bg-action" />
-							UMak CTIED
-						</span>
-					</div>
-					{selected && (
-						<article
-							className="border-t border-line bg-surface-sunken p-5"
-							aria-live="polite"
+				<div className="tbi-grid">
+					<div className="tbi-current">
+						<p className="kicker">Current TBI partner</p>
+						<img
+							src="/partnerships/ctied.png"
+							alt="CTIED logo"
+							width={298}
+							height={88}
+						/>
+						<h3>{UMAK_TBI.name}</h3>
+						<p className="host">
+							{UMAK_TBI.host} · {UMAK_TBI.city}, {UMAK_TBI.province}
+						</p>
+						<a
+							className="visit"
+							href={UMAK_TBI.url}
+							target="_blank"
+							rel="noopener noreferrer"
 						>
-							<h3 className="text-xl text-foreground">{selected.name}</h3>
-							<p className="mt-2 text-sm text-content-strong">
-								{selected.address}, {selected.city}, {selected.province}
-							</p>
-							<Button asChild variant="secondary" className="mt-4">
-								<a
-									href={selected.url}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									Visit UMak
-									<ExternalLink className="size-3.5" aria-hidden />
-								</a>
-							</Button>
-						</article>
-					)}
+							Visit UMak <span aria-hidden="true">↗</span>
+						</a>
+					</div>
+					<div className="map-slot">
+						<TbiMapCanvas
+							tbis={TBIS}
+							onSelect={selectMarker}
+							selectedId={selectedId}
+							origin={null}
+							focus={null}
+							reset={0}
+						/>
+					</div>
 				</div>
-			</div>
-
-			<div className="mt-6 flex flex-col items-center rounded-2xl border border-line bg-surface-card p-6 text-center shadow-card sm:p-8">
-				<h3 className="text-2xl leading-tight text-content-heading sm:text-3xl">
-					Interested in partnering with us?
-				</h3>
-				<p className="mt-3 text-base leading-relaxed text-content-soft">
-					Let’s explore how we can work together.
-				</p>
-				<a
-					href="mailto:hello@iskolar.io"
-					className="mt-2 text-base text-action underline-offset-4 hover:underline"
-				>
-					hello@iskolar.io
-				</a>
-				<Button asChild size="lg" className="mt-6">
-					<a href="mailto:hello@iskolar.io?subject=TBI%20partnership%20inquiry">
-						<Mail className="size-4" aria-hidden />
-						Email Us
+				<aside className="pull" aria-labelledby="partner-cta-title">
+					<div>
+						<p className="kicker">Partner with us</p>
+						<h3 id="partner-cta-title" className="reveal">
+							Interested in partnering with us?
+						</h3>
+						<p className="pull-sub">Let’s explore how we can work together.</p>
+					</div>
+					<a
+						className="lp-btn lp-btn-primary btn-mail"
+						href="mailto:hello@iskolar.io"
+					>
+						<MailIcon />
+						<span>hello@iskolar.io</span>
+						<ArrowIcon />
 					</a>
-				</Button>
+				</aside>
 			</div>
 		</section>
 	);

@@ -54,7 +54,14 @@ export function showcaseProjectQuery(id: string) {
 	});
 }
 
-/** Top-3 newest published for the visitor landing (PLT-06). PUBLIC. `GET /discover/teaser`. */
+/**
+ * Most-recent published projects the landing renders at most (PLT-06). The server caps the
+ * teaser itself (`TEASER_LIMIT` in academy-server); the client renders whatever comes back,
+ * up to this many.
+ */
+export const TEASER_DISPLAY_LIMIT = 6;
+
+/** Newest published for the visitor landing (PLT-06). PUBLIC. `GET /discover/teaser`. */
 export function publicTeaserQuery() {
 	return queryOptions({
 		queryKey: ["discover", "teaser"] as const,
