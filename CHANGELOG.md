@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Actions CI that runs typecheck, lint, tests, build, and a dependency audit on every push and pull request.
+
 ### Changed
 
+- Updated dependencies.
 - A project image and a purpose are now required to submit a project. The one-line pitch is optional and lives under "Additional Details". The required fields share one layout: the image on the left and the title, purpose, category and type on the right, with the same labels and inline errors.
 - Project cards fall back to the purpose when a project has no one-line pitch, and the detail page and review modal skip the pitch section when it is empty.
 
