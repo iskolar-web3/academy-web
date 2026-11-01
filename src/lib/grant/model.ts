@@ -91,3 +91,113 @@ export const grantFormSchema = z.object({
 	proposalName: z.string(),
 });
 export type GrantFormValues = z.infer<typeof grantFormSchema>;
+
+// ── Admin "Add Grant" ─────────────────────────────────────────────────────────────────
+/**
+ * Mirrors `ADMIN_GRANT_CONFIG` in academy-server `grant/model.ts`. UX only: the server
+ * re-validates every field, plus the PDF's MIME type and `%PDF-` signature.
+ */
+export const ADMIN_GRANT_CONFIG = {
+	titleMax: 200,
+	descriptionMax: 2000,
+	adminNoteMax: 2000,
+	minFundingGoalPesos: 1_000,
+	maxFundingGoalPesos: 10_000_000,
+	maxProposalMb: 15,
+} as const;
+
+/** Body of `POST /admin/grants` (`data` part); the PDF goes in the `file` part. */
+export interface AdminGrantInput {
+	studentId: string;
+	title: string;
+	description: string;
+	fundingGoal: number;
+	adminNote: string;
+}
+
+/** Add Grant form values. Message strings match the server's 422s. */
+export const adminGrantFormSchema = z.object({
+	studentId: z.string().min(1, "Select a student."),
+	title: z
+		.string()
+		.trim()
+		.min(1, "Thesis title is required.")
+		.max(
+			ADMIN_GRANT_CONFIG.titleMax,
+			`Thesis title must be ${ADMIN_GRANT_CONFIG.titleMax} characters or fewer.`,
+		),
+	description: z
+		.string()
+		.trim()
+		.min(1, "Description is required.")
+		.max(
+			ADMIN_GRANT_CONFIG.descriptionMax,
+			"Description must be 2,000 characters or fewer.",
+		),
+	fundingGoalRaw: z
+		.string()
+		.trim()
+		.min(1, "Funding goal is required.")
+		.refine((v) => /^\d+$/.test(v.replace(/,/g, "")), {
+			message: "Funding goal must be a whole peso amount.",
+		})
+		.refine(
+			(v) =>
+				Number(v.replace(/,/g, "")) >= ADMIN_GRANT_CONFIG.minFundingGoalPesos,
+			{
+				message: `Funding goal must be at least ₱${ADMIN_GRANT_CONFIG.minFundingGoalPesos.toLocaleString("en-US")}.`,
+			},
+		)
+		.refine(
+			(v) =>
+				Number(v.replace(/,/g, "")) <= ADMIN_GRANT_CONFIG.maxFundingGoalPesos,
+			{
+				message: `Funding goal must be under ₱${ADMIN_GRANT_CONFIG.maxFundingGoalPesos.toLocaleString("en-US")}.`,
+			},
+		),
+	adminNote: z
+		.string()
+		.max(
+			ADMIN_GRANT_CONFIG.adminNoteMax,
+			"Admin note must be 2,000 characters or fewer.",
+		),
+});
+export type AdminGrantFormValues = z.infer<typeof adminGrantFormSchema>;
+
+/** Student picker hit. Name + school only: no contact details. */
+export const studentSearchHitSchema = z.object({
+	academyUserId: z.string(),
+	displayName: z.string(),
+	school: z.string(),
+});
+export type StudentSearchHit = z.infer<typeof studentSearchHitSchema>;
+export const studentSearchHitListSchema = z.array(studentSearchHitSchema);
+
+/** Admin grant list row (`GET /admin/grants`). No student contact details. */
+export const adminGrantSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	status: z.enum(GRANT_STATUSES),
+	target: z.number(),
+	raised: z.number(),
+	backers: z.number(),
+	studentId: z.string(),
+	studentName: z.string(),
+	school: z.string(),
+	createdByAdmin: z.boolean(),
+	adminNote: z.string().nullable(),
+	cancelReason: z.string().nullable(),
+	createdAt: z.string(),
+});
+export type AdminGrant = z.infer<typeof adminGrantSchema>;
+
+export const adminGrantListSchema = z.object({
+	grants: z.array(adminGrantSchema),
+	totals: z.object({
+		count: z.number(),
+		byStatus: z.record(z.enum(GRANT_STATUSES), z.number()),
+		targetTotal: z.number(),
+		raisedTotal: z.number(),
+	}),
+});
+export type AdminGrantList = z.infer<typeof adminGrantListSchema>;

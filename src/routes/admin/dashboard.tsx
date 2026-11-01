@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { AddGrantForm } from "#/components/admin/AddGrantForm";
+import { AdminGrantsPanel } from "#/components/admin/AdminGrantsPanel";
 import { BadgeGrantForm } from "#/components/admin/BadgeGrantForm";
 import { MetricsPanel } from "#/components/admin/MetricsPanel";
 import { ModerationPanel } from "#/components/admin/ModerationPanel";
@@ -28,6 +30,7 @@ const TABS = [
 	{ key: "moderation", label: "Moderation" },
 	{ key: "metrics", label: "Metrics" },
 	{ key: "badges", label: "Badges" },
+	{ key: "grants", label: "Grants" },
 ] as const;
 
 function AdminConsole() {
@@ -88,6 +91,22 @@ function AdminConsole() {
 					</TabsContent>
 					<TabsContent value="badges">
 						<BadgeGrantForm />
+					</TabsContent>
+					<TabsContent value="grants">
+						<p className="mb-6 text-[15px] text-content-soft">
+							Add a grant for a student, or cancel one. Grants go live on
+							creation, and every create and cancel is written to the audit log.
+						</p>
+						<div className="mb-3 text-[13px] text-content-heading">
+							Add grant
+						</div>
+						<div className="mb-10 max-w-[720px]">
+							<AddGrantForm />
+						</div>
+						<div className="mb-3 text-[13px] text-content-heading">
+							All grants
+						</div>
+						<AdminGrantsPanel />
 					</TabsContent>
 				</div>
 			</Tabs>
