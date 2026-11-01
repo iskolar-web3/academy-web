@@ -98,15 +98,17 @@ function AdminConsole() {
 							creation, and every create and cancel is written to the audit log.
 						</p>
 						<div className="mb-3 text-[13px] text-content-heading">
-							Add grant
-						</div>
-						<div className="mb-10 max-w-[720px]">
-							<AddGrantForm />
-						</div>
-						<div className="mb-3 text-[13px] text-content-heading">
 							All grants
 						</div>
-						<AdminGrantsPanel />
+						<div className="mb-10">
+							<AdminGrantsPanel />
+						</div>
+						<div className="mb-3 text-[13px] text-content-heading">
+							Add grant
+						</div>
+						<div className="max-w-[720px]">
+							<AddGrantForm />
+						</div>
 					</TabsContent>
 				</div>
 			</Tabs>
