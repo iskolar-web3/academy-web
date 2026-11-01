@@ -169,6 +169,9 @@ export const studentSearchHitSchema = z.object({
 	academyUserId: z.string(),
 	displayName: z.string(),
 	school: z.string(),
+	/** Cached profile photo. Defaults to null so an older server or saved draft without
+	 * the field still parses. */
+	avatarUrl: z.string().nullable().default(null),
 });
 export type StudentSearchHit = z.infer<typeof studentSearchHitSchema>;
 export const studentSearchHitListSchema = z.array(studentSearchHitSchema);

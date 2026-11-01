@@ -98,6 +98,47 @@ function clearDraft(key: string) {
 	}
 }
 
+function initialsOf(name: string): string {
+	const parts = name.split(/\s+/).filter(Boolean);
+	const first = parts[0]?.[0] ?? "";
+	const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? "") : "";
+	return (first + last).toUpperCase() || "?";
+}
+
+/** Student photo, falling back to initials when there is none or it fails to load. */
+function StudentAvatar({
+	student,
+	size,
+}: {
+	student: StudentSearchHit;
+	size: "sm" | "md";
+}) {
+	const [broken, setBroken] = useState(false);
+	const showImage = student.avatarUrl && !broken;
+
+	return (
+		<span
+			className={cn(
+				"inline-flex flex-none items-center justify-center overflow-hidden border border-info-bd bg-surface-tint text-action",
+				size === "md"
+					? "size-[44px] rounded-[12px] text-[15px]"
+					: "size-[36px] rounded-[10px] text-[13px]",
+			)}
+		>
+			{showImage ? (
+				<img
+					src={student.avatarUrl ?? undefined}
+					alt=""
+					className="size-full object-cover"
+					onError={() => setBroken(true)}
+				/>
+			) : (
+				initialsOf(student.displayName)
+			)}
+		</span>
+	);
+}
+
 function formatSavedTime(iso: string): string {
 	return new Date(iso).toLocaleTimeString("en-US", {
 		hour: "numeric",
@@ -378,7 +419,7 @@ export function AddGrantForm() {
 				</div>
 			) : null}
 
-			<div className="mt-5 min-h-[220px]">
+			<div className="mt-5">
 				{step === 0 ? (
 					<div>
 						<p className="mb-4 text-[14px] text-content-soft">
@@ -386,8 +427,9 @@ export function AddGrantForm() {
 						</p>
 						{student ? (
 							<div className="flex items-center gap-3 rounded-[11px] border border-line bg-surface-sunken px-4 py-3">
+								<StudentAvatar student={student} size="md" />
 								<div className="min-w-0 flex-1">
-									<div className="text-[15px] text-content-heading">
+									<div className="truncate text-[15px] text-content-heading">
 										{student.displayName}
 									</div>
 									<div className="font-mono text-[12px] text-content-faint">
@@ -441,13 +483,16 @@ export function AddGrantForm() {
 													key={hit.academyUserId}
 													type="button"
 													onClick={() => pickStudent(hit)}
-													className="rounded-[10px] border border-line bg-surface-card px-3.5 py-2.5 text-left transition-colors hover:bg-surface-sunken"
+													className="flex items-center gap-3 rounded-[10px] border border-line bg-surface-card px-3.5 py-2.5 text-left transition-colors hover:bg-surface-sunken"
 												>
-													<div className="text-[14.5px] text-content-heading">
-														{hit.displayName}
-													</div>
-													<div className="font-mono text-[11.5px] text-content-faint">
-														{hit.school || "School not set"}
+													<StudentAvatar student={hit} size="sm" />
+													<div className="min-w-0 flex-1">
+														<div className="truncate text-[14.5px] text-content-heading">
+															{hit.displayName}
+														</div>
+														<div className="truncate font-mono text-[11.5px] text-content-faint">
+															{hit.school || "School not set"}
+														</div>
 													</div>
 												</button>
 											))
