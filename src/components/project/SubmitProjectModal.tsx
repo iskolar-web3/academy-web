@@ -12,6 +12,7 @@ import {
 	DialogTitle,
 } from "#/components/ui/dialog";
 import { useSession } from "#/hooks/auth/useSession";
+import { useNotificationMutations } from "#/hooks/notification/useNotificationMutations";
 import { useProjectMutations } from "#/hooks/project/useProjectMutations";
 import { searchUsers, type UserSearchHit } from "#/lib/account/api";
 import { BACKEND_URL } from "#/lib/api";
@@ -211,12 +212,28 @@ export function SubmitProjectModal({
 			setMoreOpen(true);
 		}
 	}, [hasOptional]);
-	const consentOf = (m: { name: string; linkedUserId?: string | null }) =>
+	const storedMemberOf = (m: { name: string; linkedUserId?: string | null }) =>
 		current?.members.find(
 			(e) =>
 				(m.linkedUserId && e.linkedUserId === m.linkedUserId) ||
 				e.name === m.name,
-		)?.consent;
+		);
+	const consentOf = (m: { name: string; linkedUserId?: string | null }) =>
+		storedMemberOf(m)?.consent;
+	const { resend } = useNotificationMutations();
+	const resendInviteTo = (memberId: string) => {
+		if (!current?.id) {
+			return;
+		}
+		resend.mutate(
+			{ projectId: current.id, memberId },
+			{
+				onSuccess: () => toast.success("Invitation resent"),
+				onError: (err: Error) =>
+					toast.error(err.message || "Couldn't resend the invitation."),
+			},
+		);
+	};
 	const name = user?.displayName || user?.iskolarUserId || "You";
 
 	const busy =
@@ -806,6 +823,25 @@ export function SubmitProjectModal({
 														consent={consentOf(members[i]) ?? null}
 													/>
 												) : null}
+												{(() => {
+													// Pending/declined teammates can be re-invited; "cancel" is
+													// the remove (×) button + save, which drops the invite.
+													const stored = members?.[i]?.linkedUserId
+														? storedMemberOf(members[i])
+														: undefined;
+													return stored &&
+														(stored.consent === "pending" ||
+															stored.consent === "declined") ? (
+														<button
+															type="button"
+															disabled={resend.isPending}
+															onClick={() => resendInviteTo(stored.id)}
+															className="flex h-9 flex-none items-center rounded-[9px] border border-info-bd px-3 text-[12.5px] text-action hover:bg-surface-sunken disabled:opacity-60"
+														>
+															Resend
+														</button>
+													) : null;
+												})()}
 												<button
 													type="button"
 													onClick={() => {

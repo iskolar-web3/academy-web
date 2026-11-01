@@ -93,10 +93,6 @@ function AdminConsole() {
 						<BadgeGrantForm />
 					</TabsContent>
 					<TabsContent value="grants">
-						<p className="mb-6 text-[15px] text-content-soft">
-							Add a grant for a student, or cancel one. Grants go live on
-							creation, and every create and cancel is written to the audit log.
-						</p>
 						<div className="mb-3 text-[13px] text-content-heading">
 							All grants
 						</div>

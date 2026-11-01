@@ -45,7 +45,30 @@ export const notificationSchema = z.object({
 	actorUserId: z.string().nullable(),
 	actorName: z.string().nullable(),
 	memberId: z.string().nullable(),
+	/**
+	 * Live consent of the invited member row (member_invite only). Optional so an older
+	 * server that doesn't send it still parses — then `isPendingInvite` falls back to unread.
+	 */
+	inviteConsent: z
+		.enum(["not_required", "pending", "accepted", "declined"])
+		.nullable()
+		.optional(),
 });
 export type AcademyNotification = z.infer<typeof notificationSchema>;
+
+/**
+ * An invite the user can still accept/decline. Driven by the member's consent, NOT the read
+ * flag — opening (marking read) the notification must never hide the Accept button.
+ */
+export function isPendingInvite(
+	n: AcademyNotification,
+): n is AcademyNotification & { projectId: string; memberId: string } {
+	if (n.type !== "member_invite" || !n.projectId || !n.memberId) {
+		return false;
+	}
+	return n.inviteConsent === undefined
+		? n.unread
+		: n.inviteConsent === "pending";
+}
 
 export const notificationListSchema = z.array(notificationSchema);

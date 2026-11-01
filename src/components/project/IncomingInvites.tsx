@@ -1,13 +1,15 @@
 import { Check, X } from "lucide-react";
 import { useNotificationMutations } from "#/hooks/notification/useNotificationMutations";
 import { useNotifications } from "#/hooks/notification/useNotifications";
+import { isPendingInvite } from "#/lib/notification/model";
 import { hueFromString, projectCover } from "#/lib/project/helper";
 import { toast } from "#/lib/toast";
 
 /**
  * Membership invitations (STU-08) — where a credited member accepts or declines being shown
- * on someone else's project. Driven by unread `member_invite` notifications (the P3
- * notification model): `title` = project title, `actorName` = inviter, `body` = the
+ * on someone else's project. Driven by `member_invite` notifications whose member is still
+ * `pending` (`isPendingInvite` — NOT the read flag, so opening the notification keeps the
+ * invite answerable): `title` = project title, `actorName` = inviter, `body` = the
  * server-rendered invite line. Accept/decline post to the member sub-paths and the card
  * disappears as the notification resolves. Renders nothing when no invites are pending.
  */
@@ -22,24 +24,24 @@ function initialsOf(name: string): string {
 	);
 }
 
-export function IncomingInvites() {
-	const { data } = useNotifications();
+/**
+ * Accept / Decline buttons for one invite — shared by the dashboard card and the
+ * notification rows (header dropdown + notifications page), so an invite is answerable
+ * wherever the invitee sees it.
+ */
+export function InviteActions({
+	projectId,
+	memberId,
+	size = "md",
+}: {
+	projectId: string;
+	memberId: string;
+	size?: "sm" | "md";
+}) {
 	const { accept, decline } = useNotificationMutations();
-
-	const pending = (data ?? []).filter(
-		(n) => n.type === "member_invite" && n.unread && n.projectId && n.memberId,
-	);
-	if (pending.length === 0) {
-		return null;
-	}
-
 	const busy = accept.isPending || decline.isPending;
 
-	const respond = (
-		projectId: string,
-		memberId: string,
-		action: "accept" | "decline",
-	) => {
+	const respond = (action: "accept" | "decline") => {
 		const vars = { projectId, memberId };
 		const opts = {
 			onSuccess: () =>
@@ -56,8 +58,51 @@ export function IncomingInvites() {
 		}
 	};
 
+	const h = size === "sm" ? "h-8 text-[12.5px]" : "h-9 text-[13px]";
+
 	return (
-		<div className="mb-6 rounded-[18px] border border-line bg-surface-card p-[18px]">
+		<div className="flex items-center gap-2">
+			<button
+				type="button"
+				disabled={busy}
+				onClick={() => respond("decline")}
+				className={`flex ${h} items-center gap-1.5 rounded-[9px] border border-line bg-surface-card px-3 text-content-muted transition-colors hover:bg-surface-sunken disabled:opacity-60`}
+			>
+				<X className="size-4" aria-hidden /> Decline
+			</button>
+			<button
+				type="button"
+				disabled={busy}
+				onClick={() => respond("accept")}
+				className={`flex ${h} items-center gap-1.5 rounded-[9px] bg-action px-3 text-white transition-colors hover:bg-action-hover disabled:opacity-60`}
+			>
+				<Check className="size-4" aria-hidden /> Accept
+			</button>
+		</div>
+	);
+}
+
+export function IncomingInvites() {
+	const { data } = useNotifications();
+
+	// One card per member row (a resend may leave an older notification behind).
+	const seen = new Set<string>();
+	const pending = (data ?? []).filter(isPendingInvite).filter((n) => {
+		if (seen.has(n.memberId)) {
+			return false;
+		}
+		seen.add(n.memberId);
+		return true;
+	});
+	if (pending.length === 0) {
+		return null;
+	}
+
+	return (
+		<div
+			id="invites"
+			className="mb-6 scroll-mt-24 rounded-[18px] border border-line bg-surface-card p-[18px]"
+		>
 			<div className="mb-3.5 flex items-center justify-between">
 				<span className="font-mono text-[11.5px] uppercase tracking-[0.16em] text-action/60">
 					Membership invitations
@@ -86,36 +131,7 @@ export function IncomingInvites() {
 								{inv.body}
 							</div>
 						</div>
-						<div className="flex items-center gap-2">
-							<button
-								type="button"
-								disabled={busy}
-								onClick={() =>
-									respond(
-										inv.projectId as string,
-										inv.memberId as string,
-										"decline",
-									)
-								}
-								className="flex h-9 items-center gap-1.5 rounded-[9px] border border-line bg-surface-card px-3 text-[13px] text-content-muted transition-colors hover:bg-surface-sunken disabled:opacity-60"
-							>
-								<X className="size-4" aria-hidden /> Decline
-							</button>
-							<button
-								type="button"
-								disabled={busy}
-								onClick={() =>
-									respond(
-										inv.projectId as string,
-										inv.memberId as string,
-										"accept",
-									)
-								}
-								className="flex h-9 items-center gap-1.5 rounded-[9px] bg-action px-3 text-[13px] text-white transition-colors hover:bg-action-hover disabled:opacity-60"
-							>
-								<Check className="size-4" aria-hidden /> Accept
-							</button>
-						</div>
+						<InviteActions projectId={inv.projectId} memberId={inv.memberId} />
 					</div>
 				))}
 			</div>
