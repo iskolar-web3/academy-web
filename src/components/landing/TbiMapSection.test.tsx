@@ -1,117 +1,72 @@
 // @vitest-environment jsdom
-import {
-	act,
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { Tbi } from "#/lib/tbi/directory";
 import { TbiMapSection } from "./TbiMapSection";
 
 vi.mock("./TbiMapCanvas", () => ({
-	TbiMapCanvas: () => <div data-testid="map" />,
+	TbiMapCanvas: ({
+		tbis,
+		onSelect,
+		selectedId,
+	}: {
+		tbis: Tbi[];
+		onSelect: (tbi: Tbi) => void;
+		selectedId?: string;
+	}) => (
+		<div data-testid="map" data-selected={selectedId ?? ""}>
+			{tbis.map((tbi) => (
+				<button key={tbi.id} type="button" onClick={() => onSelect(tbi)}>
+					{`Marker ${tbi.name}`}
+				</button>
+			))}
+		</div>
+	),
 }));
-vi.mock("#/lib/tbi/places", async (importOriginal) => ({
-	...(await importOriginal<object>()),
-	searchPlaces: vi.fn(),
-}));
 
-import { searchPlaces } from "#/lib/tbi/places";
+afterEach(cleanup);
 
-afterEach(() => {
-	cleanup();
-	vi.restoreAllMocks();
-});
-
-describe("TBI discovery", () => {
-	it("requests location on user action and shows the nearest TBI", () => {
-		const locate = vi.fn((success: PositionCallback) =>
-			success({
-				coords: { latitude: 10.322, longitude: 123.898, accuracy: 20 },
-			} as GeolocationPosition),
-		);
-		vi.stubGlobal("navigator", { geolocation: { getCurrentPosition: locate } });
+describe("TBI partnerships", () => {
+	it("shows the current TBI partner with an external link to UMak", () => {
 		render(<TbiMapSection />);
-		expect(locate).not.toHaveBeenCalled();
-		fireEvent.click(screen.getByRole("button", { name: "Find TBI Near Me" }));
-		expect(locate).toHaveBeenCalledTimes(1);
-		expect(screen.getByText("Nearest listed TBI")).toBeTruthy();
-		expect(screen.getByText("Less than 1 km", { selector: "p" })).toBeTruthy();
-		fireEvent.click(screen.getByRole("button", { name: "View Nearest TBI" }));
-		expect(screen.getByRole("link", { name: "View details" })).toBeTruthy();
-	});
-	it("supports a manual city when permission is denied", () => {
-		const locate = vi.fn((_success, failure: PositionErrorCallback) =>
-			failure({ code: 1 } as GeolocationPositionError),
-		);
-		vi.stubGlobal("navigator", { geolocation: { getCurrentPosition: locate } });
-		render(<TbiMapSection />);
-		fireEvent.click(screen.getByRole("button", { name: "Find TBI Near Me" }));
-		expect(screen.getByText(/Location access was denied/)).toBeTruthy();
-		fireEvent.change(screen.getByLabelText("Choose a directory city"), {
-			target: { value: "wildcat" },
-		});
 		expect(
-			screen.getByRole("button", { name: "View Nearest TBI" }),
+			screen.getByRole("heading", { name: "TBI partnerships" }),
 		).toBeTruthy();
-		expect(screen.getByText(/From Cebu City, Cebu/)).toBeTruthy();
+		expect(
+			screen.getByRole("heading", {
+				name: "UMak Center for Technology Incubation and Enterprise Development",
+			}),
+		).toBeTruthy();
+		expect(screen.getByAltText("CTIED logo")).toBeTruthy();
+		const visit = screen.getByRole("link", { name: /Visit UMak/ });
+		expect(visit.getAttribute("href")).toBe("https://www.umak.edu.ph/");
+		expect(visit.getAttribute("target")).toBe("_blank");
+		expect(visit.getAttribute("rel")).toContain("noopener");
 	});
-	it("ignores a pending geolocation response after manual selection", () => {
-		let respond: PositionCallback | undefined;
-		vi.stubGlobal("navigator", {
-			geolocation: {
-				getCurrentPosition: (success: PositionCallback) => {
-					respond = success;
-				},
-			},
-		});
+
+	it("plots the partner on the map and tracks the selected marker", () => {
 		render(<TbiMapSection />);
-		fireEvent.click(screen.getByRole("button", { name: "Find TBI Near Me" }));
-		fireEvent.change(screen.getByLabelText("Choose a directory city"), {
-			target: { value: "wildcat" },
-		});
-		act(() =>
-			respond?.({
-				coords: { latitude: 14.6, longitude: 121, accuracy: 10 },
-			} as GeolocationPosition),
+		const map = screen.getByTestId("map");
+		expect(map.getAttribute("data-selected")).toBe("");
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: "Marker UMak Center for Technology Incubation and Enterprise Development",
+			}),
 		);
-		expect(screen.getByText(/From Cebu City, Cebu/)).toBeTruthy();
+		expect(map.getAttribute("data-selected")).toBe("umak-ctied");
 	});
-	it("searches for a municipality and lets the user choose the result", async () => {
-		vi.mocked(searchPlaces).mockResolvedValue([
-			{
-				id: "test",
-				label: "Palo, Leyte, Philippines",
-				lat: 11.16,
-				lng: 124.99,
-			},
-		]);
+
+	it("offers the partnering email CTA", () => {
 		render(<TbiMapSection />);
-		fireEvent.change(screen.getByLabelText("Search a place"), {
-			target: { value: "Palo" },
-		});
-		fireEvent.click(
-			screen.getByRole("button", { name: "Search Philippine places" }),
-		);
-		fireEvent.click(
-			await screen.findByRole("button", { name: "Palo, Leyte, Philippines" }),
-		);
-		expect(screen.getByText(/From Palo, Leyte, Philippines/)).toBeTruthy();
-	});
-	it("keeps offline city selection available if place search fails", async () => {
-		vi.mocked(searchPlaces).mockRejectedValue(new Error("offline"));
-		render(<TbiMapSection />);
-		fireEvent.change(screen.getByLabelText("Search a place"), {
-			target: { value: "Laguna" },
-		});
-		fireEvent.click(
-			screen.getByRole("button", { name: "Search Philippine places" }),
-		);
-		await waitFor(() =>
-			expect(screen.getByText(/Place search is unavailable/)).toBeTruthy(),
-		);
-		expect(screen.getByLabelText("Choose a directory city")).toBeTruthy();
+		expect(
+			screen.getByRole("heading", {
+				name: "Interested in partnering with us?",
+			}),
+		).toBeTruthy();
+		expect(
+			screen
+				.getByRole("link", { name: /hello@iskolar\.io/ })
+				.getAttribute("href"),
+		).toBe("mailto:hello@iskolar.io");
 	});
 });

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "#/auth";
 import { getDefaultPathOfRole } from "#/lib/api";
 import type { AcademyRole } from "#/lib/auth/model";
+import { takePostSignInRedirect } from "#/lib/auth/redirect";
 
 /**
  * Client-side route guard (PLT-05, defense-in-depth). Real enforcement is the server's
@@ -57,6 +58,19 @@ export function useRouteGuard(mode: GuardMode): { allowed: boolean } {
 			navigate({ to: redirectTo });
 		}
 	}, [redirectTo, navigate]);
+
+	// A destination picked before sign-in (Submit Project) wins over the role home the
+	// auth callback landed on — once the user is fully admitted to an app area.
+	const admitted = allowed && mode.kind !== "onboarding";
+	useEffect(() => {
+		if (!admitted) {
+			return;
+		}
+		const pending = takePostSignInRedirect();
+		if (pending && pending !== window.location.pathname) {
+			navigate({ to: pending });
+		}
+	}, [admitted, navigate]);
 
 	return { allowed };
 }

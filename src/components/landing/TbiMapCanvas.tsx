@@ -255,7 +255,7 @@ export function TbiMapCanvas({
 	}, [ready, reset]);
 
 	return (
-		<div className="relative h-[420px] min-w-0 bg-surface-sunken sm:h-[530px] lg:h-auto lg:min-h-[640px] lg:flex-1">
+		<div className="relative min-h-[280px] min-w-0 flex-1 bg-surface-sunken md:min-h-[420px]">
 			<section
 				ref={container}
 				className="tbi-map absolute inset-0 z-0"

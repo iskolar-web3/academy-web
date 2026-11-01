@@ -1,179 +1,144 @@
-import {
-	type MotionValue,
-	motion,
-	useMotionValue,
-	useReducedMotion,
-	useSpring,
-	useTransform,
-} from "framer-motion";
-import {
-	BookOpen,
-	GraduationCap,
-	Lightbulb,
-	type LucideIcon,
-} from "lucide-react";
-import { PartnerCarousel } from "#/components/landing/PartnerCarousel";
+import { type CSSProperties, useEffect, useRef } from "react";
+import { HeroDrift } from "#/components/landing/HeroDrift";
 import { SignInPopover } from "#/components/landing/SignInPopover";
-import { ACADEMY_SUMMARY } from "#/lib/landing/content";
 
-interface Glyph {
-	Icon: LucideIcon;
-	className: string;
-	size: number;
-	/** Parallax travel in px; sign sets direction. */
-	depth: number;
-}
+/** The visible artwork of logo-academy.svg is ~66.5% of its square box, centred. */
+const MARK_ART_HALF = 0.3325;
 
-const BACKDROP: Glyph[] = [
-	{ Icon: GraduationCap, className: "left-[6%] top-24", size: 54, depth: 26 },
-	{ Icon: Lightbulb, className: "right-[8%] top-32", size: 44, depth: -22 },
-	{ Icon: BookOpen, className: "left-[16%] top-72", size: 46, depth: 20 },
-];
-
-function ParallaxGlyph({
-	mx,
-	my,
-	glyph,
-	index,
-}: {
-	mx: MotionValue<number>;
-	my: MotionValue<number>;
-	glyph: Glyph;
-	index: number;
-}) {
-	const x = useTransform(mx, (v) => v * glyph.depth);
-	const y = useTransform(my, (v) => v * glyph.depth * 0.6);
-	const { Icon } = glyph;
-	return (
-		<motion.span
-			style={{ x, y, animationDelay: `${-index * 1.4}s` }}
-			className={`absolute animate-float text-action/10 ${glyph.className}`}
-		>
-			<Icon
-				style={{ width: glyph.size, height: glyph.size }}
-				strokeWidth={1.3}
-			/>
-		</motion.span>
+/**
+ * Centres the A mark inside the carousel band (desktop). The band starts just right of
+ * the widest text line that shares the A's height (+ --drift-gap); the A moves to the
+ * middle of [band start, viewport edge] so the card area left and right of it matches
+ * --card-side-1440 / --card-side-1920 (interpolated by viewport width). Text always
+ * wins: nothing slides under the headline, description or buttons.
+ */
+function layoutHero(hero: HTMLElement, markImg: HTMLImageElement) {
+	hero.style.removeProperty("--drift-left");
+	hero.style.setProperty("--mark-shift", "0px");
+	if (window.innerWidth < 768) {
+		return;
+	}
+	const h = hero.getBoundingClientRect();
+	const img = markImg.getBoundingClientRect();
+	const artHalf = img.height * MARK_ART_HALF;
+	const cx = img.left + img.width / 2;
+	const top = img.top + img.height * 0.17;
+	const bottom = img.bottom - img.height * 0.17;
+	const cs = getComputedStyle(hero);
+	const gap = Number.parseFloat(cs.getPropertyValue("--drift-gap")) || 24;
+	let textRight = 0;
+	for (const el of hero.querySelectorAll(
+		"h1 .line, .hero-copy p, .hero-ctas",
+	)) {
+		// A Range gives the inked line boxes, not the block's full width.
+		const range = document.createRange();
+		range.selectNodeContents(el);
+		for (const r of range.getClientRects()) {
+			if (r.bottom > top && r.top < bottom) {
+				textRight = Math.max(textRight, r.right);
+			}
+		}
+	}
+	textRight += gap;
+	const w1 = Number.parseFloat(cs.getPropertyValue("--card-side-1440")) || 150;
+	const w2 = Number.parseFloat(cs.getPropertyValue("--card-side-1920")) || 225;
+	const side = Math.max(
+		40,
+		w1 + (window.innerWidth - 1440) * ((w2 - w1) / 480),
 	);
+	let target = h.right - side - artHalf;
+	let start = target - artHalf - side;
+	if (start < textRight) {
+		start = textRight;
+		target = (textRight + h.right) / 2;
+	}
+	hero.style.setProperty("--mark-shift", `${Math.round(target - cx)}px`);
+	hero.style.setProperty("--drift-left", `${Math.round(start - h.left)}px`);
 }
 
 export function Hero() {
-	const reduce = useReducedMotion();
-	const mxRaw = useMotionValue(0);
-	const myRaw = useMotionValue(0);
-	const mx = useSpring(mxRaw, { stiffness: 90, damping: 20 });
-	const my = useSpring(myRaw, { stiffness: 90, damping: 20 });
+	const heroRef = useRef<HTMLElement>(null);
+	const markRef = useRef<HTMLImageElement>(null);
 
-	// Kinetic headline (motion.zajno.com feel): each line shears/leans with the cursor,
-	// in opposite directions, so the type "waves" as you move the mouse.
-	const skewTop = useTransform(mx, [-0.5, 0.5], [6, -6]);
-	const skewBottom = useTransform(mx, [-0.5, 0.5], [-6, 6]);
-	const shiftTopX = useTransform(mx, [-0.5, 0.5], [-18, 18]);
-	const shiftBottomX = useTransform(mx, [-0.5, 0.5], [18, -18]);
-	const shiftTopY = useTransform(my, [-0.5, 0.5], [-10, 10]);
-	const shiftBottomY = useTransform(my, [-0.5, 0.5], [10, -10]);
-
-	function onMove(e: React.MouseEvent<HTMLElement>) {
-		if (reduce) {
+	useEffect(() => {
+		const hero = heroRef.current;
+		const mark = markRef.current;
+		if (!hero || !mark) {
 			return;
 		}
-		mxRaw.set(e.clientX / window.innerWidth - 0.5);
-		myRaw.set(e.clientY / window.innerHeight - 0.5);
-	}
-
-	function onLeave() {
-		mxRaw.set(0);
-		myRaw.set(0);
-	}
+		const layout = () => layoutHero(hero, mark);
+		const relayout = () => requestAnimationFrame(layout);
+		const ro = new ResizeObserver(layout);
+		ro.observe(hero);
+		document.fonts?.ready.then(layout);
+		// The dev tweak panel's sliders change the inputs to this layout.
+		document.addEventListener("input", relayout);
+		// The carousel only animates while the hero is on screen.
+		const io = new IntersectionObserver(([entry]) => {
+			hero.classList.toggle("paused", !entry.isIntersecting);
+		});
+		io.observe(hero);
+		return () => {
+			ro.disconnect();
+			io.disconnect();
+			document.removeEventListener("input", relayout);
+		};
+	}, []);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: cosmetic mouse-parallax only (shifts decorative background glyphs); nothing here is an activatable control, so no keyboard equivalent applies.
 		<section
-			className="relative overflow-hidden"
-			onMouseMove={onMove}
-			onMouseLeave={onLeave}
+			ref={heroRef}
+			id="hero"
+			className="hero ground-canvas"
+			aria-labelledby="hero-title"
 		>
-			<div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-				{BACKDROP.map((glyph, i) => (
-					<ParallaxGlyph
-						key={glyph.className}
-						mx={mx}
-						my={my}
-						glyph={glyph}
-						index={i}
-					/>
-				))}
-			</div>
-
-			<div className="container-page relative z-10 grid items-center gap-14 pt-4 pb-0 sm:pt-3 sm:pb-2 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
-				<div className="order-2 animate-fade-up lg:order-1 lg:self-center">
-					<h1 className="text-balance text-4xl leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-[4rem]">
-						<motion.span
-							className="block origin-left will-change-transform"
-							style={{ skewX: skewTop, x: shiftTopX, y: shiftTopY }}
-						>
-							<span className="block overflow-hidden pb-[0.08em]">
-								<span className="mask-reveal block">Student projects</span>
+			<div className="hero-dots" aria-hidden="true" />
+			<HeroDrift />
+			<div className="wrap">
+				<div>
+					<h1 id="hero-title">
+						<span className="line reveal" style={{ "--i": 0 } as CSSProperties}>
+							Student projects,
+						</span>
+						<span className="line reveal" style={{ "--i": 1 } as CSSProperties}>
+							Student Talent
+						</span>
+						<span className="line reveal" style={{ "--i": 2 } as CSSProperties}>
+							Built to be{" "}
+							<span className="pill">
+								<span>seen.</span>
 							</span>
-						</motion.span>
-						<motion.span
-							className="block origin-left will-change-transform"
-							style={{ skewX: skewBottom, x: shiftBottomX, y: shiftBottomY }}
-						>
-							<span className="block overflow-hidden pb-[0.08em]">
-								<span className="mask-reveal mask-reveal-2 block">
-									built to be{" "}
-									<span className="relative inline-block whitespace-nowrap px-3 text-on-action">
-										<motion.span
-											className="absolute inset-0 origin-left rounded-lg bg-action"
-											initial={{ scaleX: 0, rotate: -1.5 }}
-											animate={{ scaleX: 1, rotate: -1.5 }}
-											transition={{
-												duration: 0.5,
-												delay: 0.6,
-												ease: [0.2, 0.8, 0.25, 1],
-											}}
-										/>
-										<span className="relative">seen</span>
-									</span>
-									.
-								</span>
-							</span>
-						</motion.span>
+						</span>
 					</h1>
-
-					<p className="mt-10 max-w-xl text-base leading-relaxed text-content-strong sm:text-xl">
-						{ACADEMY_SUMMARY}
-					</p>
-
-					<div className="mt-8 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-						<SignInPopover>
-							<button
-								type="button"
-								className="btn btn-primary h-12 w-full px-7 text-base sm:w-auto"
-							>
-								Get started
-							</button>
-						</SignInPopover>
-						<a
-							href="#recent-projects"
-							className="btn btn-secondary h-12 w-full px-7 text-base sm:w-auto"
-						>
-							See recent projects
-						</a>
+					<div className="hero-copy">
+						<p>
+							Academy by <a href="https://iskolar.io">iSkolar</a> is a student
+							project showcase where students share working projects, thesis
+							papers, grant proposals and sponsors discover student talent, or
+							support the next big idea.
+						</p>
+						<div className="hero-ctas">
+							<SignInPopover>
+								<button type="button" className="lp-btn lp-btn-primary">
+									Get started
+								</button>
+							</SignInPopover>
+							<a href="#recent-projects" className="lp-btn lp-btn-secondary">
+								See recent projects
+							</a>
+						</div>
 					</div>
 				</div>
-
-				<div className="order-1 relative flex animate-fade-up flex-col items-center justify-center lg:order-2">
-					<div className="absolute top-0 size-64 rounded-full bg-[radial-gradient(circle,rgba(96,121,232,0.18),transparent_68%)] sm:size-[26rem]" />
+				<div className="hero-mark reveal" style={{ "--i": 3 } as CSSProperties}>
 					<img
+						ref={markRef}
 						src="/logo-academy.svg"
-						alt="iSkolar Academy"
-						className="relative max-h-64 w-auto animate-float sm:max-h-[28rem]"
+						alt=""
+						width={600}
+						height={600}
 					/>
 				</div>
 			</div>
-			<PartnerCarousel />
 		</section>
 	);
 }

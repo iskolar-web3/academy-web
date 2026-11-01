@@ -1,25 +1,37 @@
-import { Reveal } from "#/components/landing/Reveal";
 import { SignInPopover } from "#/components/landing/SignInPopover";
 
+const TAGLINE = "Find your next opportunity on Academy";
+
+/** Navy tagline band; the headline brightens word by word as it scrolls in (CSS). */
 export function LandingCta() {
+	const words = TAGLINE.split(" ");
 	return (
-		<section className="container-page pb-20">
-			<Reveal className="card-surface ruled-paper relative overflow-hidden px-8 py-16 text-center sm:py-20">
-				<h2 className="mx-auto max-w-xl text-balance text-4xl leading-tight text-foreground">
-					Find your next opportunity on Academy
-				</h2>
-				<p className="mx-auto mt-4 max-w-md text-lg text-content-soft">
-					Showcase a project, share a thesis grant proposal, or discover student
-					talent.
-				</p>
-				<div className="mt-9 flex justify-center">
-					<SignInPopover>
-						<button type="button" className="btn btn-primary">
-							Get started
-						</button>
-					</SignInPopover>
+		<section className="cta section lp-navy" aria-labelledby="cta-title">
+			<div className="wrap">
+				<span className="rule reveal" style={{ marginBottom: "2.5rem" }} />
+				<div className="cta-grid">
+					<h2 id="cta-title">
+						{words.map((word, i) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: static copy, never reordered.
+							<span key={i}>
+								<span className="w">{word}</span>
+								{i < words.length - 1 ? " " : null}
+							</span>
+						))}
+					</h2>
+					<div>
+						<p>
+							Showcase a project, share a thesis grant proposal, or discover
+							student talent.
+						</p>
+						<SignInPopover>
+							<button type="button" className="lp-btn lp-btn-light">
+								Get started
+							</button>
+						</SignInPopover>
+					</div>
 				</div>
-			</Reveal>
+			</div>
 		</section>
 	);
 }

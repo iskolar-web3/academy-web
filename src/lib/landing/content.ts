@@ -54,9 +54,127 @@ export const LANDING_FAQS = [
 	{
 		id: "find-a-tbi",
 		question:
-			"How can I find a technology business incubator near me in the Philippines?",
+			"Which technology business incubators in the Philippines does Academy work with?",
 		answer:
-			"Use Academy's TBI map to explore listed technology business incubators in the Philippines. Choose Find TBI Near Me and allow location access, or search for a place or select a directory city. Results use approximate straight-line distances, not driving routes. Visit the incubator's linked website for its programs and application requirements.",
-		link: { href: "#tbi-map", label: "Explore the Philippine TBI map" },
+			"Academy's TBI map shows the technology business incubators we partner with. Our current partner is the University of Makati's Center for Technology Incubation and Enterprise Development (UMak CTIED) in Makati. Visit the incubator's website for its programs and application requirements. Incubators interested in partnering can email hello@iskolar.io.",
+		link: { href: "#tbi-map", label: "See the TBI map" },
 	},
 ] as const;
+
+export interface Partner {
+	name: string;
+	href: string;
+	/** Alpha-trimmed PNG under public/partnerships/. */
+	logo: string;
+	/** Width / height of the trimmed PNG — drives equal-visual-area sizing. */
+	aspect?: number;
+	/** Native pixel width; caps upscaling at 1.5x. */
+	nativeWidth?: number;
+	/** Round seal: rendered on a light disc. */
+	round?: boolean;
+	/** Navy letterforms: inverted instead of flattened to white. */
+	invert?: boolean;
+	/**
+	 * Hover/focus treatment on the navy band. true: swap the white silhouette to the
+	 * original colours. false: the artwork reads poorly on navy, so it stays white and
+	 * brightens + lifts instead.
+	 */
+	hoverColour: boolean;
+}
+
+export interface PartnerGroup {
+	id: string;
+	title: string;
+	partners: Partner[];
+}
+
+export const PARTNER_GROUPS: PartnerGroup[] = [
+	{
+		id: "partners",
+		title: "Our Partners",
+		partners: [
+			{
+				name: "BYC Ventures",
+				href: "https://byc.ventures",
+				logo: "/partnerships/byc-ventures.png",
+				aspect: 2.535,
+				nativeWidth: 512,
+				hoverColour: false,
+			},
+			{
+				name: "Tutorials Dojo",
+				href: "https://tutorialsdojo.com",
+				logo: "/partnerships/tutorials-dojo.png",
+				aspect: 3.034,
+				nativeWidth: 176,
+				hoverColour: true,
+			},
+			{
+				name: "Fundr Studios",
+				href: "https://fundrstudio.com/",
+				logo: "/partnerships/fundr-studio.png",
+				aspect: 2.349,
+				nativeWidth: 1675,
+				hoverColour: true,
+			},
+			{
+				name: "Jia Talent Vault",
+				href: "https://www.hellojia.ai/",
+				logo: "/partnerships/jia-whitecloak.png",
+				aspect: 4.15,
+				nativeWidth: 664,
+				hoverColour: false,
+			},
+		],
+	},
+	{
+		id: "student-communities",
+		title: "Student Communities",
+		partners: [
+			{
+				name: "AWS Learning Club Heron",
+				href: "https://www.facebook.com/awslearningclubheron",
+				logo: "/partnerships/aws-learning-club-heron.png",
+				round: true,
+				hoverColour: true,
+			},
+			{
+				name: "Tech Kubo",
+				href: "https://techkubo.com/",
+				logo: "/partnerships/tech-kubo.png",
+				round: true,
+				hoverColour: true,
+			},
+			{
+				name: "Cryptita Plays",
+				href: "https://cryptitaplays.org",
+				logo: "/partnerships/cryptita-plays.png",
+				round: true,
+				hoverColour: true,
+			},
+		],
+	},
+	{
+		id: "tbis",
+		title: "University TBIs and Incubators",
+		partners: [
+			{
+				name: "QBO Innovation Hub",
+				href: "https://www.qboinnovation.com/",
+				logo: "/partnerships/qbo-innovation.png",
+				aspect: 2.115,
+				nativeWidth: 554,
+				hoverColour: false,
+			},
+			{
+				name: "UMak CTIED",
+				href: "https://www.umak.edu.ph/",
+				logo: "/partnerships/ctied.png",
+				aspect: 3.386,
+				nativeWidth: 298,
+				invert: true,
+				hoverColour: false,
+			},
+		],
+	},
+];

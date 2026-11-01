@@ -31,7 +31,6 @@ PostgreSQL and the optional Docker profiles are defined in the sibling
 Welcome to your new TanStack Start app!
 
 # Getting Started
-
 To run this application:
 
 ```bash

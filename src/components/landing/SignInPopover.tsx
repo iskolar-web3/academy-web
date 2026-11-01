@@ -32,11 +32,22 @@ function GoogleLogo() {
 	);
 }
 
-export function SignInPopover({ children }: { children: ReactNode }) {
+/**
+ * Sign-in popover for every landing entry point. `redirectTo` is where the user lands
+ * after signing in, on all three paths (Google, hosted SSO, dev cookie check); omitted,
+ * they go to their role home.
+ */
+export function SignInPopover({
+	children,
+	redirectTo,
+}: {
+	children: ReactNode;
+	redirectTo?: string;
+}) {
 	const { isSignedIn, checking, checked, onSignIn, onContinue } =
-		useSignInAction();
+		useSignInAction(redirectTo);
 	const googleAuthEnabled = isGoogleAuthEnabled();
-	const ssoEnabled = Boolean(ssoLoginUrl());
+	const ssoEnabled = Boolean(ssoLoginUrl(redirectTo));
 
 	return (
 		<Popover>
