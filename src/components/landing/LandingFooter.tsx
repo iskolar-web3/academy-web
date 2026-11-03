@@ -131,6 +131,8 @@ function BackToTop() {
 }
 
 export function LandingFooter() {
+	// Computed per render so the year tracks the current date.
+	const year = new Date().getFullYear();
 	return (
 		<>
 			<footer className="site-footer">
@@ -188,7 +190,7 @@ export function LandingFooter() {
 						</div>
 					</div>
 					<div className="f-bottom">
-						<p>© 2026 iSkolar. All rights reserved.</p>
+						<p>© {year} iSkolar Technologies Inc. All rights reserved.</p>
 						<p>Built For Students, Built By Students.</p>
 					</div>
 				</div>
