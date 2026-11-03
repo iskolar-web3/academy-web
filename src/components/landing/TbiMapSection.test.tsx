@@ -119,4 +119,20 @@ describe("TBI discovery", () => {
 		);
 		expect(screen.getByLabelText("Choose a directory city")).toBeTruthy();
 	});
+	it("offers the partnering email CTA below the map", () => {
+		render(<TbiMapSection />);
+		expect(
+			screen.getByRole("heading", {
+				name: "Interested in partnering with us?",
+			}),
+		).toBeTruthy();
+		expect(
+			screen.getByRole("link", { name: /Email Us/ }).getAttribute("href"),
+		).toBe("mailto:hello@iskolar.io?subject=TBI%20partnership%20inquiry");
+		expect(
+			screen
+				.getByRole("link", { name: "hello@iskolar.io" })
+				.getAttribute("href"),
+		).toBe("mailto:hello@iskolar.io");
+	});
 });

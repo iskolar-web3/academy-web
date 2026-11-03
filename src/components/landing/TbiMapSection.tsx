@@ -1,4 +1,10 @@
-import { ExternalLink, LocateFixed, Navigation, Search } from "lucide-react";
+import {
+	ExternalLink,
+	LocateFixed,
+	Mail,
+	Navigation,
+	Search,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	type MapOrigin,
@@ -435,6 +441,24 @@ export function TbiMapSection() {
 						</article>
 					)}
 				</div>
+			</div>
+
+			<div className="mt-6 flex flex-col items-center rounded-2xl border border-line bg-surface-card p-6 text-center shadow-card sm:p-8">
+				<h3 className="text-2xl leading-tight text-content-heading sm:text-3xl">
+					Interested in partnering with us?
+				</h3>
+				<a
+					href="mailto:hello@iskolar.io"
+					className="mt-3 text-base text-action underline-offset-4 hover:underline"
+				>
+					hello@iskolar.io
+				</a>
+				<Button asChild size="lg" className="mt-6 text-on-action!">
+					<a href="mailto:hello@iskolar.io?subject=TBI%20partnership%20inquiry">
+						<Mail className="size-4" aria-hidden />
+						Email Us
+					</a>
+				</Button>
 			</div>
 		</section>
 	);
