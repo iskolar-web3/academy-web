@@ -255,12 +255,11 @@ export function TbiMapCanvas({
 	}, [ready, reset]);
 
 	return (
-		<div className="relative min-h-[280px] min-w-0 flex-1 bg-surface-sunken md:min-h-[420px]">
+		<div className="relative min-h-[280px] min-w-0 flex-1 overflow-hidden rounded-lg bg-surface-sunken md:min-h-[420px]">
 			<section
 				ref={container}
 				className="tbi-map absolute inset-0 z-0"
 				aria-label="Interactive map showing UMak CTIED in Makati"
-				data-lenis-prevent
 			/>
 			{!ready && (
 				<output className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-surface-sunken px-6 text-center">

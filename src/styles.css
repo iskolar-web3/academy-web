@@ -805,14 +805,17 @@ html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 @media (prefers-reduced-motion: reduce) { .lp .step { opacity: 1; } }
 
 /* TBI PARTNERSHIPS */
-.lp .tbi-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 4vw, 4rem); margin-top: 2.5rem; align-items: stretch; }
+.lp .tbi-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(2rem, 4vw, 3rem); margin-top: 2.5rem; align-items: stretch; }
 .lp .tbi-current { padding-top: 1.5rem; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 1rem; }
 .lp .tbi-current img { height: 64px; width: auto; max-width: 213px; align-self: flex-start;
 	filter: grayscale(1) sepia(1) hue-rotate(190deg) saturate(2.2) brightness(0.95); }
-.lp .tbi-current h3 { font-size: clamp(1.5rem, 2vw, 2rem); line-height: 1.1; color: var(--heading); max-width: 22ch; }
+.lp .tbi-row { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem clamp(1.5rem, 4vw, 3.5rem); }
+.lp .tbi-info { flex: 1 1 20rem; min-width: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.lp .tbi-row img { flex: none; align-self: center; }
+.lp .tbi-current h3 { font-size: clamp(1.5rem, 2.4vw, 2.25rem); line-height: 1.1; color: var(--heading); text-wrap: balance; }
 .lp .tbi-current .host { color: var(--muted); }
 .lp .tbi-current a.visit { color: var(--accent); text-decoration: underline; align-self: flex-start; display: inline-flex; align-items: center; gap: 0.25rem; min-height: 44px; }
-.lp .map-slot { position: relative; display: flex; flex-direction: column; min-height: 420px; }
+.lp .map-slot { position: relative; display: flex; flex-direction: column; min-height: clamp(420px, 45vw, 560px); }
 .lp .pull { margin-top: clamp(3rem, 7vh, 5rem); padding: clamp(2rem, 5vw, 4rem); background: var(--panel-tint);
 	border: var(--panel-border-w) solid var(--panel-border);
 	display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1.5rem 3rem; }
@@ -933,7 +936,7 @@ html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 	.lp .process-aside { position: static; grid-template-columns: 1fr; }
 	.lp .rail, .lp .counter { display: none; }
 	.lp .step { min-height: 0; opacity: 1; padding-block: 1.75rem; }
-	.lp .tbi-grid, .lp .cta-grid { grid-template-columns: 1fr; }
+	.lp .cta-grid { grid-template-columns: 1fr; }
 	.lp .map-slot { min-height: 280px; }
 	.lp .shelf { display: flex; overflow-x: auto; column-gap: 2rem; padding-bottom: 0.5rem; }
 	.lp .shelf li { flex: 0 0 68%; }

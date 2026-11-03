@@ -73,24 +73,28 @@ export function TbiMapSection() {
 				<div className="tbi-grid">
 					<div className="tbi-current">
 						<p className="kicker">Current TBI partner</p>
-						<img
-							src="/partnerships/ctied.png"
-							alt="CTIED logo"
-							width={298}
-							height={88}
-						/>
-						<h3>{UMAK_TBI.name}</h3>
-						<p className="host">
-							{UMAK_TBI.host} · {UMAK_TBI.city}, {UMAK_TBI.province}
-						</p>
-						<a
-							className="visit"
-							href={UMAK_TBI.url}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							Visit UMak <span aria-hidden="true">↗</span>
-						</a>
+						<div className="tbi-row">
+							<img
+								src="/partnerships/ctied.png"
+								alt="CTIED logo"
+								width={298}
+								height={88}
+							/>
+							<div className="tbi-info">
+								<h3>{UMAK_TBI.name}</h3>
+								<p className="host">
+									{UMAK_TBI.host} · {UMAK_TBI.city}, {UMAK_TBI.province}
+								</p>
+								<a
+									className="visit"
+									href={UMAK_TBI.url}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Visit UMak <span aria-hidden="true">↗</span>
+								</a>
+							</div>
+						</div>
 					</div>
 					<div className="map-slot">
 						<TbiMapCanvas
