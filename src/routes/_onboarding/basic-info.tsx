@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuth } from "#/auth";
+import { OnboardingShell } from "#/components/onboarding/OnboardingShell";
 import { Calendar } from "#/components/ui/calendar";
 import {
 	Popover,
@@ -109,75 +110,6 @@ function Field({
 	);
 }
 
-function OnboardingShell({
-	children,
-	onSubmit,
-	pending,
-	error,
-	onBack,
-	subtitle,
-}: {
-	children: ReactNode;
-	onSubmit: () => void;
-	pending: boolean;
-	error?: string;
-	/** Shown above the heading for sponsor's 3-way branch only. */
-	onBack?: () => void;
-	subtitle?: string;
-}) {
-	return (
-		<main className="mx-auto max-w-[560px]">
-			{onBack ? (
-				<button
-					type="button"
-					onClick={onBack}
-					className="mb-4 text-[13px] text-action"
-				>
-					Change type
-				</button>
-			) : null}
-			<div className="mb-8 text-center">
-				<div className="mb-3.5 inline-flex items-center gap-[11px]">
-					<span className="font-mono text-[11.5px] uppercase tracking-[0.24em] text-action/60">
-						Almost there
-					</span>
-				</div>
-				<h1 className="mb-2 text-[34px] text-content-heading">
-					Tell us the basics
-				</h1>
-				<p className="text-[15.5px] leading-[1.55] text-content-muted">
-					{subtitle ??
-						"A couple of details so people can recognize you on Academy."}
-				</p>
-			</div>
-
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					onSubmit();
-				}}
-				className="card-surface flex flex-col gap-4 rounded-2xl px-7 py-7"
-			>
-				{children}
-
-				<button
-					type="submit"
-					disabled={pending}
-					className="btn btn-primary mt-2 h-12 disabled:cursor-not-allowed disabled:opacity-60"
-				>
-					{pending ? "Saving…" : "Continue"}
-				</button>
-
-				{error ? (
-					<p className="text-center text-sm text-danger">
-						Couldn't save: {error}
-					</p>
-				) : null}
-			</form>
-		</main>
-	);
-}
-
 function BirthDateField({
 	value,
 	onChange,
@@ -248,17 +180,19 @@ function StudentForm({ onDone }: { onDone: () => void }) {
 		},
 	});
 
-	const onSubmit = handleSubmit((values) => {
-		complete.mutate(
-			{
-				role: "student",
-				...values,
-				gender: values.gender as Gender,
-				educationLevel: values.educationLevel as EducationLevel,
-			},
-			{ onSuccess: onDone },
-		);
-	});
+	const onSubmit = (marketingOptIn: boolean) =>
+		handleSubmit((values) => {
+			complete.mutate(
+				{
+					role: "student",
+					...values,
+					marketingOptIn,
+					gender: values.gender as Gender,
+					educationLevel: values.educationLevel as EducationLevel,
+				},
+				{ onSuccess: onDone },
+			);
+		})();
 
 	return (
 		<OnboardingShell
@@ -498,17 +432,19 @@ function IndividualSponsorForm({
 		},
 	});
 
-	const onSubmit = handleSubmit((values) => {
-		complete.mutate(
-			{
-				role: "sponsor",
-				sponsorType: "individual",
-				...values,
-				employmentType: values.employmentType as EmploymentType,
-			},
-			{ onSuccess: onDone },
-		);
-	});
+	const onSubmit = (marketingOptIn: boolean) =>
+		handleSubmit((values) => {
+			complete.mutate(
+				{
+					role: "sponsor",
+					sponsorType: "individual",
+					...values,
+					marketingOptIn,
+					employmentType: values.employmentType as EmploymentType,
+				},
+				{ onSuccess: onDone },
+			);
+		})();
 
 	return (
 		<OnboardingShell
@@ -615,17 +551,19 @@ function OrganizationSponsorForm({
 		defaultValues: { name: "", organizationType: "", phone: "" },
 	});
 
-	const onSubmit = handleSubmit((values) => {
-		complete.mutate(
-			{
-				role: "sponsor",
-				sponsorType: "organization",
-				...values,
-				organizationType: values.organizationType as OrganizationType,
-			},
-			{ onSuccess: onDone },
-		);
-	});
+	const onSubmit = (marketingOptIn: boolean) =>
+		handleSubmit((values) => {
+			complete.mutate(
+				{
+					role: "sponsor",
+					sponsorType: "organization",
+					...values,
+					marketingOptIn,
+					organizationType: values.organizationType as OrganizationType,
+				},
+				{ onSuccess: onDone },
+			);
+		})();
 
 	return (
 		<OnboardingShell
@@ -688,17 +626,19 @@ function GovernmentSponsorForm({
 		defaultValues: { name: "", agencyType: "", phone: "" },
 	});
 
-	const onSubmit = handleSubmit((values) => {
-		complete.mutate(
-			{
-				role: "sponsor",
-				sponsorType: "government",
-				...values,
-				agencyType: values.agencyType as AgencyType,
-			},
-			{ onSuccess: onDone },
-		);
-	});
+	const onSubmit = (marketingOptIn: boolean) =>
+		handleSubmit((values) => {
+			complete.mutate(
+				{
+					role: "sponsor",
+					sponsorType: "government",
+					...values,
+					marketingOptIn,
+					agencyType: values.agencyType as AgencyType,
+				},
+				{ onSuccess: onDone },
+			);
+		})();
 
 	return (
 		<OnboardingShell
@@ -771,9 +711,13 @@ function AdminForm({ onDone }: { onDone: () => void }) {
 		defaultValues: { displayName: "" },
 	});
 
-	const onSubmit = handleSubmit((values) => {
-		complete.mutate({ role: "admin", ...values }, { onSuccess: onDone });
-	});
+	const onSubmit = (marketingOptIn: boolean) =>
+		handleSubmit((values) => {
+			complete.mutate(
+				{ role: "admin", ...values, marketingOptIn },
+				{ onSuccess: onDone },
+			);
+		})();
 
 	return (
 		<OnboardingShell
