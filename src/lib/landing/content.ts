@@ -63,118 +63,135 @@ export const LANDING_FAQS = [
 
 export interface Partner {
 	name: string;
-	href: string;
-	/** Alpha-trimmed PNG under public/partnerships/. */
+	/** Existing verified destinations only; new artwork can stand on its own. */
+	href?: string;
 	logo: string;
-	/** Width / height of the trimmed PNG — drives equal-visual-area sizing. */
-	aspect?: number;
-	/** Native pixel width; caps upscaling at 1.5x. */
-	nativeWidth?: number;
-	/** Round seal: rendered on a light disc. */
+	width: number;
+	height: number;
+	wordmark?: boolean;
+	/** Preserve internal shapes in multitone artwork on the navy background. */
+	tonal?: boolean;
+	/** False retains legible monochrome artwork while sharing the same hover motion. */
+	hoverColour?: boolean;
 	round?: boolean;
-	/** Navy letterforms: inverted instead of flattened to white. */
-	invert?: boolean;
-	/**
-	 * Hover/focus treatment on the navy band. true: swap the white silhouette to the
-	 * original colours. false: the artwork reads poorly on navy, so it stays white and
-	 * brightens + lifts instead.
-	 */
-	hoverColour: boolean;
 }
 
-export interface PartnerGroup {
-	id: string;
-	title: string;
-	partners: Partner[];
-}
-
-export const PARTNER_GROUPS: PartnerGroup[] = [
+export const LAUNCH_PARTNERS: Partner[] = [
 	{
-		id: "partners",
-		title: "Our Partners",
-		partners: [
-			{
-				name: "BYC Ventures",
-				href: "https://byc.ventures",
-				logo: "/partnerships/byc-ventures.png",
-				aspect: 2.535,
-				nativeWidth: 512,
-				hoverColour: false,
-			},
-			{
-				name: "Tutorials Dojo",
-				href: "https://tutorialsdojo.com",
-				logo: "/partnerships/tutorials-dojo.png",
-				aspect: 3.034,
-				nativeWidth: 176,
-				hoverColour: true,
-			},
-			{
-				name: "Fundr Studios",
-				href: "https://fundrstudio.com/",
-				logo: "/partnerships/fundr-studio.png",
-				aspect: 2.349,
-				nativeWidth: 1675,
-				hoverColour: true,
-			},
-			{
-				name: "Jia Talent Vault",
-				href: "https://www.hellojia.ai/",
-				logo: "/partnerships/jia-whitecloak.png",
-				aspect: 4.15,
-				nativeWidth: 664,
-				hoverColour: false,
-			},
-		],
+		name: "BYC Ventures",
+		href: "https://byc.ventures",
+		logo: "/partnerships/byc-ventures.png",
+		width: 512,
+		height: 202,
+		wordmark: true,
+		hoverColour: false,
 	},
 	{
-		id: "student-communities",
-		title: "Student Communities",
-		partners: [
-			{
-				name: "AWS Learning Club Heron",
-				href: "https://www.facebook.com/awslearningclubheron",
-				logo: "/partnerships/aws-learning-club-heron.png",
-				round: true,
-				hoverColour: true,
-			},
-			{
-				name: "Tech Kubo",
-				href: "https://techkubo.com/",
-				logo: "/partnerships/tech-kubo.png",
-				round: true,
-				hoverColour: true,
-			},
-			{
-				name: "Cryptita Plays",
-				href: "https://cryptitaplays.org",
-				logo: "/partnerships/cryptita-plays.png",
-				round: true,
-				hoverColour: true,
-			},
-		],
+		name: "Tutorials Dojo",
+		href: "https://tutorialsdojo.com",
+		logo: "/partnerships/tutorials-dojo.png",
+		width: 176,
+		height: 58,
+		wordmark: true,
 	},
 	{
-		id: "tbis",
-		title: "University TBIs and Incubators",
-		partners: [
-			{
-				name: "QBO Innovation Hub",
-				href: "https://www.qboinnovation.com/",
-				logo: "/partnerships/qbo-innovation.png",
-				aspect: 2.115,
-				nativeWidth: 554,
-				hoverColour: false,
-			},
-			{
-				name: "UMak CTIED",
-				href: "https://www.umak.edu.ph/",
-				logo: "/partnerships/ctied.png",
-				aspect: 3.386,
-				nativeWidth: 298,
-				invert: true,
-				hoverColour: false,
-			},
-		],
+		name: "Fundr Studios",
+		href: "https://fundrstudio.com/",
+		logo: "/partnerships/fundr-studio.png",
+		width: 1675,
+		height: 713,
+		wordmark: true,
+	},
+	{
+		name: "Jia Talent Vault",
+		href: "https://www.hellojia.ai/",
+		logo: "/partnerships/jia-whitecloak.png",
+		width: 664,
+		height: 160,
+		wordmark: true,
+		hoverColour: false,
+	},
+	{
+		name: "UMak CTIED",
+		href: "https://www.umak.edu.ph/",
+		logo: "/partnerships/ctied.png",
+		width: 298,
+		height: 88,
+		wordmark: true,
+		tonal: true,
+		hoverColour: false,
+	},
+	{
+		name: "AWS Learning Club Heron",
+		href: "https://www.facebook.com/awslearningclubheron",
+		logo: "/partnerships/aws-learning-club-heron.png",
+		width: 1634,
+		height: 1634,
+		round: true,
+	},
+	{
+		name: "AWS Student Builder Group Tempest",
+		href: "https://www.facebook.com/AWSSBG.Tempest",
+		logo: "/partnerships/aws-sbg-tempest.png",
+		width: 480,
+		height: 480,
+	},
+	{
+		name: "AWS Student Builder Group UPM",
+		href: "https://www.facebook.com/awscc.up",
+		logo: "/partnerships/aws-sbg-upm.png",
+		width: 2039,
+		height: 2039,
+	},
+	{
+		name: "AWS User Group Philippines ENOV",
+		href: "https://www.facebook.com/awsugenovatorsph",
+		logo: "/partnerships/awsugph-enov.png",
+		width: 1961,
+		height: 1961,
+	},
+	{
+		name: "Cryptita Plays",
+		href: "https://cryptitaplays.org",
+		logo: "/partnerships/cryptita-plays.png",
+		width: 335,
+		height: 360,
+		round: true,
+	},
+	{
+		name: "Tech Kubo",
+		round: true,
+		href: "https://techkubo.com/",
+		logo: "/partnerships/tech-kubo.png",
+		width: 339,
+		height: 423,
+	},
+	{
+		name: "Seekers Guild",
+		href: "https://www.facebook.com/seekersguildcommunity",
+		logo: "/partnerships/seekers-guild.png",
+		width: 1080,
+		height: 1080,
+	},
+	{
+		name: "Startup Machine",
+		href: "https://www.facebook.com/startupmachine/",
+		logo: "/partnerships/startup-machine.png",
+		width: 640,
+		height: 480,
+	},
+	{
+		name: "Stellar PH",
+		href: "https://stellarph.io/",
+		logo: "/partnerships/stellar-ph.png",
+		width: 492,
+		height: 492,
+	},
+	{
+		name: "WorkFlow PH",
+		href: "https://www.facebook.com/WorkFlowPH",
+		logo: "/partnerships/workflow-ph.png",
+		width: 480,
+		height: 480,
 	},
 ];
