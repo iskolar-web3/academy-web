@@ -51,6 +51,7 @@ export const academyUserSchema = z.object({
 	roleConfirmed: z.boolean(),
 	/** True once the basic-info onboarding step (name + school/org) is submitted. */
 	onboardingCompleted: z.boolean(),
+	email: z.email().nullable().optional(),
 	displayName: z.string().nullable(),
 	avatarUrl: z.string().nullable(),
 	createdAt: z.string(),

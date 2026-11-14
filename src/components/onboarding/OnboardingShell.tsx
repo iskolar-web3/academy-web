@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
+import { useAuth } from "#/auth";
 import { Checkbox } from "#/components/ui/checkbox";
+import { marketingEmailSchema } from "#/lib/account/model";
 
 export function OnboardingShell({
 	children,
@@ -11,14 +13,17 @@ export function OnboardingShell({
 	subtitle,
 }: {
 	children: ReactNode;
-	onSubmit: (marketingOptIn: boolean) => void;
+	onSubmit: (marketingOptIn: boolean, marketingEmail?: string) => void;
 	pending: boolean;
 	error?: string;
 	/** Shown above the heading for sponsor's 3-way branch only. */
 	onBack?: () => void;
 	subtitle?: string;
 }) {
+	const { user } = useAuth();
 	const [marketingOptIn, setMarketingOptIn] = useState(false);
+	const [marketingEmail, setMarketingEmail] = useState(user?.email ?? "");
+	const [emailError, setEmailError] = useState<string | null>(null);
 
 	return (
 		<main className="mx-auto max-w-[560px]">
@@ -49,6 +54,18 @@ export function OnboardingShell({
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
+					if (marketingOptIn) {
+						const parsed = marketingEmailSchema.safeParse(marketingEmail);
+						if (!parsed.success) {
+							setEmailError(
+								parsed.error.issues[0]?.message ??
+									"Enter a valid email address.",
+							);
+							return;
+						}
+						onSubmit(true, parsed.data);
+						return;
+					}
 					onSubmit(marketingOptIn);
 				}}
 				className="card-surface flex flex-col gap-4 rounded-2xl px-7 py-7"
@@ -85,6 +102,48 @@ export function OnboardingShell({
 						</span>
 					</span>
 				</label>
+
+				{marketingOptIn ? (
+					<div className="pl-6.5">
+						<label
+							htmlFor="marketing-email"
+							className="mb-1.5 block text-sm text-content-body"
+						>
+							Email for updates
+						</label>
+						<input
+							id="marketing-email"
+							name="marketingEmail"
+							type="email"
+							autoComplete="email"
+							maxLength={254}
+							value={marketingEmail}
+							onChange={(e) => {
+								setMarketingEmail(e.target.value);
+								setEmailError(null);
+							}}
+							onInvalid={(e) => {
+								e.preventDefault();
+								setEmailError("Enter a valid email address.");
+							}}
+							disabled={pending}
+							aria-invalid={!!emailError}
+							aria-describedby={
+								emailError ? "marketing-email-error" : undefined
+							}
+							className="h-12 w-full rounded-xl border border-line bg-surface-card px-4 text-[15px] text-content-heading outline-none focus:border-action disabled:opacity-60"
+						/>
+						{emailError ? (
+							<p
+								id="marketing-email-error"
+								role="alert"
+								className="mt-1.5 text-xs text-danger"
+							>
+								{emailError}
+							</p>
+						) : null}
+					</div>
+				) : null}
 
 				<button
 					type="submit"

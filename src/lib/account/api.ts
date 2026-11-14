@@ -2,7 +2,10 @@ import { queryOptions } from "@tanstack/react-query";
 import {
 	type AccountProfile,
 	accountProfileSchema,
+	type MarketingPreference,
+	type MarketingPreferenceEdit,
 	type MyAccountProfile,
+	marketingPreferenceSchema,
 	myAccountProfileSchema,
 	type OnboardingInput,
 	type ProfileEdit,
@@ -28,6 +31,33 @@ export function myProfileQuery() {
 			return myAccountProfileSchema.parse(res.data);
 		},
 	});
+}
+
+/** Account-scoped cache prevents showing a previous user's private preference. */
+export function marketingPreferenceQuery(accountId: string) {
+	return queryOptions({
+		queryKey: ["account", "marketing-preference", accountId] as const,
+		queryFn: async ({ signal }): Promise<MarketingPreference> => {
+			const res = await apiFetch<ApiEnvelope<unknown>>(
+				"/accounts/me/marketing-preference",
+				{ signal },
+			);
+			return marketingPreferenceSchema.parse(res.data);
+		},
+	});
+}
+
+export async function updateMarketingPreference(
+	input: MarketingPreferenceEdit,
+): Promise<MarketingPreference> {
+	const res = await apiFetch<ApiEnvelope<unknown>>(
+		"/accounts/me/marketing-preference",
+		{
+			method: "PATCH",
+			body: JSON.stringify(input),
+		},
+	);
+	return marketingPreferenceSchema.parse(res.data);
 }
 
 /** A public profile by academy user id (STU-02 / SPN-02). `GET /accounts/:id/profile`. */

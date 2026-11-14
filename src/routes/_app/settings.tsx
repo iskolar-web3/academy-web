@@ -5,13 +5,15 @@ import {
 } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAuth } from "#/auth";
+import { MarketingPreferenceSettings } from "#/components/account/MarketingPreferenceSettings";
 import { Switch } from "#/components/ui/switch";
 
 /**
  * Settings (design-template SETTINGS PAGE) — a signed-in surface under `_app` (any role).
  * Go-live alerts toggle (Radix Switch, template geometry), digest/language rows,
  * account/privacy entries, and Log out. The account/privacy sub-pages aren't scoped yet
- * (inert); Log out uses the real auth flow.
+ * (inert); Log out uses the real auth flow. iSkolar email preferences read/write
+ * the authenticated account endpoint and persist independently of these older stubs.
  */
 export const Route = createFileRoute("/_app/settings")({
 	component: Settings,
@@ -24,7 +26,7 @@ const linkRowCls =
 function Settings() {
 	const router = useRouter();
 	const navigate = useNavigate();
-	const { logout } = useAuth();
+	const { logout, user } = useAuth();
 	const [alerts, setAlerts] = useState(true);
 
 	const onLogout = async () => {
@@ -42,6 +44,13 @@ function Settings() {
 				Back
 			</button>
 			<h1 className="mb-[22px] text-[32px] text-action">Settings</h1>
+
+			{user ? (
+				<MarketingPreferenceSettings
+					key={user.academyUserId}
+					accountId={user.academyUserId}
+				/>
+			) : null}
 
 			<div className="mb-4 overflow-hidden rounded-2xl border border-line bg-surface-card">
 				<div className={`${rowCls} border-[#eef1fa] border-b`}>

@@ -3,9 +3,15 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { OnboardingShell } from "./OnboardingShell";
 
+const auth = vi.hoisted(() => ({
+	email: "learner@example.test" as string | null,
+}));
+vi.mock("#/auth", () => ({ useAuth: () => ({ user: { email: auth.email } }) }));
+
 afterEach(cleanup);
 
 beforeEach(() => {
+	auth.email = "learner@example.test";
 	vi.stubGlobal(
 		"ResizeObserver",
 		class {
@@ -45,7 +51,7 @@ describe("signup marketing choice", () => {
 		fireEvent.click(checkbox);
 		expect(checkbox.getAttribute("aria-checked")).toBe("true");
 		fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-		expect(onSubmit).toHaveBeenLastCalledWith(true);
+		expect(onSubmit).toHaveBeenLastCalledWith(true, "learner@example.test");
 		fireEvent.click(checkbox);
 		fireEvent.click(screen.getByRole("button", { name: "Continue" }));
 		expect(onSubmit).toHaveBeenLastCalledWith(false);
@@ -73,5 +79,42 @@ describe("signup marketing choice", () => {
 			</OnboardingShell>,
 		);
 		expect(screen.getByRole("checkbox").hasAttribute("disabled")).toBe(true);
+	});
+
+	it("collects an email only after opting in and requires it before subscribing", () => {
+		auth.email = null;
+		const onSubmit = vi.fn();
+		render(
+			<OnboardingShell onSubmit={onSubmit} pending={false}>
+				<p>Signup details</p>
+			</OnboardingShell>,
+		);
+		expect(screen.queryByLabelText("Email for updates")).toBeNull();
+		fireEvent.click(screen.getByRole("checkbox"));
+		fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+		expect(onSubmit).not.toHaveBeenCalled();
+		expect(screen.getByRole("alert").textContent).toBe(
+			"Enter a valid email address.",
+		);
+		fireEvent.change(screen.getByLabelText("Email for updates"), {
+			target: { value: "new@example.test" },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+		expect(onSubmit).toHaveBeenCalledWith(true, "new@example.test");
+	});
+
+	it("lets an account without an email continue after opting back out", () => {
+		auth.email = null;
+		const onSubmit = vi.fn();
+		render(
+			<OnboardingShell onSubmit={onSubmit} pending={false}>
+				<p>Signup details</p>
+			</OnboardingShell>,
+		);
+		fireEvent.click(screen.getByRole("checkbox"));
+		fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+		fireEvent.click(screen.getByRole("checkbox"));
+		fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+		expect(onSubmit).toHaveBeenCalledWith(false);
 	});
 });

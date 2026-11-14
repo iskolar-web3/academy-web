@@ -1,45 +1,52 @@
-# Phase 17 - Signup marketing opt-in
+# Phase 17 - Signup marketing opt-in and email collection
 
 **Status:** Done
 **Date:** 2026-11-14
 **Repo(s):** academy-web and academy-server
-**Traces to:** Owner-requested optional iSkolar marketing/newsletter checkbox during signup
-**Commit/PR:** Uncommitted; feat/signup-marketing-opt-in in both repositories
+**Traces to:** Owner-requested optional signup email collection and ability to change consent anytime
+**Commit/PR:** Follow-up changes uncommitted; feat/signup-marketing-opt-in in both repositories
 
 ## Goal
 
-Allow new Academy users to choose whether to receive iSkolar marketing updates and newsletters while completing signup. Signup must work without subscribing.
+Collect an email address and explicit consent for iSkolar scholarships, opportunities, and updates. Signup remains available without subscribing. Users can later change their preference and collected address in Settings. The owner explicitly scoped this to collection only for now; no newsletter service or email delivery is required.
 
 ## What Was Built
 
 | File | Functions / Components | Purpose |
 | --- | --- | --- |
-| `src/components/onboarding/OnboardingShell.tsx` | `OnboardingShell` | Existing shared signup layout, extracted from the route; adds one accessible, optional checkbox above Continue. |
-| `src/routes/_onboarding/basic-info.tsx` | Student, individual sponsor, organization sponsor, government sponsor, and admin forms | Pass the explicit checkbox choice into the existing onboarding mutation after form validation. |
-| `src/lib/account/model.ts` | Onboarding schemas | Include optional boolean `marketingOptIn` in the existing request contract. |
-| `src/components/onboarding/OnboardingShell.test.tsx` | Signup preference tests | Cover unchecked default, explicit opt-in/opt-out, failure retention, and disabled state while saving. |
+| `src/components/onboarding/OnboardingShell.tsx` | `OnboardingShell` | Shared optional, unchecked checkbox with left-aligned text and muted helper. Shows a validated email field only after opt-in, prefilled from private sign-in email when available. |
+| `src/routes/_onboarding/basic-info.tsx` | All five role/sponsor forms | Submit consent and collected email with validated onboarding details. |
+| `src/lib/account/model.ts`, `api.ts` | Preference schemas, query, update | Private GET/PATCH contract with strict booleans, email validation, Zod response parsing, abortable reads, and account-scoped cache keys. |
+| `src/lib/auth/model.ts` | `academyUserSchema` | Retain the existing server's optional private sign-in email for prefill. |
+| `src/hooks/account/useMarketingPreference.ts` | `useMarketingPreference` | Load/save preference and prevent an older read from replacing a confirmed save. |
+| `src/hooks/auth/useCompleteOnboarding.ts` | Onboarding mutation | Refresh the current account's preference cache after signup. |
+| `src/components/account/MarketingPreferenceSettings.tsx` | Settings form | Load saved choice, enable/disable updates, edit collected email, save explicitly, confirm success, and retry failed reads/writes without losing edits. |
+| `src/routes/_app/settings.tsx` | Shared Settings route | Expose the persisted preference to every signed-in, onboarded role. |
+| `src/components/layout/RoleNav.tsx` | Account dropdown | Add a discoverable Settings link for all roles and screen sizes. |
+| Onboarding and preference component tests | 10 behavior tests | Cover safe defaults, required email on opt-in, signup without email/consent, persistent preference changes, loading/saving/errors/retry, and cross-account cache isolation. |
 
 ## Decisions & Trade-offs
 
-- Academy uses Google/iSkolar authentication and collects signup information on `/basic-info`; the checkbox belongs in this shared step so every account type sees the same choice.
-- Label: "Notify me about new scholarships, opportunities, and iSkolar updates." Helper: "Optional. You can change this anytime." The group aligns with the form fields, with smaller muted helper text directly below the label and natural wrapping on narrow screens.
-- The checkbox starts unchecked, has no required validation, and uses the existing Radix Checkbox and design tokens. Clicking the label or using the keyboard changes the same controlled boolean.
-- The shared shell owns the preference for its mounted form. Validation and save errors retain it; changing sponsor type starts a new, unchecked form.
-- Both checked and unchecked choices are sent with `POST /accounts/me/onboarding`. The backend stores the choice and first acceptance time with the onboarding write. No private marketing fields were added to public profile responses.
+- Exact signup copy: "Notify me about new scholarships, opportunities, and iSkolar updates." Helper: "Optional. You can change this anytime."
+- The checkbox starts unchecked. Email is required only for opt-in; opting out removes the conditional input and allows signup without an address.
+- Marketing email is separate from login identity. Editing it never changes the sign-in address. Addresses are collected, not independently verified.
+- Settings is reachable through the account menu. Toggle/edit the preference, then choose **Save preference**. Confirmation appears only after the server accepts it; failures retain the draft and offer retry.
+- Turning updates off clears active consent and its timestamp but retains the collected address for private prefill. An enabled address change or later re-enable records new consent time. Repeated saves with the same enabled address preserve the timestamp.
+- Private preference data is keyed by account ID, and the Settings component remounts when the account changes. Public profile/search responses never expose collected addresses or consent.
+- The underlying API is GET/PATCH `/accounts/me/marketing-preference`, scoped to the authenticated account. No caller-supplied account ID is accepted.
+- Existing Settings alerts/digest/account/privacy stubs are outside this feature; the iSkolar email preference is persisted through the real API.
 
 ## Verification
 
-- `pnpm test`: 34 tests pass, including three new checkbox behavior tests.
-- `pnpm typecheck` and targeted Biome checks pass.
-- `DISABLE_NETLIFY_PLUGIN=true pnpm build`: client and SSR build pass.
-- Browser checks at 1440px and 375px use mocked session/save responses against the real app UI: initially unchecked; submitting without selecting sends `marketingOptIn: false`; selecting and retrying sends `true`; save failure retains the choice; no horizontal overflow.
-- Backend real PostgreSQL integration checks: 65 account tests pass, including 17 new preference cases across all five onboarding paths.
-- Independent review found no material issues in consent defaults, schema compatibility, callback wiring, or atomic SQL persistence.
+- Full frontend suite: **41 tests pass**, including five onboarding and five Settings preference tests. TypeScript and targeted Biome checks pass.
+- Production client and SSR builds pass with `DISABLE_NETLIFY_PLUGIN=true` for local verification.
+- Backend: **106 account integration tests pass** (58 preference/workflow and 48 existing account tests), using isolated PostgreSQL 18.1 and all 19 migrations.
+- Real browser/local backend workflow: unchecked signup -> opt in and collect address -> complete signup -> account menu Settings -> opt out/save -> refresh and confirm off -> re-enable with a different address/save -> confirm stored choice, address, and renewed timestamp.
+- Inspected rendered signup and Settings screenshots. Settings fits 1440px, 375px, and 320px widths without horizontal overflow.
+- Independent review found the missing Settings navigation entry; it was added and exercised in the real browser workflow.
 
 ## Open Items
 
-- Deploy the backend change first; startup applies migration `00018_signup_marketing_opt_in.sql`. Then deploy the frontend so strict older backend schemas do not reject the new field.
-- This feature records the user's newsletter/marketing preference. It does not send emails or synchronize an external mailing list. Connecting the selected mailing provider and managing later subscription changes are follow-up work.
-
-- Copy/layout refinement (2026-11-14): left-aligned the checkbox group with the form fields, updated the requested wording, and kept a generous clickable label area.
-- The requested "change this anytime" helper requires a later preference-editing control before launch. The current implementation records consent during signup only.
+- Deploy backend/migration 19 first, then frontend, because older strict onboarding schemas reject the new email field.
+- Email sending, provider synchronization, verification emails, and public unsubscribe links are deliberately deferred under the collection-only scope. Authenticated users can change their saved preference in Settings now.
+- Any later mailing list must use current opt-in consent and a usable collected address, and must honor subsequent opt-outs. Backend phase 10 documents the filtered collection query.

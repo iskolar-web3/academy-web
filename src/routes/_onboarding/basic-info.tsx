@@ -180,13 +180,14 @@ function StudentForm({ onDone }: { onDone: () => void }) {
 		},
 	});
 
-	const onSubmit = (marketingOptIn: boolean) =>
+	const onSubmit = (marketingOptIn: boolean, marketingEmail?: string) =>
 		handleSubmit((values) => {
 			complete.mutate(
 				{
 					role: "student",
 					...values,
 					marketingOptIn,
+					marketingEmail,
 					gender: values.gender as Gender,
 					educationLevel: values.educationLevel as EducationLevel,
 				},
@@ -432,7 +433,7 @@ function IndividualSponsorForm({
 		},
 	});
 
-	const onSubmit = (marketingOptIn: boolean) =>
+	const onSubmit = (marketingOptIn: boolean, marketingEmail?: string) =>
 		handleSubmit((values) => {
 			complete.mutate(
 				{
@@ -440,6 +441,7 @@ function IndividualSponsorForm({
 					sponsorType: "individual",
 					...values,
 					marketingOptIn,
+					marketingEmail,
 					employmentType: values.employmentType as EmploymentType,
 				},
 				{ onSuccess: onDone },
@@ -551,7 +553,7 @@ function OrganizationSponsorForm({
 		defaultValues: { name: "", organizationType: "", phone: "" },
 	});
 
-	const onSubmit = (marketingOptIn: boolean) =>
+	const onSubmit = (marketingOptIn: boolean, marketingEmail?: string) =>
 		handleSubmit((values) => {
 			complete.mutate(
 				{
@@ -559,6 +561,7 @@ function OrganizationSponsorForm({
 					sponsorType: "organization",
 					...values,
 					marketingOptIn,
+					marketingEmail,
 					organizationType: values.organizationType as OrganizationType,
 				},
 				{ onSuccess: onDone },
@@ -626,7 +629,7 @@ function GovernmentSponsorForm({
 		defaultValues: { name: "", agencyType: "", phone: "" },
 	});
 
-	const onSubmit = (marketingOptIn: boolean) =>
+	const onSubmit = (marketingOptIn: boolean, marketingEmail?: string) =>
 		handleSubmit((values) => {
 			complete.mutate(
 				{
@@ -634,6 +637,7 @@ function GovernmentSponsorForm({
 					sponsorType: "government",
 					...values,
 					marketingOptIn,
+					marketingEmail,
 					agencyType: values.agencyType as AgencyType,
 				},
 				{ onSuccess: onDone },
@@ -711,10 +715,10 @@ function AdminForm({ onDone }: { onDone: () => void }) {
 		defaultValues: { displayName: "" },
 	});
 
-	const onSubmit = (marketingOptIn: boolean) =>
+	const onSubmit = (marketingOptIn: boolean, marketingEmail?: string) =>
 		handleSubmit((values) => {
 			complete.mutate(
-				{ role: "admin", ...values, marketingOptIn },
+				{ role: "admin", ...values, marketingOptIn, marketingEmail },
 				{ onSuccess: onDone },
 			);
 		})();
