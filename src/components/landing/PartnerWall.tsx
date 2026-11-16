@@ -1,67 +1,75 @@
 import type { CSSProperties } from "react";
-import { PARTNER_GROUPS, type Partner } from "#/lib/landing/content";
+import { LAUNCH_PARTNERS, type Partner } from "#/lib/landing/content";
 import { cn } from "#/lib/utils";
 
 function PartnerLogo({ partner }: { partner: Partner }) {
-	const sizing = partner.round
-		? undefined
-		: ({
-				"--ar": partner.aspect,
-				"--nw": partner.nativeWidth,
-			} as CSSProperties);
+	const sizing = {
+		"--ar": partner.width / partner.height,
+	} as CSSProperties;
+	const artwork = (
+		<span className="p-logo" style={sizing}>
+			<img
+				src={partner.logo}
+				alt={partner.name}
+				width={partner.width}
+				height={partner.height}
+				loading="lazy"
+				decoding="async"
+			/>
+		</span>
+	);
+	const className = cn(
+		"p-mark",
+		partner.wordmark && "p-wordmark",
+		partner.tonal && "p-tonal",
+		partner.round && "p-round",
+	);
+
 	return (
 		<li>
-			<a href={partner.href} target="_blank" rel="noopener noreferrer">
-				<img
-					className={cn(
-						"p-logo",
-						partner.round && "round",
-						partner.invert && "inv",
-					)}
-					data-hover-colour={partner.hoverColour}
-					style={sizing}
-					src={partner.logo}
-					alt={partner.name}
-					loading="lazy"
-					decoding="async"
-				/>
-			</a>
+			{partner.href ? (
+				<a
+					className={className}
+					data-hover-colour={partner.hoverColour !== false}
+					href={partner.href}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{artwork}
+				</a>
+			) : (
+				<div
+					className={className}
+					data-hover-colour={partner.hoverColour !== false}
+				>
+					{artwork}
+				</div>
+			)}
 		</li>
 	);
 }
 
-/**
- * Static partner rows on the navy band: group label left, column-ruled logo track right.
- * Logos are sized to equal visual area (width = sqrt(area x aspect)), not equal height.
- */
+/** One static, responsive wall: every launch partner shares the same hierarchy. */
 export function PartnerWall() {
 	return (
 		<section
-			className="section compact lp-navy"
+			className="section compact lp-navy p-section"
 			aria-labelledby="partners-title"
 		>
 			<div className="wrap">
-				{PARTNER_GROUPS.map((group, index) => {
-					const Heading = index === 0 ? "h2" : "h3";
-					return (
-						<div className="p-group" key={group.id}>
-							<div className="p-label head">
-								<span className="rule reveal" />
-								<Heading
-									id={index === 0 ? "partners-title" : undefined}
-									className="reveal"
-								>
-									{group.title}
-								</Heading>
-							</div>
-							<ul className="p-logos">
-								{group.partners.map((partner) => (
-									<PartnerLogo key={partner.name} partner={partner} />
-								))}
-							</ul>
-						</div>
-					);
-				})}
+				<div className="p-group">
+					<div className="p-label head">
+						<span className="rule reveal" />
+						<h2 id="partners-title" className="reveal">
+							Our Launch Partners
+						</h2>
+					</div>
+					<ul className="p-logos">
+						{LAUNCH_PARTNERS.map((partner) => (
+							<PartnerLogo key={partner.logo} partner={partner} />
+						))}
+					</ul>
+				</div>
 			</div>
 		</section>
 	);

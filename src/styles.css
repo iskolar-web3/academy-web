@@ -744,33 +744,35 @@ html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lp .hero-mark { width: calc(min(var(--mark-size), 600px) * 0.7); display: flex; justify-content: center; translate: var(--mark-shift, 0px) 0; }
 .lp .hero-mark img { height: min(var(--mark-size), 600px); width: auto; max-width: none; }
 
-/* PARTNERS (navy band): label left, column-ruled logo track right. Line marks render as
-   white silhouettes, round seals sit on light discs. Equal visual area, not equal height. */
-.lp .p-group { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: clamp(1.5rem, 3vw, 3rem); padding-block: clamp(2rem, 5vh, 3rem); }
-.lp .p-group:first-of-type { padding-top: 0; }
-.lp .p-label h2 { font-size: clamp(2.5rem, 4vw, 4rem); line-height: 0.96; letter-spacing: -0.02em; }
-.lp .p-label h3 { font-size: clamp(1.5rem, 2vw, 2rem); line-height: 1.05; letter-spacing: -0.01em; }
-.lp .p-logos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: start; margin: 0; padding: 0; list-style: none; }
-.lp .p-logos li { height: 156px; border-left: 1px solid var(--rule-dark); }
-.lp .p-logos li:first-child { border-left-color: transparent; }
-.lp .p-logos a { position: relative; display: grid; place-items: center; height: 100%; padding: 1rem 1.25rem; }
-.lp .p-logo { position: relative; z-index: 1; height: auto; object-fit: contain;
-	width: calc(sqrt(var(--logo-area) * var(--ar, 1)) * 1px);
-	max-width: min(100%, calc(var(--nw, 9999) * 1.5px));
-	filter: brightness(0) invert(1); opacity: var(--logo-opacity);
-	transition: opacity var(--dur-hover) ease, filter var(--dur-hover) ease, transform var(--dur-hover) var(--ease-out); }
-.lp .p-logo.inv { filter: grayscale(1) invert(1) brightness(1.15); }
-.lp .p-logo.round { width: var(--disc); height: var(--disc); max-width: none; padding: 5%; box-sizing: border-box; border-radius: 50%;
-	filter: grayscale(1) contrast(1.05); background: var(--on-dark); opacity: 0.95; }
-/* hoverColour true: swap to the original colour. false: artwork too dark for navy, so it
-   stays white, goes to full opacity and lifts 3px. */
-.lp .p-logos li:hover .p-logo,
-.lp .p-logos a:focus-visible .p-logo { opacity: 1; }
-.lp .p-logos li:hover .p-logo[data-hover-colour="true"],
-.lp .p-logos a:focus-visible .p-logo[data-hover-colour="true"] { filter: none; }
-.lp .p-logos li:hover .p-logo[data-hover-colour="false"],
-.lp .p-logos a:focus-visible .p-logo[data-hover-colour="false"] { transform: translateY(-3px); }
-@media (prefers-reduced-motion: reduce) { .lp .p-logo { transition: none; } }
+/* LAUNCH PARTNERS: one open logo wall, keeping the landing's navy and serif identity. */
+.lp .p-section { padding-block: var(--section-pad-compact); }
+.lp .p-group { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: clamp(2rem, 4vw, 4rem); align-items: start; }
+.lp .p-label h2 { font-size: clamp(2.5rem, 3.5vw, 3.75rem); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
+.lp .p-logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem 1rem; align-items: center; margin: 0; padding: 0; list-style: none; }
+.lp .p-logos li { min-width: 0; display: grid; place-items: center; }
+.lp .p-mark { display: grid; place-items: center; width: 100%; min-height: 112px; padding: 0.75rem; -webkit-tap-highlight-color: transparent; }
+.lp .p-logo { --mark-area: 5600; --mark-height: 80px; position: relative; display: block;
+	width: calc(min(100%, calc(sqrt(var(--mark-area) * var(--ar)) * 1px), calc(var(--mark-height) * var(--ar))) - 0.9px);
+	aspect-ratio: var(--ar); filter: grayscale(1); opacity: var(--logo-opacity);
+	transition: filter var(--dur-hover) ease, opacity var(--dur-hover) ease, transform var(--dur-hover) var(--ease-out); }
+.lp .p-logo img { width: 100%; height: 100%; object-fit: contain; }
+.lp .p-wordmark .p-logo { --mark-area: calc(var(--logo-area) * 0.6); --mark-height: 60px; filter: brightness(0) invert(1); }
+.lp .p-tonal .p-logo { filter: grayscale(1) invert(1) brightness(1.15); }
+.lp .p-round .p-logo { width: 83.1px; aspect-ratio: 1; padding: 5px; border-radius: 50%; background: var(--on-dark); }
+/* Every logo shares the same lift, brightening, and timing. Color-capable artwork
+   also reveals its colors; dark wordmarks retain their readable treatment. */
+.lp .p-mark:focus-visible .p-logo,
+.lp .p-mark:active .p-logo { opacity: 1; transform: translateY(-3px); }
+.lp .p-mark[data-hover-colour="true"]:focus-visible .p-logo,
+.lp .p-mark[data-hover-colour="true"]:active .p-logo { filter: none; }
+@media (hover: hover) and (pointer: fine) {
+	.lp .p-mark:hover .p-logo { opacity: 1; transform: translateY(-3px); }
+	.lp .p-mark[data-hover-colour="true"]:hover .p-logo { filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.lp .p-logo { transition: none; }
+	.lp .p-mark:is(:hover, :focus-visible, :active) .p-logo { transform: none; }
+}
 
 /* WHY ACADEMY: label column + three column-ruled claims */
 .lp .why-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: clamp(1.5rem, 3vw, 3rem); }
@@ -911,6 +913,8 @@ html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 /* tablet */
 @media (max-width: 1100px) {
 	.lp .why-grid, .lp .faq-grid { grid-template-columns: 1fr; }
+	.lp .p-group { grid-template-columns: 1fr; gap: 2rem; }
+	.lp .p-label h2 { max-width: none; }
 	.lp .f-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 	.lp .f-brand { grid-column: 1 / -1; }
 	.lp .faq-aside { position: static; }
@@ -926,10 +930,8 @@ html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 	.lp .hero-mark { order: -1; width: auto; justify-content: flex-start; translate: none; }
 	.lp .hero-mark img { height: 24svh; margin-left: -4svh; }
 	.lp .hero-ctas .lp-btn { flex: 1 1 100%; }
-	.lp .p-group { grid-template-columns: 1fr; }
-	.lp .p-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	.lp .p-logos li { height: 128px; border-left: 0; border-top: 1px solid var(--rule-dark); }
-	.lp .p-logos li:nth-child(even) { border-left: 1px solid var(--rule-dark); }
+	.lp .p-logos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+	.lp .p-mark { min-height: 108px; padding: 0.5rem; }
 	.lp .why-list { grid-template-columns: 1fr; gap: 2rem; }
 	.lp .why-list li, .lp .why-list li:first-child { padding: 1.5rem 0 0; border-left: 0; border-top: 1px solid var(--rule); }
 	.lp .process-grid { grid-template-columns: 1fr; }
@@ -961,3 +963,9 @@ html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lp-tweaks .tw-row > label { grid-column: 1 / -1; color: #3f4a6b; }
 .lp-tweaks input[type="range"] { width: 100%; }
 .lp-tweaks select { grid-column: 1 / -1; font: inherit; }
+
+@media (max-width: 479px) {
+	.lp .p-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; }
+	.lp .p-label h2 { max-width: 12ch; }
+	.lp .p-logos li:last-child:nth-child(odd) { grid-column: 1 / -1; width: calc((100% - 1.5rem) / 2); justify-self: center; }
+}

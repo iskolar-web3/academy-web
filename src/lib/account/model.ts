@@ -84,6 +84,30 @@ export const profileEditSchema = z.object({
 });
 export type ProfileEdit = z.infer<typeof profileEditSchema>;
 
+/** Private email preference, available only through the signed-in account endpoint. */
+export const marketingPreferenceSchema = z.object({
+	marketingOptIn: z.boolean(),
+	marketingOptInAt: z.iso.datetime().nullable(),
+	marketingEmail: z.email().nullable(),
+});
+export type MarketingPreference = z.infer<typeof marketingPreferenceSchema>;
+
+export const marketingEmailSchema = z
+	.string()
+	.trim()
+	.email("Enter a valid email address.")
+	.max(254, "Email address is too long.");
+
+export const marketingPreferenceEditSchema = z
+	.object({
+		marketingOptIn: z.boolean(),
+		marketingEmail: marketingEmailSchema.optional(),
+	})
+	.strict();
+export type MarketingPreferenceEdit = z.infer<
+	typeof marketingPreferenceEditSchema
+>;
+
 /**
  * Onboarding basic-info — one form per role, submitted to `POST /accounts/me/onboarding`
  * (flips `onboardingCompleted`). Mirrors the actual fields iSkolar-main's own onboarding
@@ -102,6 +126,8 @@ export type ProfileEdit = z.infer<typeof profileEditSchema>;
  */
 
 export const studentOnboardingSchema = z.object({
+	marketingOptIn: z.boolean().optional(),
+	marketingEmail: marketingEmailSchema.optional(),
 	firstName: z.string().min(1, "First name is required").max(60),
 	middleName: z.string().max(60).optional(),
 	lastName: z.string().min(1, "Last name is required").max(60),
@@ -160,6 +186,8 @@ export const AGENCY_TYPE_LABELS: Record<AgencyType, string> = {
 };
 
 export const individualSponsorOnboardingSchema = z.object({
+	marketingOptIn: z.boolean().optional(),
+	marketingEmail: marketingEmailSchema.optional(),
 	sponsorType: z.literal("individual"),
 	firstName: z.string().min(1, "First name is required").max(60),
 	middleName: z.string().max(60).optional(),
@@ -173,6 +201,8 @@ export type IndividualSponsorOnboardingInput = z.infer<
 >;
 
 export const organizationSponsorOnboardingSchema = z.object({
+	marketingOptIn: z.boolean().optional(),
+	marketingEmail: marketingEmailSchema.optional(),
 	sponsorType: z.literal("organization"),
 	name: z.string().min(1, "Organization name is required").max(120),
 	organizationType: z.enum(ORGANIZATION_TYPES),
@@ -183,6 +213,8 @@ export type OrganizationSponsorOnboardingInput = z.infer<
 >;
 
 export const governmentSponsorOnboardingSchema = z.object({
+	marketingOptIn: z.boolean().optional(),
+	marketingEmail: marketingEmailSchema.optional(),
 	sponsorType: z.literal("government"),
 	name: z.string().min(1, "Agency name is required").max(120),
 	agencyType: z.enum(AGENCY_TYPES),
@@ -198,6 +230,8 @@ export type SponsorOnboardingInput =
 	| GovernmentSponsorOnboardingInput;
 
 export const adminOnboardingSchema = z.object({
+	marketingOptIn: z.boolean().optional(),
+	marketingEmail: marketingEmailSchema.optional(),
 	displayName: z.string().min(2, "Name is too short").max(80),
 });
 export type AdminOnboardingInput = z.infer<typeof adminOnboardingSchema>;
