@@ -1,10 +1,15 @@
 import { queryOptions } from "@tanstack/react-query";
 import { type ApiEnvelope, apiFetch, apiUpload, BACKEND_URL } from "#/lib/api";
 import {
+	type AdminGrantInput,
+	type AdminGrantList,
+	adminGrantListSchema,
 	type GrantInput,
 	type GrantRequest,
 	grantListSchema,
 	grantSchema,
+	type StudentSearchHit,
+	studentSearchHitListSchema,
 } from "#/lib/grant/model";
 
 /**
@@ -79,4 +84,45 @@ export async function cancelGrantRequest(
 		method: "POST",
 		body: JSON.stringify({ reason }),
 	});
+}
+
+/** Admin grant list with status + funding totals. `GET /admin/grants`. */
+export function adminGrantsQuery() {
+	return queryOptions({
+		queryKey: ["grant", "admin", "list"] as const,
+		queryFn: async (): Promise<AdminGrantList> => {
+			const res = await apiFetch<ApiEnvelope<unknown>>("/admin/grants");
+			return adminGrantListSchema.parse(res.data);
+		},
+	});
+}
+
+/** Add Grant student picker. `GET /admin/students/search?q=`. Needs ≥2 characters. */
+export function studentSearchQuery(q: string) {
+	return queryOptions({
+		queryKey: ["grant", "admin", "student-search", q] as const,
+		queryFn: async (): Promise<StudentSearchHit[]> => {
+			const res = await apiFetch<ApiEnvelope<unknown>>(
+				`/admin/students/search?q=${encodeURIComponent(q)}`,
+			);
+			return studentSearchHitListSchema.parse(res.data);
+		},
+		enabled: q.trim().length >= 2,
+		staleTime: 30_000,
+	});
+}
+
+/**
+ * Admin "Add Grant": publish a grant for a student. Multipart `data` (JSON
+ * `AdminGrantInput`) + `file` (title-proposal PDF). Live on creation. `POST /admin/grants`.
+ */
+export async function createAdminGrant(
+	input: AdminGrantInput,
+	file: File,
+): Promise<GrantRequest> {
+	const formData = new FormData();
+	formData.append("data", JSON.stringify(input));
+	formData.append("file", file);
+	const res = await apiUpload<ApiEnvelope<unknown>>("/admin/grants", formData);
+	return grantSchema.parse(res.data);
 }

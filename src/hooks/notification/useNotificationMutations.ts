@@ -4,6 +4,7 @@ import {
 	declineInvite,
 	markAllRead,
 	markRead,
+	resendInvite,
 } from "#/lib/notification/api";
 
 /**
@@ -43,5 +44,11 @@ export function useNotificationMutations() {
 		},
 	});
 
-	return { read, readAll, accept, decline };
+	const resend = useMutation({
+		mutationFn: (vars: { projectId: string; memberId: string }) =>
+			resendInvite(vars.projectId, vars.memberId),
+		onSuccess: () => qc.invalidateQueries({ queryKey: ["project"] }),
+	});
+
+	return { read, readAll, accept, decline, resend };
 }

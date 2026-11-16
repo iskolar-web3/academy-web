@@ -6,6 +6,7 @@ import {
 	type MyAccountProfile,
 	roleLabel,
 } from "#/lib/account/model";
+import { parseIsoDate } from "#/lib/date";
 import type { ShowcaseProject } from "#/lib/discover/model";
 import { statusChipClass } from "#/lib/project/helper";
 
@@ -43,10 +44,10 @@ const panelCls =
 const asideLabelCls =
 	"mb-3.5 font-mono text-[11.5px] uppercase tracking-[0.16em] text-action/60";
 
-/** "2004-03-12" → "March 12, 2004" — no time-of-day, so no timezone shift to worry about. */
+/** "2004-03-12" → "March 12, 2004" — parsed as a local date, never via UTC. */
 function formatBirthDate(iso: string): string {
-	const [year, month, day] = iso.split("-").map(Number);
-	return format(new Date(year, month - 1, day), "MMMM d, yyyy");
+	const date = parseIsoDate(iso);
+	return date ? format(date, "MMMM d, yyyy") : iso;
 }
 
 /**

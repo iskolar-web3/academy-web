@@ -10,9 +10,11 @@ import {
 	Users,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import type {
-	AcademyNotification,
-	NotificationTone,
+import { InviteActions } from "#/components/project/IncomingInvites";
+import {
+	type AcademyNotification,
+	isPendingInvite,
+	type NotificationTone,
 } from "#/lib/notification/model";
 import { cn } from "#/lib/utils";
 
@@ -48,7 +50,11 @@ function iconOf(n: AcademyNotification): LucideIcon {
 }
 
 /** Template `go` map → route target. Falls back to the notifications page itself. */
-function linkOf(n: AcademyNotification): { to: string; params?: object } {
+function linkOf(n: AcademyNotification): {
+	to: string;
+	params?: object;
+	hash?: string;
+} {
 	switch (n.type) {
 		case "sponsor_interest":
 			return n.actorUserId
@@ -70,6 +76,8 @@ function linkOf(n: AcademyNotification): { to: string; params?: object } {
 			// Matches the template's own seed exactly: go:{ screen: 'vaults' } (P5).
 			return { to: "/student/vaults" };
 		case "member_invite":
+			// Lands on the dashboard's Membership invitations card.
+			return { to: "/student/home", hash: "invites" };
 		case "review_decision":
 			return { to: "/student/home" };
 	}
@@ -87,12 +95,16 @@ export function NotificationItem({
 }) {
 	const link = linkOf(n);
 	const Icon = iconOf(n);
+	// A still-pending invite carries its own Accept/Decline, rendered BESIDE the link (never
+	// inside it — buttons in an <a> are invalid nesting and would also trigger navigation).
+	const invite = isPendingInvite(n) ? n : null;
 
 	if (compact) {
-		return (
+		const row = (
 			<Link
 				to={link.to}
 				params={link.params}
+				hash={link.hash}
 				onClick={onActivate}
 				className="flex gap-[11px] rounded-[10px] px-3 py-2.5 transition-colors hover:bg-surface-sunken"
 			>
@@ -114,16 +126,33 @@ export function NotificationItem({
 				</div>
 			</Link>
 		);
+		if (!invite) {
+			return row;
+		}
+		return (
+			<div>
+				{row}
+				<div className="pb-2 pl-[49px]">
+					<InviteActions
+						projectId={invite.projectId}
+						memberId={invite.memberId}
+						size="sm"
+					/>
+				</div>
+			</div>
+		);
 	}
 
-	return (
+	const row = (
 		<Link
 			to={link.to}
 			params={link.params}
+			hash={link.hash}
 			onClick={onActivate}
 			className={cn(
 				"flex items-start gap-3.5 border-[#eef1fa] border-b px-5 py-4 transition-colors last:border-b-0 hover:bg-[#f7faff]",
 				n.unread && "bg-[#fbfdff]",
+				invite && "border-b-0",
 			)}
 		>
 			<span
@@ -155,6 +184,25 @@ export function NotificationItem({
 				{n.ageLabel}
 			</span>
 		</Link>
+	);
+	if (!invite) {
+		return row;
+	}
+	return (
+		<div
+			className={cn(
+				"border-[#eef1fa] border-b last:border-b-0",
+				n.unread && "bg-[#fbfdff]",
+			)}
+		>
+			{row}
+			<div className="px-5 pb-4 pl-[76px]">
+				<InviteActions
+					projectId={invite.projectId}
+					memberId={invite.memberId}
+				/>
+			</div>
+		</div>
 	);
 }
 

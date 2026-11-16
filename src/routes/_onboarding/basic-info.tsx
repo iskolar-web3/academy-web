@@ -35,6 +35,7 @@ import {
 } from "#/lib/account/model";
 import { getDefaultPathOfRole } from "#/lib/api";
 import { AcademyRole } from "#/lib/auth/model";
+import { parseIsoDate, toIsoDate } from "#/lib/date";
 
 /**
  * Client-facing student form schema — plain non-empty strings for gender/education
@@ -187,7 +188,7 @@ function BirthDateField({
 	error?: string;
 }) {
 	const [open, setOpen] = useState(false);
-	const selected = value ? new Date(value) : undefined;
+	const selected = value ? parseIsoDate(value) : undefined;
 
 	return (
 		<Field id="birthDate" label="Birth date" error={error}>
@@ -212,7 +213,7 @@ function BirthDateField({
 							if (!date) {
 								return;
 							}
-							onChange(date.toISOString().slice(0, 10));
+							onChange(toIsoDate(date));
 							setOpen(false);
 						}}
 						disabled={(date) => date > new Date()}

@@ -43,6 +43,16 @@ export async function acceptInvite(
 	});
 }
 
+/** Owner re-sends a pending/declined invite. `POST /projects/:id/members/:memberId/resend`. */
+export async function resendInvite(
+	projectId: string,
+	memberId: string,
+): Promise<void> {
+	await apiFetch(`/projects/${projectId}/members/${memberId}/resend`, {
+		method: "POST",
+	});
+}
+
 /** Decline a membership invite (STU-08). `POST /projects/:id/members/:memberId/decline`. */
 export async function declineInvite(
 	projectId: string,

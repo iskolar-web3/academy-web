@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { AddGrantForm } from "#/components/admin/AddGrantForm";
+import { AdminGrantsPanel } from "#/components/admin/AdminGrantsPanel";
 import { BadgeGrantForm } from "#/components/admin/BadgeGrantForm";
 import { MetricsPanel } from "#/components/admin/MetricsPanel";
 import { ModerationPanel } from "#/components/admin/ModerationPanel";
@@ -28,6 +30,7 @@ const TABS = [
 	{ key: "moderation", label: "Moderation" },
 	{ key: "metrics", label: "Metrics" },
 	{ key: "badges", label: "Badges" },
+	{ key: "grants", label: "Grants" },
 ] as const;
 
 function AdminConsole() {
@@ -88,6 +91,20 @@ function AdminConsole() {
 					</TabsContent>
 					<TabsContent value="badges">
 						<BadgeGrantForm />
+					</TabsContent>
+					<TabsContent value="grants">
+						<div className="mb-3 text-[13px] text-content-heading">
+							All grants
+						</div>
+						<div className="mb-10">
+							<AdminGrantsPanel />
+						</div>
+						<div className="mb-3 text-[13px] text-content-heading">
+							Add grant
+						</div>
+						<div className="max-w-[720px]">
+							<AddGrantForm />
+						</div>
 					</TabsContent>
 				</div>
 			</Tabs>
