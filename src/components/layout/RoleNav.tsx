@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BadgeCheck, Bell, Lock, LogOut, User } from "lucide-react";
+import { BadgeCheck, Bell, Lock, LogOut, Settings, User } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "#/auth";
 import {
@@ -280,6 +280,12 @@ export function RoleNav({ role }: { role?: AcademyRole }) {
 									</Link>
 								</DropdownMenuItem>
 							) : null}
+							<DropdownMenuItem asChild>
+								<Link to="/settings">
+									<Settings className="size-[18px] text-action" aria-hidden />
+									Settings
+								</Link>
+							</DropdownMenuItem>
 
 							<DropdownMenuSeparator />
 							<DropdownMenuItem variant="destructive" onSelect={onLogout}>

@@ -47,6 +47,7 @@ Before a phase ships, its **planned** scope (FE slices, files to create/affect, 
 | 14 | `14-landing-search-discovery.md` | ✅ Implemented | 2026-10-06 | Owner-requested landing FAQ and AEO/SEO improvements |
 | 15 | `15-landing-redesign.md` | ✅ Client done · ✅ server live | 2026-10-29 | FR-N3 · PLT-02 · PLT-06 · approved A · Ledger template; launch partner wall refined 2026-11-14 |
 | 16 | `16-admin-add-grant.md` | 🔨 In progress | 2026-11-01 | PRD FR-G3; ADM-02 |
+| 17 | `17-signup-marketing-opt-in.md` | Done | 2026-11-14 | Optional signup email collection and persisted Settings consent management |
 
 > **Numbering note (2026-07-24 documentation pass):** phase numbers `05`–`10` follow product-phase
 > order (Foundation → Submission → Review → Discovery & Contact → Grants & Funding →

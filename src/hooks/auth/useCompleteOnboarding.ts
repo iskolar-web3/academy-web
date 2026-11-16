@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { completeOnboarding } from "#/lib/account/api";
+import {
+	completeOnboarding,
+	marketingPreferenceQuery,
+} from "#/lib/account/api";
 import type { OnboardingInput } from "#/lib/account/model";
 import { validateSessionQuery } from "#/lib/auth/api";
 
@@ -14,6 +17,9 @@ export function useCompleteOnboarding() {
 		mutationFn: (input: OnboardingInput) => completeOnboarding(input),
 		onSuccess: (user) => {
 			qc.setQueryData(validateSessionQuery().queryKey, user);
+			qc.invalidateQueries({
+				queryKey: marketingPreferenceQuery(user.academyUserId).queryKey,
+			});
 		},
 	});
 }
