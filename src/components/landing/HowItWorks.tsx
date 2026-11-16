@@ -65,7 +65,7 @@ export function HowItWorks() {
 
 	return (
 		<section
-			className="section ground-paper"
+			className="section ground-paper ground-dots"
 			id="how"
 			aria-labelledby="how-title"
 		>
@@ -92,11 +92,13 @@ export function HowItWorks() {
 							className={allLit || current === i + 1 ? "step active" : "step"}
 							data-step
 						>
-							<span className="num" aria-hidden="true">
-								{step.n}
-							</span>
-							<h3>{step.title}</h3>
-							<p>{step.body}</p>
+							<div className="step-card">
+								<span className="num" aria-hidden="true">
+									{step.n}
+								</span>
+								<h3>{step.title}</h3>
+								<p>{step.body}</p>
+							</div>
 						</li>
 					))}
 				</ol>

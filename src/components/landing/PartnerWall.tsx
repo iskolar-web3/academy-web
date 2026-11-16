@@ -53,7 +53,7 @@ function PartnerLogo({ partner }: { partner: Partner }) {
 export function PartnerWall() {
 	return (
 		<section
-			className="section compact lp-navy p-section"
+			className="section partners lp-navy"
 			aria-labelledby="partners-title"
 		>
 			<div className="wrap">
