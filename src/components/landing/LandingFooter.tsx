@@ -18,7 +18,7 @@ const LINK_COLUMNS = [
 			{ label: "PathFinder", href: "https://iskolar.io/#pathfinder" },
 			{ label: "Review", href: "https://iskolar.io/#review" },
 			{ label: "iSkolar", href: "https://iskolar.io/#iskolar" },
-			{ label: "Academy", href: "https://academy.iskolar.io" },
+			{ label: "Academy", href: "https://academy.iskolar.io", current: true },
 			{ label: "Vocation", href: "https://iskolar.io/#vocation" },
 			{ label: "Verity", href: "https://iskolar.io/#verity" },
 		],
@@ -175,7 +175,18 @@ export function LandingFooter() {
 								<ul>
 									{column.links.map((link) => (
 										<li key={link.label}>
-											<a href={link.href}>{link.label}</a>
+											<a
+												href={link.href}
+												aria-current={"current" in link ? "page" : undefined}
+											>
+												{link.label}
+												{"current" in link ? (
+													<span className="f-here">
+														<span className="f-here-dot" aria-hidden="true" />
+														You are here
+													</span>
+												) : null}
+											</a>
 										</li>
 									))}
 								</ul>
