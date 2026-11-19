@@ -1,0 +1,123 @@
+name: Bug Report
+description: Report something in the Academy web app that is not working correctly.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem as accurately and concisely as you can. If the cause is on the server (wrong data, an error message from the API), say so — it may belong in academy-server instead.
+
+  - type: checkboxes
+    attributes:
+      label: Pre-Submission Checklist
+      options:
+        - label: I searched open and closed issues and this has not been reported yet.
+          required: true
+        - label: I reproduced it on the latest `develop` build or the current production site.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the app is affected?
+      options:
+        - Landing page
+        - Sign-in & onboarding
+        - Student projects & submission
+        - Verification checks
+        - Grants
+        - Document vault
+        - Discover & project pages
+        - Sponsor deal flow, interest & watchlist
+        - Subscription
+        - Notifications
+        - Admin console
+        - Settings & profile
+        - Layout & shared UI
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: Role Affected
+      description: Who sees the bug? Select all that apply.
+      multiple: true
+      options:
+        - Visitor (signed out)
+        - Student
+        - Sponsor
+        - Admin
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where It Happened
+      options:
+        - Production
+        - Deploy preview
+        - Local development
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Bug Summary
+      description: A clear, concise description of the bug.
+      placeholder: Brief bug description...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Include the page URL and the account role you were signed in as.
+      placeholder: "1.\n2.\n3."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Include screenshots if applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots / Console Errors
+      description: Screenshots, browser console errors, or the failing network request (method, URL, status, response message). Remove any personal data first.
+    validations:
+      required: false
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser & Device
+      placeholder: e.g. Chrome 131 on Windows 11, Safari on iPhone 15
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: How often it happens, related issues, or anything else that helps.
+    validations:
+      required: false
