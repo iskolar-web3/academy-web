@@ -56,7 +56,7 @@ export const LANDING_FAQS = [
 		question:
 			"Which technology business incubators in the Philippines does Academy work with?",
 		answer:
-			"Academy's TBI map shows the technology business incubators we partner with. Our current partner is the University of Makati's Center for Technology Incubation and Enterprise Development (UMak CTIED) in Makati. Visit the incubator's website for its programs and application requirements. Incubators interested in partnering can email hello@iskolar.io.",
+			"Academy's TBI map lists technology business incubators across the Philippines, compiled from public DOST and host-institution information. A listing does not mean an incubator has partnered with Academy. Our current partner is the University of Makati's Center for Technology Incubation and Enterprise Development (UMak CTIED). Visit an incubator's website for its programs and application requirements. Incubators interested in partnering can email hello@iskolar.io.",
 		link: { href: "#tbi-map", label: "See the TBI map" },
 	},
 ] as const;

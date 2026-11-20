@@ -42,7 +42,7 @@ describe("TBI discovery", () => {
 			screen.getByText(/^About [0-9]+ km$/, { selector: "p" }),
 		).toBeTruthy();
 		expect(
-			screen.getByRole("heading", { name: /UMak Center for Technology/ }),
+			screen.getByRole("heading", { name: /Wildcat Innovation Labs/ }),
 		).toBeTruthy();
 		fireEvent.click(screen.getByRole("button", { name: "View Nearest TBI" }));
 		expect(screen.getByRole("link", { name: "View details" })).toBeTruthy();

@@ -11,21 +11,8 @@ import {
 	TbiMapCanvas,
 } from "#/components/landing/TbiMapCanvas";
 import { Button } from "#/components/ui/button";
-import { formatDistance, rankTbis, type Tbi } from "#/lib/tbi/directory";
+import { formatDistance, rankTbis, TBIS, type Tbi } from "#/lib/tbi/directory";
 import { DIRECTORY_PLACES, type Place, searchPlaces } from "#/lib/tbi/places";
-
-const UMAK_TBI: Tbi = {
-	id: "umak-ctied",
-	name: "UMak Center for Technology Incubation and Enterprise Development",
-	host: "University of Makati",
-	city: "Makati",
-	province: "Metro Manila",
-	address: "University of Makati campus",
-	lat: 14.5534,
-	lng: 121.0565,
-	url: "https://www.umak.edu.ph/",
-};
-const TBIS = [UMAK_TBI];
 
 export function TbiMapSection() {
 	const [origin, setOrigin] = useState<MapOrigin | null>(null);
@@ -202,7 +189,7 @@ export function TbiMapSection() {
 						Find a Technology Business Incubator
 					</h2>
 					<p className="mt-2 text-base text-content-soft">
-						Find how close you are to our current TBI partner.
+						Find the Philippine technology business incubators closest to you.
 					</p>
 				</div>
 			</div>
