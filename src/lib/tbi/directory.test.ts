@@ -37,4 +37,10 @@ describe("TBI distance and directory", () => {
 			expect(tbi.address.length).toBeGreaterThan(0);
 		}
 	});
+	it("lists each incubator once and keeps the University of Makati partner", () => {
+		expect(new Set(TBIS.map((tbi) => tbi.name)).size).toBe(TBIS.length);
+		const umak = TBIS.find((tbi) => tbi.id === "umak-ctied");
+		expect(umak?.host).toBe("University of Makati");
+		expect(umak?.city).toBe("Taguig");
+	});
 });
