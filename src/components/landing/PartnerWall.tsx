@@ -18,40 +18,23 @@ function PartnerLogo({ partner, copy }: { partner: Partner; copy: boolean }) {
 		partner.tonal && "p-tonal",
 		partner.round && "p-round",
 	);
-	const artwork = (
-		<span className="p-logo">
-			<img
-				src={partner.logo}
-				alt={copy ? "" : partner.name}
-				width={partner.width}
-				height={partner.height}
-				loading="lazy"
-				decoding="async"
-			/>
-		</span>
-	);
-
 	return (
 		<li aria-hidden={copy || undefined}>
-			{partner.href ? (
-				<a
-					className={className}
-					data-hover-colour={partner.hoverColour !== false}
-					href={partner.href}
-					target="_blank"
-					rel="noopener noreferrer"
-					tabIndex={copy ? -1 : undefined}
-				>
-					{artwork}
-				</a>
-			) : (
-				<div
-					className={className}
-					data-hover-colour={partner.hoverColour !== false}
-				>
-					{artwork}
-				</div>
-			)}
+			<div
+				className={className}
+				data-hover-colour={partner.hoverColour !== false}
+			>
+				<span className="p-logo">
+					<img
+						src={partner.logo}
+						alt={copy ? "" : partner.name}
+						width={partner.width}
+						height={partner.height}
+						loading="lazy"
+						decoding="async"
+					/>
+				</span>
+			</div>
 		</li>
 	);
 }
